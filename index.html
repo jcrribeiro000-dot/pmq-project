@@ -8,7 +8,6 @@
     <style>
         :root { --tile-size: 55px; --gap: 4px; --step: 59px; }
         
-        /* Ajuste Dinâmico para Celulares */
         @media (max-width: 600px) {
             :root { --tile-size: 42px; --gap: 2px; --step: 44px; }
             body { padding: 5px; }
@@ -45,19 +44,40 @@
         .hp-container { position: absolute; top: -12px; width: 80%; height: 6px; background: rgba(0,0,0,0.5); border: 1px solid #000; border-radius: 3px; overflow: hidden; }
         .hp-bar { height: 100%; background: #2ecc71; transition: width 0.3s ease, background 0.3s ease; }
 
-        .p1-color { filter: hue-rotate(0deg); }
-        .p2-color { filter: hue-rotate(180deg); }
-        .p3-color { filter: hue-rotate(90deg); }
-        .p4-color { filter: hue-rotate(280deg); }
-
         @keyframes breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1) translateY(-4px); } }
         
+        /* EFEITO TSUNAMI MELHORADO */
+        .tsunami-fx { 
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+            background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, rgba(0,120,255,0.9) 40%, rgba(0,0,50,0.5) 100%); 
+            z-index: 180; pointer-events: none; 
+            animation: tsunamiBlast 1.2s cubic-bezier(0.1, 0.7, 1.0, 0.1) forwards; 
+            border-radius: 50%;
+        }
+        @keyframes tsunamiBlast { 
+            0% { transform: scale(0); opacity: 1; filter: blur(5px); } 
+            50% { opacity: 1; filter: blur(0px); }
+            100% { transform: scale(3); opacity: 0; filter: blur(10px); } 
+        }
+
+        /* EFEITO JATO DE ÁGUA */
+        .water-jet-fx { 
+            position: absolute; z-index: 190; pointer-events: none; 
+            background: linear-gradient(90deg, transparent, #fff, #3498db, #fff, transparent);
+            box-shadow: 0 0 20px #3498db;
+            animation: jetFlash 0.6s ease-out forwards;
+        }
+        @keyframes jetFlash {
+            0% { opacity: 0; transform: scaleY(0.1); }
+            50% { opacity: 1; transform: scaleY(1.2); }
+            100% { opacity: 0; transform: scaleY(0.5); }
+        }
+
         .dmg-float, .heal-float { position: absolute; font-size: 28px; font-weight: bold; pointer-events: none; z-index: 155; text-shadow: 2px 2px 0 #000; animation: floatUp 0.8s ease-out forwards; }
         .dmg-float { color: #ff3333; } .heal-float { color: #33ff33; }
         @keyframes floatUp { 0% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(-70px); } }
 
         .fire-column { position: absolute; top: 0; width: var(--tile-size); height: 100%; background: linear-gradient(to top, rgba(255, 0, 0, 0.9) 0%, rgba(255, 69, 0, 1) 50%, rgba(255, 255, 0, 0.7) 100%); z-index: 200; pointer-events: none; animation: fireFlashLento 1.2s ease-in-out forwards; filter: drop-shadow(0 0 15px #ff4500); }
-        @keyframes fireFlashLento { 0% { opacity: 0; transform: scaleX(0); } 15% { opacity: 1; transform: scaleX(1.1); } 85% { opacity: 1; transform: scaleX(1); filter: brightness(1.5); } 100% { opacity: 0; transform: scaleX(0.5); } }
 
         .axe-projectile, .vortex-fx { position: absolute; z-index: 200; pointer-events: none; transition: all 0.6s linear; animation: spin 0.3s linear infinite; }
         @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
@@ -79,7 +99,6 @@
         .log { width: 100%; height: 120px; background: #000; color: #0f0; font-family: monospace; font-size: 10px; padding: 5px; overflow-y: auto; margin-top: 8px; border-radius: 4px; border: 1px solid #333; line-height: 1.2; }
         .projectile { position: absolute; width: 30px; height: 30px; z-index: 50; pointer-events: none; transition: all 0.3s linear; }
         .sword-fx { position: absolute; width: 50px; height: 50px; z-index: 60; pointer-events: none; animation: swordSlash 0.4s ease-out forwards; }
-        @keyframes swordSlash { 0% { transform: scale(0) rotate(-45deg); opacity: 0; } 50% { transform: scale(1.5) rotate(45deg); opacity: 1; } 100% { transform: scale(1.2) rotate(90deg); opacity: 0; } }
 
         #gameOverlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -115,7 +134,7 @@
             <tr style="border-top: 1px solid #555"><td>BOSS: HP <input type="number" id="hp_BOSS_cfg" value="60"> ATK <input type="number" id="atk_BOSS_cfg" value="4"></td></tr>
         </table>
         <div>MODO: <select id="gameMode" onchange="initGame()"><option value="BOSS">BOSS (CO-OP)</option><option value="PVP">PVP (1vs1)</option></select></div>
-        <div>BOSS: <select id="bossSelect" onchange="initGame()"><option value="DRAGON">Dragão</option><option value="MINOTAUR">Minotauro</option><option value="SACI">Saci</option></select></div>
+        <div>BOSS: <select id="bossSelect" onchange="initGame()"><option value="DRAGON">Dragão</option><option value="MINOTAUR">Minotauro</option><option value="SACI">Saci</option><option value="IARA">Iara</option></select></div>
         <div>PLAYERS: <select id="playerCount" onchange="initGame()"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option></select></div>
         <button onclick="initGame()" style="background:#16a085; color:white; width:auto;">REINICIAR</button>
     </div>
@@ -152,6 +171,7 @@
         DRAGON: "https://cdn-icons-png.flaticon.com/512/6525/6525922.png",
         MINOTAUR: "https://cdn-icons-png.flaticon.com/128/1400/1400396.png",
         SACI: "https://i.ibb.co/0psrrg1S/saci-token.png",
+        IARA: "https://i.ibb.co/LDsxbV3X/iara-token.png",
         VortexFX: "https://cdn-icons-png.flaticon.com/512/1344/1344933.png",
         SwordFX: "https://cdn-icons-png.flaticon.com/512/6720/6720973.png",
         ArrowFX: "https://cdn-icons-png.flaticon.com/512/95/95460.png",
@@ -162,21 +182,15 @@
     let audioUnlocked = false;
     const sfx = {
         dragonSkill: new Audio("dramatic-synth-echo-43970.mp3"),
-        atkg: new Audio("atkg.mp3"),
-        atkm: new Audio("atkm.mp3"),
-        atka: new Audio("atka.mp3"),
-        click: new Audio("click.mp3"),
-        bgm: new Audio("fundoboss.mp3"),
-        minoa1: new Audio("minoa1.mp3"),
-        minoa2: new Audio("minoa2.mp3"),
-        saci: new Audio("saci.mp3"),
-        saci1: new Audio("saci1.mp3"),
-        win: new Audio("win.mp3"),
-        gameover: new Audio("gameover.mp3")
+        atkg: new Audio("atkg.mp3"), atkm: new Audio("atkm.mp3"), atka: new Audio("atka.mp3"),
+        click: new Audio("click.mp3"), bgm: new Audio("fundoboss.mp3"),
+        minoa1: new Audio("minoa1.mp3"), minoa2: new Audio("minoa2.mp3"),
+        saci: new Audio("saci.mp3"), saci1: new Audio("saci1.mp3"),
+        iara1: new Audio("iara1.mp3"), iara2: new Audio("iara2.mp3"),
+        win: new Audio("win.mp3"), gameover: new Audio("gameover.mp3")
     };
 
-    sfx.bgm.loop = true;
-    sfx.bgm.volume = 0.3;
+    sfx.bgm.loop = true; sfx.bgm.volume = 0.3;
 
     function unlockAudio() {
         if (!audioUnlocked) {
@@ -191,8 +205,7 @@
     function playSfx(name) {
         if (!audioUnlocked || !sfx[name]) return;
         const sound = sfx[name].cloneNode();
-        sound.volume = 0.6;
-        sound.play();
+        sound.volume = 0.6; sound.play();
     }
 
     let CLASS_DB = {}, grid = [], path = [], players = []; 
@@ -248,7 +261,7 @@
 
         const count = mode === "PVP" ? 2 : parseInt(document.getElementById('playerCount').value);
         updateClassBase(); grid = []; path = []; players = [];
-        document.getElementById('log').innerHTML = ''; addLog("Partida Iniciada!");
+        document.getElementById('log').innerHTML = '';
         
         const gridEl = document.getElementById('grid'); gridEl.innerHTML = '';
         for(let i=0; i<64; i++) {
@@ -268,7 +281,7 @@
         for(let i=0; i<count; i++) {
             players.push({ id: i, x: 2 + i, y: 7, hp: CLASS_DB.Guerreiro.hp, maxHp: CLASS_DB.Guerreiro.hp, class: 'Guerreiro', element: 'FOGO', name: `P${i+1}`, skillUsed: false, dead: false });
             const token = document.createElement('div');
-            token.id = `tokenP${i}`; token.className = `token p${i+1}-color`;
+            token.id = `tokenP${i}`; token.className = `token`;
             token.innerHTML = `<div class="hp-container"><div id="hpBarP${i}" class="hp-bar"></div></div><img id="imgP${i}" src="${SPRITES.Guerreiro}">`;
             board.appendChild(token);
         }
@@ -363,8 +376,7 @@
             const dealGueDmg = () => {
                 if(!target.dead && (Math.abs(active.x-target.x)+Math.abs(active.y-target.y)) <= 1) {
                     let total = info.atk + bonusElem + skillAtkBonus;
-                    playSfx('atkg');
-                    applyDmg(target, total); spawnSwordEffect(target.x, target.y);
+                    playSfx('atkg'); applyDmg(target, total); spawnSwordEffect(target.x, target.y);
                 }
             };
             dealGueDmg();
@@ -403,12 +415,10 @@
     }
 
     function showEndGame(msg, isWin) {
-        gameActive = false;
-        sfx.bgm.pause();
+        gameActive = false; sfx.bgm.pause();
         const overlay = document.getElementById('gameOverlay');
         const title = document.getElementById('overlayTitle');
-        overlay.style.display = 'flex';
-        title.innerText = msg;
+        overlay.style.display = 'flex'; title.innerText = msg;
         title.className = isWin ? "win-text" : "lose-text";
         playSfx(isWin ? 'win' : 'gameover');
     }
@@ -419,7 +429,7 @@
         if(t.hp <= 0) { 
             t.hp = 0; t.dead = true;
             if(mode === "BOSS") {
-                if(['DRAGON','MINOTAUR','SACI'].includes(t.type) || t.id === undefined) { showEndGame("VITÓRIA!", true); }
+                if(['DRAGON','MINOTAUR','SACI','IARA'].includes(t.type) || t.id === undefined) { showEndGame("VITÓRIA!", true); }
                 else if(players.every(p => p.dead)) { showEndGame("GAME OVER", false); }
             } else {
                 const winner = players.find(p => !p.dead);
@@ -490,6 +500,27 @@
                 });
             }
         }
+        else if(boss.type === "IARA") {
+            const r = Math.random();
+            if(r < 0.5) {
+                addLog("POROROCA!"); playSfx('iara1'); triggerTsunami();
+                await new Promise(r => setTimeout(r, 500));
+                players.forEach(p => {
+                    if(!p.dead) {
+                        applyDmg(p, 1);
+                        let dx = p.x < 4 ? -1 : 1; let dy = p.y < 4 ? -1 : 1;
+                        if(Math.abs(p.x-3.5) > Math.abs(p.y-3.5)) { if(p.x+dx>=0 && p.x+dx<8) p.x += dx; }
+                        else { if(p.y+dy>=0 && p.y+dy<8) p.y += dy; }
+                    }
+                });
+                updateVisuals();
+            } else {
+                addLog("JATO DE ÁGUA!"); playSfx('iara2');
+                triggerWaterJet(boss.x, boss.y);
+                await new Promise(r => setTimeout(r, 600));
+                players.forEach(p => { if(!p.dead && (p.x === boss.x || p.y === boss.y)) applyDmg(p, bossAtk); });
+            }
+        }
 
         await new Promise(r => setTimeout(r, 600));
         document.getElementById('turnBoss').classList.remove('active-turn');
@@ -497,18 +528,38 @@
         if(players[currentPlayerIdx]) switchConfig(currentPlayerIdx);
     }
 
+    function triggerTsunami() {
+        const t = document.createElement('div'); t.className = 'tsunami-fx';
+        document.getElementById('board').appendChild(t); setTimeout(() => t.remove(), 1200);
+    }
+
+    function triggerWaterJet(bx, by) {
+        const step = getStep();
+        // Horizontal Jet
+        const hJet = document.createElement('div'); hJet.className = 'water-jet-fx';
+        hJet.style.width = '100%'; hJet.style.height = step + 'px';
+        hJet.style.left = '0'; hJet.style.top = (by * step + 8) + 'px';
+        document.getElementById('board').appendChild(hJet);
+        // Vertical Jet
+        const vJet = document.createElement('div'); vJet.className = 'water-jet-fx';
+        vJet.style.width = step + 'px'; vJet.style.height = '100%';
+        vJet.style.top = '0'; vJet.style.left = (bx * step + 8) + 'px';
+        vJet.style.background = 'linear-gradient(0deg, transparent, #fff, #3498db, #fff, transparent)';
+        document.getElementById('board').appendChild(vJet);
+        
+        setTimeout(() => { hJet.remove(); vJet.remove(); }, 600);
+    }
+
     function triggerFireColumn(col) {
         const fire = document.createElement('div'); fire.className = 'fire-column';
-        const step = getStep();
-        fire.style.left = (col * step + 8) + 'px';
+        const step = getStep(); fire.style.left = (col * step + 8) + 'px';
         document.getElementById('board').appendChild(fire); setTimeout(() => fire.remove(), 1200);
     }
 
     function triggerVortex(x, y, delay = 0) {
         setTimeout(() => {
             const v = document.createElement('img'); v.src = SPRITES.VortexFX; v.className = 'vortex-fx';
-            const step = getStep();
-            v.style.width = step + 'px'; v.style.height = step + 'px';
+            const step = getStep(); v.style.width = step + 'px'; v.style.height = step + 'px';
             v.style.left = (x * step + 8) + 'px'; v.style.top = (y * step + 8) + 'px';
             document.getElementById('board').appendChild(v);
             setTimeout(() => { v.style.opacity = '0'; v.style.transform = 'scale(0.5)'; }, 500);
@@ -518,8 +569,7 @@
 
     async function triggerSpinAxe(x, y) {
         const axe = document.createElement('img'); axe.src = SPRITES.AxeFX; axe.className = 'axe-projectile';
-        const step = getStep();
-        axe.style.width = (step * 2) + 'px'; axe.style.height = (step * 2) + 'px';
+        const step = getStep(); axe.style.width = (step * 2) + 'px'; axe.style.height = (step * 2) + 'px';
         axe.style.left = (x * step - step/2) + 'px'; axe.style.top = (y * step - step/2) + 'px';
         document.getElementById('board').appendChild(axe);
         setTimeout(() => { axe.style.opacity = '0'; axe.style.transform = 'scale(2) rotate(720deg)'; }, 400);
@@ -560,23 +610,19 @@
     function activateSkill() { if (!gameActive || players[currentPlayerIdx].skillUsed) return; skillActive = true; document.querySelectorAll('.tile').forEach(t => t.classList.add('skill-mode')); }
     
     function showDmgEffect(x, y, amt) { 
-        const step = getStep();
-        const f = document.createElement('div'); f.className = 'dmg-float'; f.innerText = `-${amt}`; f.style.left = (x*step+20)+'px'; f.style.top = (y*step)+'px'; document.getElementById('board').appendChild(f); setTimeout(() => f.remove(), 800); 
+        const step = getStep(); const f = document.createElement('div'); f.className = 'dmg-float'; f.innerText = `-${amt}`; f.style.left = (x*step+20)+'px'; f.style.top = (y*step)+'px'; document.getElementById('board').appendChild(f); setTimeout(() => f.remove(), 800); 
     }
     
     function showHealEffect(x, y, amt) { 
-        const step = getStep();
-        const f = document.createElement('div'); f.className = 'heal-float'; f.innerText = `+${amt}`; f.style.left = (x*step+20)+'px'; f.style.top = (y*step)+'px'; document.getElementById('board').appendChild(f); setTimeout(() => f.remove(), 800); 
+        const step = getStep(); const f = document.createElement('div'); f.className = 'heal-float'; f.innerText = `+${amt}`; f.style.left = (x*step+20)+'px'; f.style.top = (y*step)+'px'; document.getElementById('board').appendChild(f); setTimeout(() => f.remove(), 800); 
     }
     
     function spawnSwordEffect(x, y) { 
-        const step = getStep();
-        const s = document.createElement('img'); s.src = SPRITES.SwordFX; s.className = 'sword-fx'; s.style.left = (x*step+12)+'px'; s.style.top = (y*step+12)+'px'; document.getElementById('board').appendChild(s); setTimeout(() => s.remove(), 400); 
+        const step = getStep(); const s = document.createElement('img'); s.src = SPRITES.SwordFX; s.className = 'sword-fx'; s.style.left = (x*step+12)+'px'; s.style.top = (y*step+12)+'px'; document.getElementById('board').appendChild(s); setTimeout(() => s.remove(), 400); 
     }
     
     async function spawnProjectile(f, t, type) {
-        const step = getStep();
-        const p = document.createElement('img'); p.src = SPRITES[type + 'FX']; p.className = 'projectile';
+        const step = getStep(); const p = document.createElement('img'); p.src = SPRITES[type + 'FX']; p.className = 'projectile';
         p.style.left = (f.x*step+20)+'px'; p.style.top = (f.y*step+20)+'px';
         document.getElementById('board').appendChild(p); await new Promise(r => setTimeout(r, 50));
         p.style.left = (t.x*step+20)+'px'; p.style.top = (t.y*step+20)+'px'; await new Promise(r => setTimeout(r, 300)); p.remove();
