@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>Entidades: Confronto de Lendas - Mobile Full</title>
+    <style>
+        :root { --tile-size: 55px; --gap: 4px; --step: 59px; }
+        
+        /* Ajuste Dinâmico para Celulares */
+        @media (max-width: 600px) {
+            :root { --tile-size: 42px; --gap: 2px; --step: 44px; }
+            body { padding: 5px; }
+            .game-area { flex-direction: column; align-items: center; gap: 10px; }
+            .panel { width: 95% !important; max-width: 350px; }
+            .setup-row { flex-direction: column; width: 95%; }
+            .skills-guide { flex-wrap: wrap; gap: 5px; font-size: 9px; }
+            button { padding: 12px !important; font-size: 14px !important; }
+            .dmg-float, .heal-float { font-size: 22px !important; }
+        }
+
+        body { font-family: 'Segoe UI', sans-serif; background-color: #1a1a1a; color: #eee; padding: 10px; display: flex; flex-direction: column; align-items: center; overflow-x: hidden; touch-action: manipulation; }
+        .skills-guide { background: #2c3e50; padding: 10px; border-radius: 10px; margin-bottom: 10px; border: 1px solid #444; width: 95%; max-width: 1000px; display: flex; justify-content: space-around; font-size: 11px; text-align: center; }
+        .skill-item { display: flex; flex-direction: column; align-items: center; gap: 3px; }
+        .setup-row { background: #2c3e50; padding: 10px; border-radius: 10px; margin-bottom: 10px; display: flex; gap: 15px; align-items: center; border: 1px solid #444; width: 95%; max-width: 1000px; flex-wrap: wrap; }
+        .config-table { font-size: 10px; }
+        .config-table input { width: 30px; background: #1a1a1a; color: #0f0; border: 1px solid #555; text-align: center; }
+        .game-area { display: flex; gap: 15px; align-items: flex-start; }
+        
+        .board-wrapper { position: relative; width: calc((var(--tile-size) * 8) + (var(--gap) * 7)); height: calc((var(--tile-size) * 8) + (var(--gap) * 7)); background: #222; padding: 8px; border-radius: 12px; border: 4px solid #333; overflow: hidden; z-index: 1; }
+        .grid { display: grid; grid-template-columns: repeat(8, var(--tile-size)); gap: var(--gap); position: relative; z-index: 2; }
+        .tile { width: var(--tile-size); height: var(--tile-size); cursor: pointer; border-radius: 4px; transition: background 0.2s; position: relative; }
+        .tile.selected { border: 2px solid white; transform: scale(0.85); box-shadow: inset 0 0 10px #fff; z-index: 5; }
+        .tile.skill-mode { animation: pulseSkill 1s infinite; border: 2px solid gold; z-index: 20; }
+        
+        .bg-FOGO { background: linear-gradient(135deg, #e74c3c, #c0392b); } 
+        .bg-AGUA { background: linear-gradient(135deg, #3498db, #2980b9); }
+        .bg-TERRA { background: linear-gradient(135deg, #27ae60, #1e8449); } 
+        .bg-AR { background: linear-gradient(135deg, #f1c40f, #f39c12); }
+        
+        .token { position: absolute; width: var(--tile-size); height: var(--tile-size); z-index: 10; transition: all 0.2s ease-in-out; pointer-events: none; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        .token img { width: 120%; height: 120%; object-fit: contain; animation: breathe 2s infinite ease-in-out; }
+        
+        .hp-container { position: absolute; top: -12px; width: 80%; height: 6px; background: rgba(0,0,0,0.5); border: 1px solid #000; border-radius: 3px; overflow: hidden; }
+        .hp-bar { height: 100%; background: #2ecc71; transition: width 0.3s ease, background 0.3s ease; }
+
+        .p1-color { filter: hue-rotate(0deg); }
+        .p2-color { filter: hue-rotate(180deg); }
+        .p3-color { filter: hue-rotate(90deg); }
+        .p4-color { filter: hue-rotate(280deg); }
+
+        @keyframes breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1) translateY(-4px); } }
+        
+        .dmg-float, .heal-float { position: absolute; font-size: 28px; font-weight: bold; pointer-events: none; z-index: 155; text-shadow: 2px 2px 0 #000; animation: floatUp 0.8s ease-out forwards; }
+        .dmg-float { color: #ff3333; } .heal-float { color: #33ff33; }
+        @keyframes floatUp { 0% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(-70px); } }
+
+        .fire-column { position: absolute; top: 0; width: var(--tile-size); height: 100%; background: linear-gradient(to top, rgba(255, 0, 0, 0.9) 0%, rgba(255, 69, 0, 1) 50%, rgba(255, 255, 0, 0.7) 100%); z-index: 200; pointer-events: none; animation: fireFlashLento 1.2s ease-in-out forwards; filter: drop-shadow(0 0 15px #ff4500); }
+        @keyframes fireFlashLento { 0% { opacity: 0; transform: scaleX(0); } 15% { opacity: 1; transform: scaleX(1.1); } 85% { opacity: 1; transform: scaleX(1); filter: brightness(1.5); } 100% { opacity: 0; transform: scaleX(0.5); } }
+
+        .axe-projectile { position: absolute; z-index: 200; pointer-events: none; transition: all 0.6s linear; animation: spin 0.3s linear infinite; }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+        .panel { background: #2c3e50; padding: 12px; border-radius: 10px; width: 210px; border: 1px solid #444; }
+        .turn-box { padding: 6px; text-align: center; font-weight: bold; border-radius: 4px; margin-bottom: 8px; opacity: 0.2; font-size: 11px; color: white; }
+        .active-turn { opacity: 1; border: 2px solid gold; box-shadow: 0 0 10px rgba(255,215,0,0.4); }
+
+        .config-tabs { display: flex; gap: 3px; margin-bottom: 10px; justify-content: center; }
+        .config-tabs button { flex: 1; padding: 5px; font-size: 10px; background: #222; color: #fff; border: 1px solid #444; cursor: pointer; }
+        .config-tabs button.active-tab { background: #e67e22; border-color: gold; }
+
+        .player-input { width: 100%; padding: 5px; box-sizing: border-box; background: #1a1a1a; color: #fff; border: 1px solid #555; border-radius: 4px; margin-bottom: 5px; }
+        .elem-display { font-size: 10px; font-weight: bold; padding: 3px; border-radius: 3px; text-align: center; margin-bottom: 8px; text-transform: uppercase; color: #fff; }
+        button { width: 100%; padding: 10px; cursor: pointer; border-radius: 4px; font-weight: bold; border: none; transition: 0.2s; }
+        .btn-main { background: #d35400; color: white; margin-top: 5px; }
+        .btn-skill { background: #2980b9; color: white; margin-top: 5px; font-size: 11px; padding: 8px; }
+        .btn-skill:disabled { background: #444 !important; color: #777; }
+        .log { width: 100%; height: 120px; background: #000; color: #0f0; font-family: monospace; font-size: 10px; padding: 5px; overflow-y: auto; margin-top: 8px; border-radius: 4px; border: 1px solid #333; line-height: 1.2; }
+        .projectile { position: absolute; width: 30px; height: 30px; z-index: 50; pointer-events: none; transition: all 0.3s linear; }
+        .sword-fx { position: absolute; width: 50px; height: 50px; z-index: 60; pointer-events: none; animation: swordSlash 0.4s ease-out forwards; }
+        @keyframes swordSlash { 0% { transform: scale(0) rotate(-45deg); opacity: 0; } 50% { transform: scale(1.5) rotate(45deg); opacity: 1; } 100% { transform: scale(1.2) rotate(90deg); opacity: 0; } }
+
+        #gameOverlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85); display: none; flex-direction: column;
+            justify-content: center; align-items: center; z-index: 1000;
+            animation: fadeIn 0.5s forwards;
+        }
+        #gameOverlay h1 { font-size: 55px; margin: 0; text-shadow: 0 0 20px #000; letter-spacing: 5px; text-align: center; padding: 20px; }
+        .win-text { color: #f1c40f; text-shadow: 0 0 30px gold !important; }
+        .lose-text { color: #c0392b; text-shadow: 0 0 30px red !important; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    </style>
+</head>
+<body onclick="unlockAudio()">
+
+    <div id="gameOverlay">
+        <h1 id="overlayTitle">VITORIA</h1>
+        <button onclick="initGame()" style="width: 200px; margin-top: 20px; background: #27ae60; color: white; font-size: 20px;">JOGAR NOVAMENTE</button>
+    </div>
+
+    <div class="skills-guide">
+        <div class="skill-item"><b style="color:#f1c40f">LINHA (4+)</b><small>+2 ATK / +1 HP</small></div>
+        <div class="skill-item"><b style="color:#2ecc71">L (4)</b><small>CURA +2 HP</small></div>
+        <div class="skill-item"><b style="color:#3498db">QUAD (4)</b><small>RESET ULT</small></div>
+        <div class="skill-item"><b style="color:#e74c3c">ZIGZAG (4)</b><small>+3 ATK</small></div>
+    </div>
+
+    <div class="setup-row">
+        <table class="config-table">
+            <tr><td>Gue: HP <input type="number" id="hp_Guerreiro" value="15"> ATK <input type="number" id="atk_Guerreiro" value="2"></td></tr>
+            <tr><td>Mag: HP <input type="number" id="hp_Mago" value="8"> ATK <input type="number" id="atk_Mago" value="2"></td></tr>
+            <tr><td>Arq: HP <input type="number" id="hp_Arqueiro" value="10"> ATK <input type="number" id="atk_Arqueiro" value="2"></td></tr>
+            <tr style="border-top: 1px solid #555"><td>BOSS: HP <input type="number" id="hp_BOSS_cfg" value="60"> ATK <input type="number" id="atk_BOSS_cfg" value="4"></td></tr>
+        </table>
+        <div>MODO: <select id="gameMode" onchange="initGame()"><option value="BOSS">BOSS (CO-OP)</option><option value="PVP">PVP (1vs1)</option></select></div>
+        <div>BOSS: <select id="bossSelect" onchange="initGame()"><option value="DRAGON">Dragão</option><option value="MINOTAUR">Minotauro</option></select></div>
+        <div>PLAYERS: <select id="playerCount" onchange="initGame()"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option></select></div>
+        <button onclick="initGame()" style="background:#16a085; color:white; width:auto;">REINICIAR</button>
+    </div>
+
+    <div class="game-area">
+        <div class="panel">
+            <div id="turnP_Active" class="turn-box" style="background:#8e44ad">TURNO ATUAL</div>
+            <div class="config-tabs" id="tabBar"></div>
+            <input type="text" id="pName" class="player-input" oninput="saveAndRefresh()">
+            <div id="pElem" class="elem-display"></div>
+            <select id="pClass" class="player-input" onchange="resetPlayerHP()"></select>
+            <div id="pStatsDisplay" style="text-align:center; font-size:11px; margin-bottom:5px;"></div>
+            <button id="btnSkill" class="btn-skill" onclick="activateSkill()">ULTIMATE (1x)</button>
+            <button id="btnPlay" class="btn-main" onclick="executeAction()">JOGAR TURNO</button>
+        </div>
+
+        <div class="board-wrapper" id="board">
+            <div class="grid" id="grid"></div>
+        </div>
+
+        <div class="panel">
+            <div id="turnBoss" class="turn-box" style="background:#c0392b">BOSS</div>
+            <div id="bossStatsDisplay" style="text-align:center; font-weight:bold; color:red;"></div>
+            <div class="log" id="log"></div>
+        </div>
+    </div>
+
+<script>
+    const COLORS = ['FOGO', 'AGUA', 'TERRA', 'AR'];
+    const SPRITES = {
+        Guerreiro: "https://cdn-icons-png.flaticon.com/512/5532/5532617.png",
+        Mago: "https://cdn-icons-png.flaticon.com/512/1907/1907861.png",
+        Arqueiro: "https://cdn-icons-png.flaticon.com/512/6081/6081840.png",
+        DRAGON: "https://cdn-icons-png.flaticon.com/512/6525/6525922.png",
+        MINOTAUR: "https://cdn-icons-png.flaticon.com/128/1400/1400396.png",
+        SwordFX: "https://cdn-icons-png.flaticon.com/512/6720/6720973.png",
+        ArrowFX: "https://cdn-icons-png.flaticon.com/512/95/95460.png",
+        MagicFX: "https://cdn-icons-png.flaticon.com/512/1310/1310630.png",
+        AxeFX: "https://cdn-icons-png.flaticon.com/512/1000/1000780.png"
+    };
+
+    let audioUnlocked = false;
+    const sfx = {
+        dragonSkill: new Audio("dramatic-synth-echo-43970.mp3"),
+        atkg: new Audio("atkg.mp3"),
+        atkm: new Audio("atkm.mp3"),
+        atka: new Audio("atka.mp3"),
+        click: new Audio("click.mp3"),
+        bgm: new Audio("fundoboss.mp3"),
+        minoa1: new Audio("minoa1.mp3"),
+        minoa2: new Audio("minoa2.mp3"),
+        win: new Audio("win.mp3"),
+        gameover: new Audio("gameover.mp3")
+    };
+
+    sfx.bgm.loop = true;
+    sfx.bgm.volume = 0.3;
+
+    function unlockAudio() {
+        if (!audioUnlocked) {
+            Object.values(sfx).forEach(a => {
+                a.play().then(() => { a.pause(); if(a === sfx.bgm) { a.currentTime = 0; a.play(); } }).catch(()=>{});
+            });
+            audioUnlocked = true;
+            addLog("Áudio e Música ativados.");
+        }
+    }
+
+    function playSfx(name) {
+        if (!audioUnlocked || !sfx[name]) return;
+        const sound = sfx[name].cloneNode();
+        sound.volume = 0.6;
+        sound.play();
+    }
+
+    let CLASS_DB = {}, grid = [], path = [], players = []; 
+    let boss = { x: 4, y: 0, hp: 0, maxHp: 0, type: 'DRAGON', dead: false };
+    let currentPlayerIdx = 0, editingIdx = 0, gameActive = true, mode = "BOSS", skillActive = false;
+
+    function addLog(msg) {
+        const log = document.getElementById('log');
+        log.innerHTML += `<div>> ${msg}</div>`;
+        log.scrollTop = log.scrollHeight;
+    }
+
+    function updateClassBase() {
+        ['Guerreiro', 'Mago', 'Arqueiro'].forEach(cls => {
+            CLASS_DB[cls] = { hp: parseInt(document.getElementById(`hp_${cls}`).value), atk: parseInt(document.getElementById(`atk_${cls}`).value), min: (cls === 'Mago' ? 4 : (cls === 'Arqueiro' ? 3 : 0)) };
+        });
+    }
+
+    function switchConfig(idx) {
+        editingIdx = idx;
+        const p = players[idx];
+        document.getElementById('pName').value = p.name;
+        document.getElementById('pClass').value = p.class;
+        document.querySelectorAll('.config-tabs button').forEach(b => b.classList.remove('active-tab'));
+        if(document.getElementById(`tab${idx}`)) document.getElementById(`tab${idx}`).classList.add('active-tab');
+        saveAndRefresh();
+    }
+
+    function saveAndRefresh() {
+        const p = players[editingIdx]; if(!p) return;
+        p.name = document.getElementById('pName').value.toUpperCase();
+        let s = 0; for(let i=0; i<p.name.length; i++) s += p.name.charCodeAt(i);
+        p.element = COLORS[s % 4];
+        const ed = document.getElementById('pElem'); ed.innerText = p.element; ed.className = `elem-display bg-${p.element}`;
+        document.getElementById('pStatsDisplay').innerHTML = `HP: <b>${p.hp}</b> / ${p.maxHp} | ATK: <b>${CLASS_DB[p.class].atk}</b>`;
+        const img = document.getElementById(`imgP${p.id}`); if(img) img.src = SPRITES[p.class];
+        const isMyTurn = (editingIdx === currentPlayerIdx);
+        document.getElementById('btnPlay').disabled = !isMyTurn;
+        document.getElementById('btnSkill').disabled = !isMyTurn || players[currentPlayerIdx].skillUsed;
+    }
+
+    function resetPlayerHP() {
+        const p = players[editingIdx];
+        p.class = document.getElementById('pClass').value;
+        p.hp = CLASS_DB[p.class].hp; p.maxHp = p.hp;
+        saveAndRefresh(); updateVisuals();
+    }
+
+    function initGame() {
+        gameActive = true; mode = document.getElementById('gameMode').value;
+        document.getElementById('gameOverlay').style.display = 'none';
+        if(audioUnlocked) sfx.bgm.play();
+
+        const count = mode === "PVP" ? 2 : parseInt(document.getElementById('playerCount').value);
+        updateClassBase(); grid = []; path = []; players = [];
+        document.getElementById('log').innerHTML = ''; addLog("Partida Iniciada!");
+        
+        const gridEl = document.getElementById('grid'); gridEl.innerHTML = '';
+        for(let i=0; i<64; i++) {
+            const c = COLORS[Math.floor(Math.random()*4)]; grid.push(c);
+            const tile = document.createElement('div'); tile.className = `tile bg-${c}`;
+            tile.onclick = () => handleSelect(i); gridEl.appendChild(tile);
+        }
+
+        const tabBar = document.getElementById('tabBar'); tabBar.innerHTML = '';
+        for(let i=0; i<count; i++) {
+            const btn = document.createElement('button'); btn.innerText = `P${i+1}`;
+            btn.onclick = () => switchConfig(i); btn.id = `tab${i}`; tabBar.appendChild(btn);
+        }
+
+        document.querySelectorAll('.token').forEach(t => t.remove());
+        const board = document.getElementById('board');
+        for(let i=0; i<count; i++) {
+            players.push({ id: i, x: 2 + i, y: 7, hp: CLASS_DB.Guerreiro.hp, maxHp: CLASS_DB.Guerreiro.hp, class: 'Guerreiro', element: 'FOGO', name: `P${i+1}`, skillUsed: false, dead: false });
+            const token = document.createElement('div');
+            token.id = `tokenP${i}`; token.className = `token p${i+1}-color`;
+            token.innerHTML = `<div class="hp-container"><div id="hpBarP${i}" class="hp-bar"></div></div><img id="imgP${i}" src="${SPRITES.Guerreiro}">`;
+            board.appendChild(token);
+        }
+
+        if(mode === "BOSS") {
+            boss.type = document.getElementById('bossSelect').value;
+            boss.maxHp = parseInt(document.getElementById('hp_BOSS_cfg').value);
+            boss.hp = boss.maxHp; boss.x = 4; boss.y = 0; boss.dead = false;
+            document.getElementById('turnBoss').innerText = boss.type === "DRAGON" ? "DRAGÃO BOSS" : "MINOTAURO BOSS";
+            const bToken = document.createElement('div');
+            bToken.id = `tokenBoss`; bToken.className = `token`;
+            bToken.innerHTML = `<div class="hp-container"><div id="hpBarBoss" class="hp-bar"></div></div><img src="${SPRITES[boss.type]}">`;
+            board.appendChild(bToken);
+        } else { players[1].y = 0; players[1].x = 4; players[1].hp = CLASS_DB[players[1].class].hp; players[1].maxHp = players[1].hp; }
+
+        document.getElementById('pClass').innerHTML = '<option value="Guerreiro">Guerreiro</option><option value="Mago">Mago</option><option value="Arqueiro">Arqueiro</option>';
+        currentPlayerIdx = 0; switchConfig(0); updateVisuals();
+    }
+
+    function handleSelect(idx) {
+        if(!gameActive) return;
+        const p = players[currentPlayerIdx];
+        if (skillActive) {
+            grid[idx] = p.element; document.querySelectorAll('.tile')[idx].className = `tile bg-${p.element}`;
+            p.skillUsed = true; skillActive = false; document.querySelectorAll('.tile').forEach(t => t.classList.remove('skill-mode'));
+            addLog(`${p.name} ativou Ultimate!`); saveAndRefresh(); return;
+        }
+        const x = idx % 8, y = Math.floor(idx / 8);
+        const occupied = players.some(other => !other.dead && other.id !== p.id && other.x === x && other.y === y) || (mode === "BOSS" && boss.x === x && boss.y === y);
+        if(occupied || (x === p.x && y === p.y)) return;
+        
+        if(path.length === 0) { 
+            if((Math.abs(x-p.x)+Math.abs(y-p.y)) === 1) { path.push(idx); playSfx('click'); }
+        } else {
+            const lastIdx = path[path.length-1];
+            if(idx === lastIdx) { path.pop(); playSfx('click'); }
+            else if(!path.includes(idx) && grid[idx] === grid[lastIdx] && (Math.abs(x-lastIdx%8)+Math.abs(y-Math.floor(lastIdx/8))) === 1) { path.push(idx); playSfx('click'); }
+        }
+        renderPath();
+    }
+
+    function renderPath() { document.querySelectorAll('.tile').forEach((t, i) => t.classList.toggle('selected', path.includes(i))); }
+
+    function detectShape(pIdxs) {
+        if(pIdxs.length < 4) return null;
+        const coords = pIdxs.map(i => ({x: i%8, y: Math.floor(i/8)}));
+        const xs = coords.map(c => c.x), ys = coords.map(c => c.y);
+        const minX = Math.min(...xs), maxX = Math.max(...xs), minY = Math.min(...ys), maxY = Math.max(...ys);
+        const diffX = maxX - minX, diffY = maxY - minY;
+        if (diffX === 0 || diffY === 0) return "LINHA";
+        if (pIdxs.length === 4 && diffX === 1 && diffY === 1) return "QUADRADO";
+        if (pIdxs.length === 4) {
+            if ((diffX === 1 && diffY === 2) || (diffX === 2 && diffY === 1)) {
+                let turns = 0;
+                for(let i=2; i<coords.length; i++) {
+                    const d1 = {x: coords[i-1].x-coords[i-2].x, y: coords[i-1].y-coords[i-2].y};
+                    const d2 = {x: coords[i].x-coords[i-1].x, y: coords[i].y-coords[i-1].y};
+                    if(d1.x !== d2.x || d1.y !== d2.y) turns++;
+                }
+                if(turns === 1) return "L";
+            }
+        }
+        let totalTurns = 0;
+        for(let i=2; i<coords.length; i++) {
+            const d1 = {x: coords[i-1].x-coords[i-2].x, y: coords[i-1].y-coords[i-2].y};
+            const d2 = {x: coords[i].x-coords[i-1].x, y: coords[i].y-coords[i-1].y};
+            if(d1.x !== d2.x || d1.y !== d2.y) totalTurns++;
+        }
+        if(totalTurns >= 2) return "ZIGZAG";
+        return null;
+    }
+
+    async function executeAction() {
+        if(!gameActive) return;
+        const active = players[currentPlayerIdx];
+        const target = (mode === "BOSS") ? boss : players.find(p => p.id !== active.id && !p.dead);
+        const info = CLASS_DB[active.class], usedPath = [...path];
+        
+        let skillAtkBonus = 0;
+        const shape = detectShape(usedPath);
+        if(shape) {
+            addLog(`Skill ${shape} detectada!`);
+            if(shape === "LINHA") { skillAtkBonus = 2; active.hp = Math.min(active.maxHp, active.hp + 1); showHealEffect(active.x, active.y, 1); }
+            if(shape === "L") { active.hp = Math.min(active.maxHp, active.hp + 2); showHealEffect(active.x, active.y, 2); }
+            if(shape === "ZIGZAG") skillAtkBonus = 3;
+            if(shape === "QUADRADO") { active.skillUsed = false; addLog("Ultimate Recarregada!"); }
+        }
+
+        let bonusElem = (usedPath.length > 0 && grid[usedPath[0]] === active.element) ? 1 : 0;
+
+        if(active.class === "Guerreiro") {
+            const dealGueDmg = () => {
+                if(!target.dead && (Math.abs(active.x-target.x)+Math.abs(active.y-target.y)) <= 1) {
+                    let total = info.atk + bonusElem + skillAtkBonus;
+                    playSfx('atkg');
+                    applyDmg(target, total); spawnSwordEffect(target.x, target.y);
+                }
+            };
+            dealGueDmg();
+            for(const idx of usedPath) {
+                active.x = idx%8; active.y = Math.floor(idx/8); updateVisuals();
+                await new Promise(r => setTimeout(r, 120)); dealGueDmg();
+            }
+        } else {
+            for(const idx of usedPath) {
+                active.x = idx%8; active.y = Math.floor(idx/8); updateVisuals();
+                await new Promise(r => setTimeout(r, 100));
+            }
+            if(usedPath.length >= info.min && !target.dead) {
+                let extra = usedPath.length - info.min;
+                let total = info.atk + bonusElem + skillAtkBonus + (active.class === "Mago" ? extra : Math.floor(extra/2));
+                playSfx(active.class === 'Mago' ? 'atkm' : 'atka');
+                await spawnProjectile(active, target, active.class === "Arqueiro" ? 'Arrow' : 'Magic');
+                applyDmg(target, total);
+            }
+        }
+
+        usedPath.forEach(idx => { grid[idx] = COLORS[Math.floor(Math.random()*4)]; document.querySelectorAll('.tile')[idx].className = `tile bg-${grid[idx]}`; });
+        path = []; renderPath();
+        
+        if(gameActive) {
+            if(mode === "BOSS") {
+                let next = currentPlayerIdx + 1;
+                while(next < players.length && players[next].dead) next++;
+                if(next < players.length) { currentPlayerIdx = next; switchConfig(next); }
+                else { currentPlayerIdx = 0; document.getElementById('turnP_Active').classList.remove('active-turn'); setTimeout(bossAI, 600); }
+            } else { 
+                let next = (currentPlayerIdx === 0) ? 1 : 0;
+                currentPlayerIdx = next; switchConfig(next);
+            }
+        }
+    }
+
+    function showEndGame(msg, isWin) {
+        gameActive = false;
+        sfx.bgm.pause();
+        const overlay = document.getElementById('gameOverlay');
+        const title = document.getElementById('overlayTitle');
+        overlay.style.display = 'flex';
+        title.innerText = msg;
+        title.className = isWin ? "win-text" : "lose-text";
+        playSfx(isWin ? 'win' : 'gameover');
+    }
+
+    function applyDmg(t, amt) {
+        if(t.dead) return;
+        t.hp -= amt; showDmgEffect(t.x, t.y, amt);
+        if(t.hp <= 0) { 
+            t.hp = 0; t.dead = true;
+            if(mode === "BOSS") {
+                if(t.type === 'DRAGON' || t.type === 'MINOTAUR' || t.id === undefined) { showEndGame("VITÓRIA!", true); }
+                else if(players.every(p => p.dead)) { showEndGame("GAME OVER", false); }
+            } else {
+                const winner = players.find(p => !p.dead);
+                showEndGame(`VITÓRIA DO ${winner.name}`, true);
+            }
+            if(t.id !== undefined) document.getElementById(`tokenP${t.id}`).style.display = 'none';
+        }
+        updateVisuals();
+    }
+
+    async function bossAI() {
+        if(!gameActive) return;
+        document.getElementById('turnBoss').classList.add('active-turn');
+        const bossAtk = parseInt(document.getElementById('atk_BOSS_cfg').value);
+        for(let i=0; i<4; i++) {
+            let moves = [{x:boss.x+1,y:boss.y},{x:boss.x-1,y:boss.y},{x:boss.x,y:boss.y+1},{x:boss.x,y:boss.y-1}]
+                .filter(m => m.x>=0 && m.x<8 && m.y>=0 && m.y<8)
+                .filter(m => !players.some(p => !p.dead && p.x===m.x && p.y===m.y));
+            if(moves.length > 0) {
+                let m = moves[Math.floor(Math.random()*moves.length)];
+                boss.x = m.x; boss.y = m.y; updateVisuals(); await new Promise(r => setTimeout(r, 200));
+            }
+        }
+        if(boss.type === "DRAGON") {
+            const cols = [boss.x-1, boss.x, boss.x+1];
+            playSfx('dragonSkill');
+            cols.forEach(c => { if(c>=0 && c<=7) triggerFireColumn(c); });
+            await new Promise(r => setTimeout(r, 600));
+            players.forEach(p => { if(!p.dead && cols.includes(p.x)) applyDmg(p, bossAtk); });
+        } else {
+            const r = Math.random();
+            if(r < 0.5) {
+                addLog("MACHADO GIRATÓRIO!"); playSfx('minoa1'); triggerSpinAxe(boss.x, boss.y);
+                await new Promise(r => setTimeout(r, 600));
+                players.forEach(p => { if(!p.dead && Math.abs(p.x-boss.x)<=2 && Math.abs(p.y-boss.y)<=2) applyDmg(p, bossAtk); });
+            } else {
+                addLog("ARRASO HORIZONTAL!"); playSfx('minoa2'); triggerDualAxe(boss.x, boss.y);
+                await new Promise(r => setTimeout(r, 600));
+                const rows = [boss.y-1, boss.y, boss.y+1];
+                players.forEach(p => { if(!p.dead && rows.includes(p.y)) applyDmg(p, bossAtk); });
+            }
+        }
+        await new Promise(r => setTimeout(r, 600));
+        document.getElementById('turnBoss').classList.remove('active-turn');
+        currentPlayerIdx = 0; while(players[currentPlayerIdx] && players[currentPlayerIdx].dead) currentPlayerIdx++;
+        if(players[currentPlayerIdx]) switchConfig(currentPlayerIdx);
+    }
+
+    function triggerFireColumn(col) {
+        const fire = document.createElement('div'); fire.className = 'fire-column';
+        const step = getStep();
+        fire.style.left = (col * step + 8) + 'px';
+        document.getElementById('board').appendChild(fire); setTimeout(() => fire.remove(), 1200);
+    }
+
+    async function triggerSpinAxe(x, y) {
+        const axe = document.createElement('img'); axe.src = SPRITES.AxeFX; axe.className = 'axe-projectile';
+        const step = getStep();
+        axe.style.width = (step * 2) + 'px'; axe.style.height = (step * 2) + 'px';
+        axe.style.left = (x * step - step/2) + 'px'; axe.style.top = (y * step - step/2) + 'px';
+        document.getElementById('board').appendChild(axe);
+        setTimeout(() => { axe.style.opacity = '0'; axe.style.transform = 'scale(2) rotate(720deg)'; }, 400);
+        setTimeout(() => axe.remove(), 800);
+    }
+
+    async function triggerDualAxe(x, y) {
+        const step = getStep();
+        const createAxe = (dir) => {
+            const axe = document.createElement('img'); axe.src = SPRITES.AxeFX; axe.className = 'axe-projectile';
+            axe.style.width = (step * 3) + 'px'; axe.style.height = (step * 3) + 'px';
+            axe.style.left = (x * step - step) + 'px'; axe.style.top = (y * step - step) + 'px';
+            document.getElementById('board').appendChild(axe);
+            setTimeout(() => { axe.style.left = (dir === 'L' ? -200 : 600) + 'px'; axe.style.opacity = '0'; }, 50);
+            setTimeout(() => axe.remove(), 700);
+        };
+        createAxe('L'); createAxe('R');
+    }
+
+    function getStep() { return parseInt(getComputedStyle(document.documentElement).getPropertyValue('--step')); }
+
+    function updateVisuals() {
+        const step = getStep();
+        players.forEach(p => {
+            const t = document.getElementById(`tokenP${p.id}`);
+            if(t && !p.dead) { 
+                t.style.left = (p.x * step + 8)+'px'; t.style.top = (p.y * step + 8)+'px';
+                document.getElementById(`hpBarP${p.id}`).style.width = (p.hp / p.maxHp) * 100 + '%';
+            }
+        });
+        if(mode === "BOSS") {
+            const bt = document.getElementById('tokenBoss');
+            if(bt) { bt.style.left = (boss.x * step + 8)+'px'; bt.style.top = (boss.y * step + 8)+'px'; document.getElementById('hpBarBoss').style.width = (boss.hp/boss.maxHp)*100+'%'; }
+            document.getElementById('bossStatsDisplay').innerHTML = `Boss: <b>${boss.hp}</b> / ${boss.maxHp}`;
+        }
+    }
+
+    function activateSkill() { if (!gameActive || players[currentPlayerIdx].skillUsed) return; skillActive = true; document.querySelectorAll('.tile').forEach(t => t.classList.add('skill-mode')); }
+    
+    function showDmgEffect(x, y, amt) { 
+        const step = getStep();
+        const f = document.createElement('div'); f.className = 'dmg-float'; f.innerText = `-${amt}`; f.style.left = (x*step+20)+'px'; f.style.top = (y*step)+'px'; document.getElementById('board').appendChild(f); setTimeout(() => f.remove(), 800); 
+    }
+    
+    function showHealEffect(x, y, amt) { 
+        const step = getStep();
+        const f = document.createElement('div'); f.className = 'heal-float'; f.innerText = `+${amt}`; f.style.left = (x*step+20)+'px'; f.style.top = (y*step)+'px'; document.getElementById('board').appendChild(f); setTimeout(() => f.remove(), 800); 
+    }
+    
+    function spawnSwordEffect(x, y) { 
+        const step = getStep();
+        const s = document.createElement('img'); s.src = SPRITES.SwordFX; s.className = 'sword-fx'; s.style.left = (x*step+12)+'px'; s.style.top = (y*step+12)+'px'; document.getElementById('board').appendChild(s); setTimeout(() => s.remove(), 400); 
+    }
+    
+    async function spawnProjectile(f, t, type) {
+        const step = getStep();
+        const p = document.createElement('img'); p.src = SPRITES[type + 'FX']; p.className = 'projectile';
+        p.style.left = (f.x*step+20)+'px'; p.style.top = (f.y*step+20)+'px';
+        document.getElementById('board').appendChild(p); await new Promise(r => setTimeout(r, 50));
+        p.style.left = (t.x*step+20)+'px'; p.style.top = (t.y*step+20)+'px'; await new Promise(r => setTimeout(r, 300)); p.remove();
+    }
+    window.onload = initGame;
+</script>
+</body>
+</html>
