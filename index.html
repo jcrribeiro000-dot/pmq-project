@@ -46,26 +46,27 @@
 
         @keyframes breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1) translateY(-4px); } }
         
+        .tsunami-fx { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, rgba(0,120,255,0.9) 40%, rgba(0,0,50,0.5) 100%); z-index: 180; pointer-events: none; animation: tsunamiBlast 1.2s forwards; border-radius: 50%; }
+        @keyframes tsunamiBlast { 0% { transform: scale(0); opacity: 1; } 100% { transform: scale(3); opacity: 0; } }
+
+        .water-jet-fx { position: absolute; z-index: 195; pointer-events: none; background: linear-gradient(90deg, transparent, #fff, #3498db, #fff, transparent); box-shadow: 0 0 25px #3498db; animation: jetFlash 0.6s ease-out forwards; opacity: 0; }
+        @keyframes jetFlash { 0% { opacity: 0; transform: scaleY(0.1); } 50% { opacity: 1; transform: scaleY(1); } 100% { opacity: 0; transform: scaleY(0.5); } }
+
+        .fire-column { position: absolute; top: 0; width: var(--tile-size); height: 100%; background: linear-gradient(to top, rgba(255, 0, 0, 0.9) 0%, rgba(255, 69, 0, 1) 50%, rgba(255, 255, 0, 0.7) 100%); z-index: 200; pointer-events: none; animation: fireFlashLento 1.2s ease-in-out forwards; filter: drop-shadow(0 0 15px #ff4500); }
+        @keyframes fireFlashLento { 0% { opacity: 0; transform: scaleX(0); } 30% { opacity: 1; transform: scaleX(1.2); } 100% { opacity: 0; transform: scaleX(0.8); } }
+
+        .bite-fx { position: absolute; z-index: 210; pointer-events: none; transform: scale(0); filter: drop-shadow(0 0 15px #ff0000); }
+        @keyframes biteAnim { 0% { transform: scale(0.2); opacity: 0; } 30% { transform: scale(3.5); opacity: 1; } 100% { transform: scale(2.5); opacity: 0; } }
+        .rock-projectile { position: absolute; z-index: 200; pointer-events: none; filter: drop-shadow(4px 4px 5px #000); transition: all 1s cubic-bezier(0.25, 0.1, 0.25, 1); }
+        .flare-fx { position: absolute; width: var(--tile-size); height: var(--tile-size); background: radial-gradient(circle, #ff0, #f00, transparent); z-index: 180; pointer-events: none; animation: flareUp 0.6s forwards; border-radius: 50%; }
+        @keyframes flareUp { 0% { transform: scale(0); opacity: 1; } 100% { transform: scale(2); opacity: 0; } }
+
         .dmg-float, .heal-float { position: absolute; font-size: 28px; font-weight: bold; pointer-events: none; z-index: 155; text-shadow: 2px 2px 0 #000; animation: floatUp 0.8s ease-out forwards; }
         .dmg-float { color: #ff3333; } .heal-float { color: #33ff33; }
         @keyframes floatUp { 0% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(-70px); } }
 
-        /* NOVOS EFEITOS MAPINGUARI / BOITATA */
-        .bite-fx { position: absolute; z-index: 210; pointer-events: none; transform: scale(0); filter: drop-shadow(0 0 15px #ff0000); }
-        @keyframes biteAnim { 
-            0% { transform: scale(0.2); opacity: 0; } 
-            30% { transform: scale(3.5); opacity: 1; } 
-            70% { transform: scale(3); opacity: 1; }
-            100% { transform: scale(2.5); opacity: 0; } 
-        }
-
-        .rock-projectile { position: absolute; z-index: 200; pointer-events: none; filter: drop-shadow(4px 4px 5px #000); transition: all 1.2s cubic-bezier(0.25, 0.1, 0.25, 1); }
-
-        .fire-column { position: absolute; top: 0; width: var(--tile-size); height: 100%; background: linear-gradient(to top, rgba(255, 0, 0, 0.9) 0%, rgba(255, 69, 0, 1) 50%, rgba(255, 255, 0, 0.7) 100%); z-index: 200; pointer-events: none; animation: fireFlashLento 1.2s ease-in-out forwards; filter: drop-shadow(0 0 15px #ff4500); }
-        @keyframes fireFlashLento { 0% { opacity: 0; transform: scaleX(0); } 20% { opacity: 1; transform: scaleX(1.2); } 80% { opacity: 1; transform: scaleX(1); } 100% { opacity: 0; transform: scaleX(0.5); } }
-
-        .flare-fx { position: absolute; width: var(--tile-size); height: var(--tile-size); background: radial-gradient(circle, #ff0, #f00, transparent); z-index: 180; pointer-events: none; animation: flareUp 0.6s forwards; border-radius: 50%; }
-        @keyframes flareUp { 0% { transform: scale(0); opacity: 1; } 100% { transform: scale(2.5); opacity: 0; } }
+        .vortex-fx { position: absolute; z-index: 200; pointer-events: none; animation: spin 0.3s linear infinite; }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
         .panel { background: #2c3e50; padding: 12px; border-radius: 10px; width: 210px; border: 1px solid #444; }
         .turn-box { padding: 6px; text-align: center; font-weight: bold; border-radius: 4px; margin-bottom: 8px; opacity: 0.2; font-size: 11px; color: white; }
@@ -84,14 +85,9 @@
         .log { width: 100%; height: 120px; background: #000; color: #0f0; font-family: monospace; font-size: 10px; padding: 5px; overflow-y: auto; margin-top: 8px; border-radius: 4px; border: 1px solid #333; line-height: 1.2; }
         .projectile { position: absolute; width: 30px; height: 30px; z-index: 50; pointer-events: none; transition: all 0.3s linear; }
         .sword-fx { position: absolute; width: 50px; height: 50px; z-index: 60; pointer-events: none; animation: swordSlash 0.4s ease-out forwards; }
-        @keyframes swordSlash { 0% { transform: scale(0) rotate(-45deg); opacity: 0; } 50% { transform: scale(1.5) rotate(45deg); opacity: 1; } 100% { transform: scale(1.2) rotate(90deg); opacity: 0; } }
+        @keyframes swordSlash { 0% { transform: scale(0) rotate(-45deg); opacity: 0; } 100% { transform: scale(1.2) rotate(90deg); opacity: 0; } }
 
-        #gameOverlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.85); display: none; flex-direction: column;
-            justify-content: center; align-items: center; z-index: 1000;
-            animation: fadeIn 0.5s forwards;
-        }
+        #gameOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 1000; animation: fadeIn 0.5s forwards; }
         #gameOverlay h1 { font-size: 55px; margin: 0; text-shadow: 0 0 20px #000; letter-spacing: 5px; text-align: center; padding: 20px; }
         .win-text { color: #f1c40f; text-shadow: 0 0 30px gold !important; }
         .lose-text { color: #c0392b; text-shadow: 0 0 30px red !important; }
@@ -120,12 +116,7 @@
             <tr style="border-top: 1px solid #555"><td>BOSS: HP <input type="number" id="hp_BOSS_cfg" value="60"> ATK <input type="number" id="atk_BOSS_cfg" value="4"></td></tr>
         </table>
         <div>MODO: <select id="gameMode" onchange="initGame()"><option value="BOSS">BOSS (CO-OP)</option><option value="PVP">PVP (1vs1)</option></select></div>
-        <div>BOSS: <select id="bossSelect" onchange="initGame()">
-            <option value="BOITATA">Boitatá (Fogo)</option>
-            <option value="MAPINGUARI">Mapinguari (Terra)</option>
-            <option value="IARA">Iara (Água)</option>
-            <option value="SACI">Saci (Ar)</option>
-        </select></div>
+        <div>BOSS: <select id="bossSelect" onchange="initGame()"><option value="BOITATA">Boitatá</option><option value="MAPINGUARI">Mapinguari</option><option value="SACI">Saci</option><option value="IARA">Iara</option></select></div>
         <div>PLAYERS: <select id="playerCount" onchange="initGame()"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option></select></div>
         <button onclick="initGame()" style="background:#16a085; color:white; width:auto;">REINICIAR</button>
     </div>
@@ -159,15 +150,16 @@
         Guerreiro: "https://cdn-icons-png.flaticon.com/512/5532/5532617.png",
         Mago: "https://cdn-icons-png.flaticon.com/512/1907/1907861.png",
         Arqueiro: "https://cdn-icons-png.flaticon.com/512/6081/6081840.png",
-        BOITATA: "https://superautopets.wiki.gg/images/3/3d/Snake_Icon.png",
-        MAPINGUARI: "https://i.ibb.co/TxZLpxyg/mapinguari.png",
-        IARA: "https://cdn-icons-png.flaticon.com/512/2633/2633005.png",
-        SACI: "https://cdn-icons-png.flaticon.com/512/2632/2632975.png",
+        BOITATA: "https://i.ibb.co/DDjQ65GV/boitata.png",
+        MAPINGUARI: "https://i.ibb.co/tMLK2pcX/mapinguari.png",
+        SACI: "https://i.ibb.co/0psrrg1S/saci-token.png",
+        IARA: "https://i.ibb.co/LDsxbV3X/iara-token.png",
+        VortexFX: "https://cdn-icons-png.flaticon.com/512/1344/1344933.png",
         SwordFX: "https://cdn-icons-png.flaticon.com/512/6720/6720973.png",
         ArrowFX: "https://cdn-icons-png.flaticon.com/512/95/95460.png",
         MagicFX: "https://cdn-icons-png.flaticon.com/512/1310/1310630.png",
-        RockFX: "https://cdn-icons-png.flaticon.com/512/3223/3223193.png",
-        BiteFX: "https://cdn-icons-png.flaticon.com/512/3504/3504404.png"
+        BiteFX: "https://cdn-icons-png.flaticon.com/512/3504/3504404.png",
+        RockFX: "https://cdn-icons-png.flaticon.com/512/3223/3223193.png"
     };
 
     let audioUnlocked = false;
@@ -176,6 +168,8 @@
         atkg: new Audio("atkg.mp3"), atkm: new Audio("atkm.mp3"), atka: new Audio("atka.mp3"),
         click: new Audio("click.mp3"), bgm: new Audio("fundoboss.mp3"),
         minoa1: new Audio("minoa1.mp3"), minoa2: new Audio("minoa2.mp3"),
+        saci: new Audio("saci.mp3"), saci1: new Audio("saci1.mp3"),
+        iara1: new Audio("iara1.mp3"), iara2: new Audio("iara2.mp3"),
         win: new Audio("win.mp3"), gameover: new Audio("gameover.mp3")
     };
 
@@ -183,26 +177,18 @@
 
     function unlockAudio() {
         if (!audioUnlocked) {
-            Object.values(sfx).forEach(a => {
-                a.play().then(() => { a.pause(); if(a === sfx.bgm) { a.currentTime = 0; a.play(); } }).catch(()=>{});
-            });
+            Object.values(sfx).forEach(a => { a.play().then(() => { a.pause(); if(a === sfx.bgm) { a.currentTime = 0; a.play(); } }).catch(()=>{}); });
             audioUnlocked = true; addLog("Áudio e Música ativados.");
         }
     }
 
-    function playSfx(name) {
-        if (!audioUnlocked || !sfx[name]) return;
-        const sound = sfx[name].cloneNode(); sound.volume = 0.6; sound.play();
-    }
+    function playSfx(name) { if (!audioUnlocked || !sfx[name]) return; const sound = sfx[name].cloneNode(); sound.volume = 0.6; sound.play(); }
 
     let CLASS_DB = {}, grid = [], path = [], players = []; 
     let boss = { x: 4, y: 0, hp: 0, maxHp: 0, type: 'BOITATA', dead: false };
     let currentPlayerIdx = 0, editingIdx = 0, gameActive = true, mode = "BOSS", skillActive = false;
 
-    function addLog(msg) {
-        const log = document.getElementById('log');
-        log.innerHTML += `<div>> ${msg}</div>`; log.scrollTop = log.scrollHeight;
-    }
+    function addLog(msg) { const log = document.getElementById('log'); log.innerHTML += `<div>> ${msg}</div>`; log.scrollTop = log.scrollHeight; }
 
     function updateClassBase() {
         ['Guerreiro', 'Mago', 'Arqueiro'].forEach(cls => {
@@ -212,8 +198,7 @@
 
     function switchConfig(idx) {
         editingIdx = idx; const p = players[idx];
-        document.getElementById('pName').value = p.name;
-        document.getElementById('pClass').value = p.class;
+        document.getElementById('pName').value = p.name; document.getElementById('pClass').value = p.class;
         document.querySelectorAll('.config-tabs button').forEach(b => b.classList.remove('active-tab'));
         if(document.getElementById(`tab${idx}`)) document.getElementById(`tab${idx}`).classList.add('active-tab');
         saveAndRefresh();
@@ -317,8 +302,8 @@
         if (diffX === 0 || diffY === 0) return "LINHA";
         if (pIdxs.length === 4 && diffX === 1 && diffY === 1) return "QUADRADO";
         if (pIdxs.length === 4) { if ((diffX === 1 && diffY === 2) || (diffX === 2 && diffY === 1)) return "L"; }
-        let turns = 0; for(let i=2; i<coords.length; i++){ if(coords[i].x-coords[i-1].x !== coords[i-1].x-coords[i-2].x || coords[i].y-coords[i-1].y !== coords[i-1].y-coords[i-2].y) turns++; }
-        if(turns >= 2) return "ZIGZAG"; return null;
+        let totalTurns = 0; for(let i=2; i<coords.length; i++) { if(coords[i].x-coords[i-1].x !== coords[i-1].x-coords[i-2].x || coords[i].y-coords[i-1].y !== coords[i-1].y-coords[i-2].y) totalTurns++; }
+        if(totalTurns >= 2) return "ZIGZAG"; return null;
     }
 
     async function executeAction() {
@@ -327,7 +312,8 @@
         const target = (mode === "BOSS") ? boss : players.find(p => p.id !== active.id && !p.dead);
         const info = CLASS_DB[active.class], usedPath = [...path];
         
-        let skillAtkBonus = 0; const shape = detectShape(usedPath);
+        let skillAtkBonus = 0;
+        const shape = detectShape(usedPath);
         if(shape) {
             addLog(`Skill ${shape} detectada!`);
             if(shape === "LINHA") { skillAtkBonus = 2; active.hp = Math.min(active.maxHp, active.hp + 1); showHealEffect(active.x, active.y, 1); }
@@ -339,7 +325,7 @@
         let bonusElem = (usedPath.length > 0 && grid[usedPath[0]] === active.element) ? 1 : 0;
 
         if(active.class === "Guerreiro") {
-            const dealGueDmg = () => { if(!target.dead && (Math.abs(active.x-target.x)+Math.abs(active.y-target.y)) <= 1) { applyDmg(target, info.atk + bonusElem + skillAtkBonus); playSfx('atkg'); spawnSwordEffect(target.x, target.y); } };
+            const dealGueDmg = () => { if(!target.dead && (Math.abs(active.x-target.x)+Math.abs(active.y-target.y)) <= 1) { playSfx('atkg'); applyDmg(target, info.atk + bonusElem + skillAtkBonus); spawnSwordEffect(target.x, target.y); } };
             dealGueDmg();
             for(const idx of usedPath) { active.x = idx%8; active.y = Math.floor(idx/8); updateVisuals(); await new Promise(r => setTimeout(r, 120)); dealGueDmg(); }
         } else {
@@ -378,7 +364,7 @@
         if(t.hp <= 0) { 
             t.hp = 0; t.dead = true;
             if(mode === "BOSS") {
-                if(t.type === 'BOITATA' || t.type === 'MAPINGUARI' || t.type === 'IARA' || t.type === 'SACI' || t.id === undefined) { showEndGame("VITÓRIA!", true); }
+                if(['BOITATA','MAPINGUARI','SACI','IARA'].includes(t.type) || t.id === undefined) { showEndGame("VITÓRIA!", true); }
                 else if(players.every(p => p.dead)) { showEndGame("GAME OVER", false); }
             } else { showEndGame(`VITÓRIA DO ${players.find(p => !p.dead).name}`, true); }
             if(t.id !== undefined) document.getElementById(`tokenP${t.id}`).style.display = 'none';
@@ -406,17 +392,19 @@
                 players.forEach(p => { if(!p.dead && cols.includes(p.x)) applyDmg(p, bossAtk); });
             } else {
                 addLog("LABAREDAS!"); playSfx('skill1');
-                let count = 0;
-                for(let i=0; i<64 && count < 5; i++) {
+                let count = 0; let attempts = 0;
+                while(count < 5 && attempts < 50) {
                     let idx = Math.floor(Math.random()*64);
                     if(grid[idx] === 'FOGO') {
                         triggerFlare(idx%8, Math.floor(idx/8));
                         players.forEach(p => { if(!p.dead && p.x === idx%8 && p.y === Math.floor(idx/8)) applyDmg(p, bossAtk + 2); });
                         count++;
                     }
+                    attempts++;
                 }
             }
-        } else if(boss.type === "MAPINGUARI") {
+        } 
+        else if(boss.type === "MAPINGUARI") {
             const r = Math.random();
             if(r < 0.5) {
                 addLog("MORDIDA GIGANTE!"); playSfx('minoa1');
@@ -430,13 +418,30 @@
                 const rows = [boss.y-1, boss.y, boss.y+1];
                 players.forEach(p => { if(!p.dead && rows.includes(p.y)) applyDmg(p, bossAtk); });
             }
-        } else if(boss.type === "IARA") {
-            addLog("TSUNAMI!"); playSfx('minoa1');
-            const rows = [boss.y, boss.y+1];
-            players.forEach(p => { if(!p.dead && rows.includes(p.y)) applyDmg(p, bossAtk); });
-        } else {
-            addLog("REDEMOINHO!"); playSfx('minoa2');
-            players.forEach(p => { if(!p.dead && Math.abs(p.x-boss.x)<=1 && Math.abs(p.y-boss.y)<=1) applyDmg(p, bossAtk); });
+        }
+        else if(boss.type === "SACI") {
+            const r = Math.random();
+            if(r < 0.5) {
+                addLog("REDEMOINHO!"); playSfx('saci1');
+                grid.forEach((c, idx) => { if(c === 'AR') { triggerVortex(idx%8, Math.floor(idx/8)); players.forEach(p => { if(!p.dead && p.x === idx%8 && p.y === Math.floor(idx/8)) applyDmg(p, bossAtk); }); } });
+            } else {
+                addLog("TUFÃO DIAGONAL!"); playSfx('saci');
+                [{dx:1,dy:1},{dx:1,dy:-1},{dx:-1,dy:1},{dx:-1,dy:-1}].forEach(d => { for(let s=1; s<8; s++) { let nx=boss.x+d.dx*s, ny=boss.y+d.dy*s; if(nx>=0 && nx<8 && ny>=0 && ny<8) { triggerVortex(nx, ny, s*100); players.forEach(p => { if(!p.dead && p.x===nx && p.y===ny) setTimeout(()=>applyDmg(p, bossAtk), s*100); }); } } });
+            }
+        }
+        else if(boss.type === "IARA") {
+            const r = Math.random();
+            if(r < 0.5) {
+                addLog("POROROCA!"); playSfx('iara1'); triggerTsunami();
+                await new Promise(r => setTimeout(r, 500));
+                players.forEach(p => { if(!p.dead) { applyDmg(p, 1); let dx = p.x < 4 ? -1 : 1, dy = p.y < 4 ? -1 : 1; if(Math.abs(p.x-3.5) > Math.abs(p.y-3.5)) { if(p.x+dx>=0 && p.x+dx<8) p.x += dx; } else { if(p.y+dy>=0 && p.y+dy<8) p.y += dy; } } });
+                updateVisuals();
+            } else {
+                addLog("JATO DE ÁGUA!"); playSfx('iara2');
+                triggerWaterJet(boss.x, boss.y);
+                await new Promise(r => setTimeout(r, 600));
+                players.forEach(p => { if(!p.dead && (p.x === boss.x || p.y === boss.y)) applyDmg(p, bossAtk); });
+            }
         }
 
         await new Promise(r => setTimeout(r, 600));
@@ -445,55 +450,19 @@
         if(players[currentPlayerIdx]) switchConfig(currentPlayerIdx);
     }
 
-    function triggerFireColumn(col) {
-        const f = document.createElement('div'); f.className = 'fire-column';
-        f.style.left = (col * getStep() + 8) + 'px';
-        document.getElementById('board').appendChild(f); setTimeout(() => f.remove(), 1200);
-    }
-
-    function triggerFlare(x, y) {
-        const f = document.createElement('div'); f.className = 'flare-fx';
-        const s = getStep(); f.style.left = (x*s+8)+'px'; f.style.top = (y*s+8)+'px';
-        document.getElementById('board').appendChild(f); setTimeout(() => f.remove(), 600);
-    }
-
-    function triggerBite(x, y) {
-        const b = document.createElement('img'); b.src = SPRITES.BiteFX; b.className = 'bite-fx';
-        const s = getStep(); b.style.width = (s*4)+'px'; b.style.height = (s*4)+'px';
-        b.style.left = (x*s - s*1.5 + 8)+'px'; b.style.top = (y*s - s*1.5 + 8)+'px';
-        b.style.animation = 'biteAnim 0.7s forwards';
-        document.getElementById('board').appendChild(b); setTimeout(() => b.remove(), 700);
-    }
-
-    function triggerRocks(x, y) {
-        const s = getStep();
-        const dirs = ['L', 'R'];
-        dirs.forEach(dir => {
-            const r = document.createElement('img'); r.src = SPRITES.RockFX; r.className = 'rock-projectile';
-            r.style.width = (s*2.5)+'px'; r.style.left = (x*s - s*0.5)+'px'; r.style.top = (y*s - s*0.5)+'px';
-            document.getElementById('board').appendChild(r);
-            setTimeout(() => { 
-                r.style.left = (dir === 'L' ? -400 : 800) + 'px'; 
-                r.style.transform = 'rotate(720deg)'; 
-                r.style.opacity = '0'; 
-            }, 50);
-            setTimeout(() => r.remove(), 1200);
-        });
-    }
-
+    function triggerFireColumn(col) { const f = document.createElement('div'); f.className = 'fire-column'; f.style.left = (col * getStep() + 8) + 'px'; document.getElementById('board').appendChild(f); setTimeout(() => f.remove(), 1200); }
+    function triggerFlare(x, y) { const f = document.createElement('div'); f.className = 'flare-fx'; const s = getStep(); f.style.left = (x*s+8)+'px'; f.style.top = (y*s+8)+'px'; document.getElementById('board').appendChild(f); setTimeout(() => f.remove(), 600); }
+    function triggerBite(x, y) { const b = document.createElement('img'); b.src = SPRITES.BiteFX; b.className = 'bite-fx'; const s = getStep(); b.style.width = (s*4)+'px'; b.style.height = (s*4)+'px'; b.style.left = (x*s - s*1.5 + 8)+'px'; b.style.top = (y*s - s*1.5 + 8)+'px'; b.style.animation = 'biteAnim 0.7s forwards'; document.getElementById('board').appendChild(b); setTimeout(() => b.remove(), 700); }
+    function triggerRocks(x, y) { const s = getStep(); ['L', 'R'].forEach(dir => { const r = document.createElement('img'); r.src = SPRITES.RockFX; r.className = 'rock-projectile'; r.style.width = (s*2.5)+'px'; r.style.left = (x*s - s*0.5)+'px'; r.style.top = (y*s - s*0.5)+'px'; document.getElementById('board').appendChild(r); setTimeout(() => { r.style.left = (dir === 'L' ? -400 : 800) + 'px'; r.style.transform = 'rotate(720deg)'; r.style.opacity = '0'; }, 50); setTimeout(() => r.remove(), 1000); }); }
+    function triggerTsunami() { const t = document.createElement('div'); t.className = 'tsunami-fx'; document.getElementById('board').appendChild(t); setTimeout(() => t.remove(), 1200); }
+    function triggerWaterJet(bx, by) { const s = getStep(); const h = document.createElement('div'); h.className = 'water-jet-fx'; h.style.width = '100%'; h.style.height = s + 'px'; h.style.left = '0'; h.style.top = (by * s + 8) + 'px'; document.getElementById('board').appendChild(h); const v = document.createElement('div'); v.className = 'water-jet-fx'; v.style.width = s + 'px'; v.style.height = '100%'; v.style.top = '0'; v.style.left = (bx * s + 8) + 'px'; v.style.background = 'linear-gradient(0deg, transparent, #fff, #3498db, #fff, transparent)'; document.getElementById('board').appendChild(v); setTimeout(() => { h.remove(); v.remove(); }, 600); }
+    function triggerVortex(x, y, d = 0) { setTimeout(() => { const v = document.createElement('img'); v.src = SPRITES.VortexFX; v.className = 'vortex-fx'; const s = getStep(); v.style.width = s + 'px'; v.style.height = s + 'px'; v.style.left = (x * s + 8) + 'px'; v.style.top = (y * s + 8) + 'px'; document.getElementById('board').appendChild(v); setTimeout(() => { v.style.opacity = '0'; v.style.transform = 'scale(0.5)'; }, 500); setTimeout(() => v.remove(), 800); }, d); }
     function getStep() { return parseInt(getComputedStyle(document.documentElement).getPropertyValue('--step')); }
 
     function updateVisuals() {
         const s = getStep();
-        players.forEach(p => {
-            const t = document.getElementById(`tokenP${p.id}`);
-            if(t && !p.dead) { t.style.left = (p.x*s+8)+'px'; t.style.top = (p.y*s+8)+'px'; document.getElementById(`hpBarP${p.id}`).style.width = (p.hp/p.maxHp)*100+'%'; }
-        });
-        if(mode === "BOSS") {
-            const bt = document.getElementById('tokenBoss');
-            if(bt) { bt.style.left = (boss.x*s+8)+'px'; bt.style.top = (boss.y*s+8)+'px'; document.getElementById('hpBarBoss').style.width = (boss.hp/boss.maxHp)*100+'%'; }
-            document.getElementById('bossStatsDisplay').innerHTML = `Boss: <b>${boss.hp}</b> / ${boss.maxHp}`;
-        }
+        players.forEach(p => { const t = document.getElementById(`tokenP${p.id}`); if(t && !p.dead) { t.style.left = (p.x*s+8)+'px'; t.style.top = (p.y*s+8)+'px'; document.getElementById(`hpBarP${p.id}`).style.width = (p.hp/p.maxHp)*100+'%'; } });
+        if(mode === "BOSS") { const bt = document.getElementById('tokenBoss'); if(bt) { bt.style.left = (boss.x*s+8)+'px'; bt.style.top = (boss.y*s+8)+'px'; document.getElementById('hpBarBoss').style.width = (boss.hp/boss.maxHp)*100+'%'; } document.getElementById('bossStatsDisplay').innerHTML = `Boss: <b>${boss.hp}</b> / ${boss.maxHp}`; }
     }
 
     function activateSkill() { if (!gameActive || players[currentPlayerIdx].skillUsed) return; skillActive = true; document.querySelectorAll('.tile').forEach(t => t.classList.add('skill-mode')); }
