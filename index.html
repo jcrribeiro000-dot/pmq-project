@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <title>Entidades: Confronto de Lendas - Mobile Full</title>
+    <title>Entidades: Confronto de Lendas - V5.1</title>
     <style>
         :root { --tile-size: 55px; --gap: 4px; --step: 59px; }
         
@@ -20,6 +20,7 @@
         }
 
         body { font-family: 'Segoe UI', sans-serif; background-color: #1a1a1a; color: #eee; padding: 10px; display: flex; flex-direction: column; align-items: center; overflow-x: hidden; touch-action: manipulation; }
+        .version-tag { position: absolute; top: 5px; right: 10px; font-size: 10px; color: #666; }
         .skills-guide { background: #2c3e50; padding: 10px; border-radius: 10px; margin-bottom: 10px; border: 1px solid #444; width: 95%; max-width: 1000px; display: flex; justify-content: space-around; font-size: 11px; text-align: center; }
         .skill-item { display: flex; flex-direction: column; align-items: center; gap: 3px; }
         .setup-row { background: #2c3e50; padding: 10px; border-radius: 10px; margin-bottom: 10px; display: flex; gap: 15px; align-items: center; border: 1px solid #444; width: 95%; max-width: 1000px; flex-wrap: wrap; }
@@ -27,7 +28,7 @@
         .config-table input { width: 30px; background: #1a1a1a; color: #0f0; border: 1px solid #555; text-align: center; }
         .game-area { display: flex; gap: 15px; align-items: flex-start; }
         
-        .board-wrapper { position: relative; width: calc((var(--tile-size) * 8) + (var(--gap) * 7)); height: calc((var(--tile-size) * 8) + (var(--gap) * 7)); background: #222; padding: 8px; border-radius: 12px; border: 4px solid #333; overflow: hidden; z-index: 1; }
+        .board-wrapper { position: relative; width: calc((var(--tile-size) * 8) + (var(--gap) * 7)); height: calc((var(--tile-size) * 8) + (var(--gap) * 7)); background: #222; padding: 8px; border-radius: 12px; border: 4px solid #333; overflow: visible; z-index: 1; margin-top: 50px; }
         .grid { display: grid; grid-template-columns: repeat(8, var(--tile-size)); gap: var(--gap); position: relative; z-index: 2; }
         .tile { width: var(--tile-size); height: var(--tile-size); cursor: pointer; border-radius: 4px; transition: background 0.2s; position: relative; }
         .tile.selected { border: 2px solid white; transform: scale(0.85); box-shadow: inset 0 0 10px #fff; z-index: 5; }
@@ -38,9 +39,15 @@
         .bg-TERRA { background: linear-gradient(135deg, #27ae60, #1e8449); } 
         .bg-AR { background: linear-gradient(135deg, #f1c40f, #f39c12); }
         
-        .token { position: absolute; width: var(--tile-size); height: var(--tile-size); z-index: 10; transition: all 0.2s ease-in-out; pointer-events: none; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        .token { position: absolute; width: var(--tile-size); height: var(--tile-size); z-index: 10; transition: all 0.3s ease-in-out; pointer-events: none; display: flex; flex-direction: column; justify-content: center; align-items: center; }
         .token img { width: 120%; height: 120%; object-fit: contain; animation: breathe 2s infinite ease-in-out; }
         
+        /* Tons diferentes para heróis (V5.1) */
+        .p-hue-0 { filter: none; }
+        .p-hue-1 { filter: hue-rotate(90deg) brightness(1.2); }
+        .p-hue-2 { filter: hue-rotate(180deg) saturate(1.5); }
+        .p-hue-3 { filter: hue-rotate(270deg) contrast(1.2); }
+
         .hp-container { position: absolute; top: -12px; width: 80%; height: 6px; background: rgba(0,0,0,0.5); border: 1px solid #000; border-radius: 3px; overflow: hidden; }
         .hp-bar { height: 100%; background: #2ecc71; transition: width 0.3s ease, background 0.3s ease; }
 
@@ -61,9 +68,13 @@
         .flare-fx { position: absolute; width: var(--tile-size); height: var(--tile-size); background: radial-gradient(circle, #ff0, #f00, transparent); z-index: 180; pointer-events: none; animation: flareUp 0.6s forwards; border-radius: 50%; }
         @keyframes flareUp { 0% { transform: scale(0); opacity: 1; } 100% { transform: scale(2); opacity: 0; } }
 
-        .dmg-float, .heal-float { position: absolute; font-size: 28px; font-weight: bold; pointer-events: none; z-index: 155; text-shadow: 2px 2px 0 #000; animation: floatUp 0.8s ease-out forwards; }
+        .dmg-float, .heal-float { position: absolute; font-size: 28px; font-weight: bold; pointer-events: none; z-index: 155; text-shadow: 2px 2px 0 #000; animation: floatUpGrow 1.2s ease-out forwards; }
         .dmg-float { color: #ff3333; } .heal-float { color: #33ff33; }
-        @keyframes floatUp { 0% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(-70px); } }
+        @keyframes floatUpGrow { 
+            0% { opacity: 0; transform: translateY(0) scale(0.5); } 
+            30% { opacity: 1; transform: translateY(-40px) scale(1.3); }
+            100% { opacity: 0; transform: translateY(-100px) scale(1.6); } 
+        }
 
         .vortex-fx { position: absolute; z-index: 200; pointer-events: none; animation: spin 0.3s linear infinite; }
         @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
@@ -95,7 +106,7 @@
     </style>
 </head>
 <body onclick="unlockAudio()">
-
+    <div class="version-tag">VERSÃO 5.1</div>
     <div id="gameOverlay">
         <h1 id="overlayTitle">VITORIA</h1>
         <button onclick="initGame()" style="width: 200px; margin-top: 20px; background: #27ae60; color: white; font-size: 20px;">JOGAR NOVAMENTE</button>
@@ -110,9 +121,9 @@
 
     <div class="setup-row">
         <table class="config-table">
-            <tr><td>Gue: HP <input type="number" id="hp_Guerreiro" value="15"> ATK <input type="number" id="atk_Guerreiro" value="2"></td></tr>
-            <tr><td>Mag: HP <input type="number" id="hp_Mago" value="8"> ATK <input type="number" id="atk_Mago" value="2"></td></tr>
-            <tr><td>Arq: HP <input type="number" id="hp_Arqueiro" value="10"> ATK <input type="number" id="atk_Arqueiro" value="2"></td></tr>
+            <tr><td>Tupã: HP <input type="number" id="hp_Tupa" value="15"> ATK <input type="number" id="atk_Tupa" value="2"></td></tr>
+            <tr><td>Sumé: HP <input type="number" id="hp_Sume" value="8"> ATK <input type="number" id="atk_Sume" value="2"></td></tr>
+            <tr><td>Caipora: HP <input type="number" id="hp_Caipora" value="10"> ATK <input type="number" id="atk_Caipora" value="2"></td></tr>
             <tr style="border-top: 1px solid #555"><td>BOSS: HP <input type="number" id="hp_BOSS_cfg" value="60"> ATK <input type="number" id="atk_BOSS_cfg" value="4"></td></tr>
         </table>
         <div>MODO: <select id="gameMode" onchange="initGame()"><option value="BOSS">BOSS (CO-OP)</option><option value="PVP">PVP (1vs1)</option></select></div>
@@ -147,9 +158,9 @@
 <script>
     const COLORS = ['FOGO', 'AGUA', 'TERRA', 'AR'];
     const SPRITES = {
-        Guerreiro: "https://cdn-icons-png.flaticon.com/512/5532/5532617.png",
-        Mago: "https://cdn-icons-png.flaticon.com/512/1907/1907861.png",
-        Arqueiro: "https://cdn-icons-png.flaticon.com/512/6081/6081840.png",
+        Tupa: "https://i.ibb.co/6c328D1m/tupa.png",
+        Sume: "https://i.ibb.co/G4RdNKm9/sume.png",
+        Caipora: "https://i.ibb.co/C5RNg4Vq/caipora.png",
         BOITATA: "https://i.ibb.co/DDjQ65GV/boitata.png",
         MAPINGUARI: "https://i.ibb.co/tMLK2pcX/mapinguari.png",
         SACI: "https://i.ibb.co/0psrrg1S/saci-token.png",
@@ -178,7 +189,7 @@
     function unlockAudio() {
         if (!audioUnlocked) {
             Object.values(sfx).forEach(a => { a.play().then(() => { a.pause(); if(a === sfx.bgm) { a.currentTime = 0; a.play(); } }).catch(()=>{}); });
-            audioUnlocked = true; addLog("Áudio e Música ativados.");
+            audioUnlocked = true; addLog("Áudio ativado. V5.1");
         }
     }
 
@@ -191,8 +202,8 @@
     function addLog(msg) { const log = document.getElementById('log'); log.innerHTML += `<div>> ${msg}</div>`; log.scrollTop = log.scrollHeight; }
 
     function updateClassBase() {
-        ['Guerreiro', 'Mago', 'Arqueiro'].forEach(cls => {
-            CLASS_DB[cls] = { hp: parseInt(document.getElementById(`hp_${cls}`).value), atk: parseInt(document.getElementById(`atk_${cls}`).value), min: (cls === 'Mago' ? 4 : (cls === 'Arqueiro' ? 3 : 0)) };
+        ['Tupa', 'Sume', 'Caipora'].forEach(cls => {
+            CLASS_DB[cls] = { hp: parseInt(document.getElementById(`hp_${cls}`).value), atk: parseInt(document.getElementById(`atk_${cls}`).value), min: (cls === 'Sume' ? 4 : (cls === 'Caipora' ? 3 : 0)) };
         });
     }
 
@@ -230,7 +241,7 @@
 
         const count = mode === "PVP" ? 2 : parseInt(document.getElementById('playerCount').value);
         updateClassBase(); grid = []; path = []; players = [];
-        document.getElementById('log').innerHTML = '';
+        document.getElementById('log').innerHTML = '<div>VERSÃO 5.1 CARREGADA</div>';
         
         const gridEl = document.getElementById('grid'); gridEl.innerHTML = '';
         for(let i=0; i<64; i++) {
@@ -248,10 +259,10 @@
         document.querySelectorAll('.token').forEach(t => t.remove());
         const board = document.getElementById('board');
         for(let i=0; i<count; i++) {
-            players.push({ id: i, x: 2 + i, y: 7, hp: CLASS_DB.Guerreiro.hp, maxHp: CLASS_DB.Guerreiro.hp, class: 'Guerreiro', element: 'FOGO', name: `P${i+1}`, skillUsed: false, dead: false });
+            players.push({ id: i, x: 2 + i, y: 7, hp: CLASS_DB.Tupa.hp, maxHp: CLASS_DB.Tupa.hp, class: 'Tupa', element: 'FOGO', name: `P${i+1}`, skillUsed: false, dead: false });
             const token = document.createElement('div');
-            token.id = `tokenP${i}`; token.className = `token`;
-            token.innerHTML = `<div class="hp-container"><div id="hpBarP${i}" class="hp-bar"></div></div><img id="imgP${i}" src="${SPRITES.Guerreiro}">`;
+            token.id = `tokenP${i}`; token.className = `token p-hue-${i}`; // Aplica tons diferentes baseados no index
+            token.innerHTML = `<div class="hp-container"><div id="hpBarP${i}" class="hp-bar"></div></div><img id="imgP${i}" src="${SPRITES.Tupa}">`;
             board.appendChild(token);
         }
 
@@ -266,7 +277,7 @@
             board.appendChild(bToken);
         } else { players[1].y = 0; players[1].x = 4; players[1].hp = CLASS_DB[players[1].class].hp; players[1].maxHp = players[1].hp; }
 
-        document.getElementById('pClass').innerHTML = '<option value="Guerreiro">Guerreiro</option><option value="Mago">Mago</option><option value="Arqueiro">Arqueiro</option>';
+        document.getElementById('pClass').innerHTML = '<option value="Tupa">Tupã</option><option value="Sume">Sumé</option><option value="Caipora">Caipora</option>';
         currentPlayerIdx = 0; switchConfig(0); updateVisuals();
     }
 
@@ -306,6 +317,12 @@
         if(totalTurns >= 2) return "ZIGZAG"; return null;
     }
 
+    // V5.1 - Função Auxiliar de Colisão
+    function isOccupied(nx, ny, excludeId) {
+        if (mode === "BOSS" && boss.x === nx && boss.y === ny && !boss.dead) return true;
+        return players.some(p => !p.dead && p.id !== excludeId && p.x === nx && p.y === ny);
+    }
+
     async function executeAction() {
         if(!gameActive) return;
         const active = players[currentPlayerIdx];
@@ -324,7 +341,7 @@
 
         let bonusElem = (usedPath.length > 0 && grid[usedPath[0]] === active.element) ? 1 : 0;
 
-        if(active.class === "Guerreiro") {
+        if(active.class === "Tupa") {
             const dealGueDmg = () => { if(!target.dead && (Math.abs(active.x-target.x)+Math.abs(active.y-target.y)) <= 1) { playSfx('atkg'); applyDmg(target, info.atk + bonusElem + skillAtkBonus); spawnSwordEffect(target.x, target.y); } };
             dealGueDmg();
             for(const idx of usedPath) { active.x = idx%8; active.y = Math.floor(idx/8); updateVisuals(); await new Promise(r => setTimeout(r, 120)); dealGueDmg(); }
@@ -332,9 +349,9 @@
             for(const idx of usedPath) { active.x = idx%8; active.y = Math.floor(idx/8); updateVisuals(); await new Promise(r => setTimeout(r, 100)); }
             if(usedPath.length >= info.min && !target.dead) {
                 let extra = usedPath.length - info.min;
-                playSfx(active.class === 'Mago' ? 'atkm' : 'atka');
-                await spawnProjectile(active, target, active.class === "Arqueiro" ? 'Arrow' : 'Magic');
-                applyDmg(target, info.atk + bonusElem + skillAtkBonus + (active.class === "Mago" ? extra : Math.floor(extra/2)));
+                playSfx(active.class === 'Sume' ? 'atkm' : 'atka');
+                await spawnProjectile(active, target, active.class === "Caipora" ? 'Arrow' : 'Magic');
+                applyDmg(target, info.atk + bonusElem + skillAtkBonus + (active.class === "Sume" ? extra : Math.floor(extra/2)));
             }
         }
 
@@ -410,7 +427,7 @@
                 addLog("MORDIDA GIGANTE!"); playSfx('minoa1');
                 triggerBite(boss.x, boss.y);
                 await new Promise(r => setTimeout(r, 600));
-                players.forEach(p => { if(!p.dead && Math.abs(p.x-boss.x)<=2 && Math.abs(p.y-boss.y)<=2) applyDmg(p, bossAtk + 2); });
+                players.forEach(p => { if(!p.dead && Math.abs(p.x-boss.x)<=2 && Math.abs(p.y-boss.y)<=2) applyDmg(p, bossAtk); });
             } else {
                 addLog("LANÇAMENTO DE ROCHAS!"); playSfx('minoa2');
                 triggerRocks(boss.x, boss.y);
@@ -434,7 +451,20 @@
             if(r < 0.5) {
                 addLog("POROROCA!"); playSfx('iara1'); triggerTsunami();
                 await new Promise(r => setTimeout(r, 500));
-                players.forEach(p => { if(!p.dead) { applyDmg(p, 1); let dx = p.x < 4 ? -1 : 1, dy = p.y < 4 ? -1 : 1; if(Math.abs(p.x-3.5) > Math.abs(p.y-3.5)) { if(p.x+dx>=0 && p.x+dx<8) p.x += dx; } else { if(p.y+dy>=0 && p.y+dy<8) p.y += dy; } } });
+                players.forEach(p => { 
+                    if(!p.dead) { 
+                        applyDmg(p, 1); 
+                        let dx = p.x < 4 ? -1 : 1, dy = p.y < 4 ? -1 : 1;
+                        let nx = p.x, ny = p.y;
+                        if(Math.abs(p.x-3.5) > Math.abs(p.y-3.5)) { if(p.x+dx>=0 && p.x+dx<8) nx += dx; } 
+                        else { if(p.y+dy>=0 && p.y+dy<8) ny += dy; }
+                        
+                        // V5.1 - Checagem de Colisão no Empurrão (Não empurra se estiver ocupado)
+                        if (!isOccupied(nx, ny, p.id)) { p.x = nx; p.y = ny; }
+                        // Coleta item mesmo se for empurrado
+                        if (grid[p.y*8 + p.x] === p.element) { /* Futura lógica de coleta automática se necessário */ }
+                    } 
+                });
                 updateVisuals();
             } else {
                 addLog("JATO DE ÁGUA!"); playSfx('iara2');
@@ -466,8 +496,8 @@
     }
 
     function activateSkill() { if (!gameActive || players[currentPlayerIdx].skillUsed) return; skillActive = true; document.querySelectorAll('.tile').forEach(t => t.classList.add('skill-mode')); }
-    function showDmgEffect(x,y,a){ const s=getStep(), f=document.createElement('div'); f.className='dmg-float'; f.innerText=`-${a}`; f.style.left=(x*s+20)+'px'; f.style.top=(y*s)+'px'; document.getElementById('board').appendChild(f); setTimeout(()=>f.remove(), 800); }
-    function showHealEffect(x,y,a){ const s=getStep(), f=document.createElement('div'); f.className='heal-float'; f.innerText=`+${a}`; f.style.left=(x*s+20)+'px'; f.style.top=(y*s)+'px'; document.getElementById('board').appendChild(f); setTimeout(()=>f.remove(), 800); }
+    function showDmgEffect(x,y,a){ const s=getStep(), f=document.createElement('div'); f.className='dmg-float'; f.innerText=`-${a}`; f.style.left=(x*s+20)+'px'; f.style.top=(y*s)+'px'; document.getElementById('board').appendChild(f); setTimeout(()=>f.remove(), 1200); }
+    function showHealEffect(x,y,a){ const s=getStep(), f=document.createElement('div'); f.className='heal-float'; f.innerText=`+${a}`; f.style.left=(x*s+20)+'px'; f.style.top=(y*s)+'px'; document.getElementById('board').appendChild(f); setTimeout(()=>f.remove(), 1200); }
     function spawnSwordEffect(x,y){ const s=getStep(), i=document.createElement('img'); i.src=SPRITES.SwordFX; i.className='sword-fx'; i.style.left=(x*s+12)+'px'; i.style.top=(y*s+12)+'px'; document.getElementById('board').appendChild(i); setTimeout(()=>i.remove(), 400); }
     async function spawnProjectile(f,t,type){ const s=getStep(), p=document.createElement('img'); p.src=SPRITES[type+'FX']; p.className='projectile'; p.style.left=(f.x*s+20)+'px'; p.style.top=(f.y*s+20)+'px'; document.getElementById('board').appendChild(p); await new Promise(r=>setTimeout(r,50)); p.style.left=(t.x*s+20)+'px'; p.style.top=(t.y*s+20)+'px'; await new Promise(r=>setTimeout(r,300)); p.remove(); }
     
