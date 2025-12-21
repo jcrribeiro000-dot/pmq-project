@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <title>Entidades: Confronto de Lendas - V5.1</title>
+    <title>Entidades: Confronto de Lendas - V5.3</title>
     <style>
         :root { --tile-size: 55px; --gap: 4px; --step: 59px; }
         
@@ -25,15 +25,18 @@
         .skill-item { display: flex; flex-direction: column; align-items: center; gap: 3px; }
         .setup-row { background: #2c3e50; padding: 10px; border-radius: 10px; margin-bottom: 10px; display: flex; gap: 15px; align-items: center; border: 1px solid #444; width: 95%; max-width: 1000px; flex-wrap: wrap; }
         .config-table { font-size: 10px; }
-        .config-table input { width: 30px; background: #1a1a1a; color: #0f0; border: 1px solid #555; text-align: center; }
+        .config-table input { width: 35px; background: #1a1a1a; color: #0f0; border: 1px solid #555; text-align: center; }
         .game-area { display: flex; gap: 15px; align-items: flex-start; }
         
         .board-wrapper { position: relative; width: calc((var(--tile-size) * 8) + (var(--gap) * 7)); height: calc((var(--tile-size) * 8) + (var(--gap) * 7)); background: #222; padding: 8px; border-radius: 12px; border: 4px solid #333; overflow: visible; z-index: 1; margin-top: 50px; }
         .grid { display: grid; grid-template-columns: repeat(8, var(--tile-size)); gap: var(--gap); position: relative; z-index: 2; }
-        .tile { width: var(--tile-size); height: var(--tile-size); cursor: pointer; border-radius: 4px; transition: background 0.2s; position: relative; }
+        .tile { width: var(--tile-size); height: var(--tile-size); cursor: pointer; border-radius: 4px; transition: background 0.2s; position: relative; display: flex; align-items: center; justify-content: center; }
         .tile.selected { border: 2px solid white; transform: scale(0.85); box-shadow: inset 0 0 10px #fff; z-index: 5; }
         .tile.skill-mode { animation: pulseSkill 1s infinite; border: 2px solid gold; z-index: 20; }
         
+        /* Estilo do Amuleto */
+        .amulet-img { width: 80%; height: 80%; object-fit: contain; pointer-events: none; position: absolute; filter: drop-shadow(0 0 3px black); }
+
         .bg-FOGO { background: linear-gradient(135deg, #e74c3c, #c0392b); } 
         .bg-AGUA { background: linear-gradient(135deg, #3498db, #2980b9); }
         .bg-TERRA { background: linear-gradient(135deg, #27ae60, #1e8449); } 
@@ -42,7 +45,6 @@
         .token { position: absolute; width: var(--tile-size); height: var(--tile-size); z-index: 10; transition: all 0.3s ease-in-out; pointer-events: none; display: flex; flex-direction: column; justify-content: center; align-items: center; }
         .token img { width: 120%; height: 120%; object-fit: contain; animation: breathe 2s infinite ease-in-out; }
         
-        /* Tons diferentes para heróis (V5.1) */
         .p-hue-0 { filter: none; }
         .p-hue-1 { filter: hue-rotate(90deg) brightness(1.2); }
         .p-hue-2 { filter: hue-rotate(180deg) saturate(1.5); }
@@ -53,20 +55,20 @@
 
         @keyframes breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1) translateY(-4px); } }
         
+        /* Efeitos Visuais Originais V5.2 */
         .tsunami-fx { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, rgba(0,120,255,0.9) 40%, rgba(0,0,50,0.5) 100%); z-index: 180; pointer-events: none; animation: tsunamiBlast 1.2s forwards; border-radius: 50%; }
         @keyframes tsunamiBlast { 0% { transform: scale(0); opacity: 1; } 100% { transform: scale(3); opacity: 0; } }
-
         .water-jet-fx { position: absolute; z-index: 195; pointer-events: none; background: linear-gradient(90deg, transparent, #fff, #3498db, #fff, transparent); box-shadow: 0 0 25px #3498db; animation: jetFlash 0.6s ease-out forwards; opacity: 0; }
         @keyframes jetFlash { 0% { opacity: 0; transform: scaleY(0.1); } 50% { opacity: 1; transform: scaleY(1); } 100% { opacity: 0; transform: scaleY(0.5); } }
-
         .fire-column { position: absolute; top: 0; width: var(--tile-size); height: 100%; background: linear-gradient(to top, rgba(255, 0, 0, 0.9) 0%, rgba(255, 69, 0, 1) 50%, rgba(255, 255, 0, 0.7) 100%); z-index: 200; pointer-events: none; animation: fireFlashLento 1.2s ease-in-out forwards; filter: drop-shadow(0 0 15px #ff4500); }
         @keyframes fireFlashLento { 0% { opacity: 0; transform: scaleX(0); } 30% { opacity: 1; transform: scaleX(1.2); } 100% { opacity: 0; transform: scaleX(0.8); } }
-
         .bite-fx { position: absolute; z-index: 210; pointer-events: none; transform: scale(0); filter: drop-shadow(0 0 15px #ff0000); }
         @keyframes biteAnim { 0% { transform: scale(0.2); opacity: 0; } 30% { transform: scale(3.5); opacity: 1; } 100% { transform: scale(2.5); opacity: 0; } }
         .rock-projectile { position: absolute; z-index: 200; pointer-events: none; filter: drop-shadow(4px 4px 5px #000); transition: all 1s cubic-bezier(0.25, 0.1, 0.25, 1); }
         .flare-fx { position: absolute; width: var(--tile-size); height: var(--tile-size); background: radial-gradient(circle, #ff0, #f00, transparent); z-index: 180; pointer-events: none; animation: flareUp 0.6s forwards; border-radius: 50%; }
         @keyframes flareUp { 0% { transform: scale(0); opacity: 1; } 100% { transform: scale(2); opacity: 0; } }
+        .vortex-fx { position: absolute; z-index: 200; pointer-events: none; animation: spin 0.3s linear infinite; }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
         .dmg-float, .heal-float { position: absolute; font-size: 28px; font-weight: bold; pointer-events: none; z-index: 155; text-shadow: 2px 2px 0 #000; animation: floatUpGrow 1.2s ease-out forwards; }
         .dmg-float { color: #ff3333; } .heal-float { color: #33ff33; }
@@ -75,9 +77,6 @@
             30% { opacity: 1; transform: translateY(-40px) scale(1.3); }
             100% { opacity: 0; transform: translateY(-100px) scale(1.6); } 
         }
-
-        .vortex-fx { position: absolute; z-index: 200; pointer-events: none; animation: spin 0.3s linear infinite; }
-        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
         .panel { background: #2c3e50; padding: 12px; border-radius: 10px; width: 210px; border: 1px solid #444; }
         .turn-box { padding: 6px; text-align: center; font-weight: bold; border-radius: 4px; margin-bottom: 8px; opacity: 0.2; font-size: 11px; color: white; }
@@ -106,14 +105,14 @@
     </style>
 </head>
 <body onclick="unlockAudio()">
-    <div class="version-tag">VERSÃO 5.1</div>
+    <div class="version-tag">VERSÃO 5.3</div>
     <div id="gameOverlay">
         <h1 id="overlayTitle">VITORIA</h1>
         <button onclick="initGame()" style="width: 200px; margin-top: 20px; background: #27ae60; color: white; font-size: 20px;">JOGAR NOVAMENTE</button>
     </div>
 
     <div class="skills-guide">
-        <div class="skill-item"><b style="color:#f1c40f">LINHA (4+)</b><small>+2 ATK / +1 HP</small></div>
+        <div class="skill-item"><b style="color:#f1c40f">LINHA (4)</b><small>+2 ATK / +1 HP</small></div>
         <div class="skill-item"><b style="color:#2ecc71">L (4)</b><small>CURA +2 HP</small></div>
         <div class="skill-item"><b style="color:#3498db">QUAD (4)</b><small>RESET ULT</small></div>
         <div class="skill-item"><b style="color:#e74c3c">ZIGZAG (4)</b><small>+3 ATK</small></div>
@@ -124,6 +123,7 @@
             <tr><td>Tupã: HP <input type="number" id="hp_Tupa" value="15"> ATK <input type="number" id="atk_Tupa" value="2"></td></tr>
             <tr><td>Sumé: HP <input type="number" id="hp_Sume" value="8"> ATK <input type="number" id="atk_Sume" value="2"></td></tr>
             <tr><td>Caipora: HP <input type="number" id="hp_Caipora" value="10"> ATK <input type="number" id="atk_Caipora" value="2"></td></tr>
+            <tr><td>Muiraquitã: <input type="number" id="amulet_chance" value="1" min="0" max="100">% chance</td></tr>
             <tr style="border-top: 1px solid #555"><td>BOSS: HP <input type="number" id="hp_BOSS_cfg" value="60"> ATK <input type="number" id="atk_BOSS_cfg" value="4"></td></tr>
         </table>
         <div>MODO: <select id="gameMode" onchange="initGame()"><option value="BOSS">BOSS (CO-OP)</option><option value="PVP">PVP (1vs1)</option></select></div>
@@ -165,6 +165,7 @@
         MAPINGUARI: "https://i.ibb.co/tMLK2pcX/mapinguari.png",
         SACI: "https://i.ibb.co/0psrrg1S/saci-token.png",
         IARA: "https://i.ibb.co/LDsxbV3X/iara-token.png",
+        Muiraquita: "https://i.ibb.co/JjYQszc0/muiraquita.png",
         VortexFX: "https://cdn-icons-png.flaticon.com/512/1344/1344933.png",
         SwordFX: "https://cdn-icons-png.flaticon.com/512/6720/6720973.png",
         ArrowFX: "https://cdn-icons-png.flaticon.com/512/95/95460.png",
@@ -189,13 +190,13 @@
     function unlockAudio() {
         if (!audioUnlocked) {
             Object.values(sfx).forEach(a => { a.play().then(() => { a.pause(); if(a === sfx.bgm) { a.currentTime = 0; a.play(); } }).catch(()=>{}); });
-            audioUnlocked = true; addLog("Áudio ativado. V5.1");
+            audioUnlocked = true; addLog("Áudio ativado. V5.3");
         }
     }
 
     function playSfx(name) { if (!audioUnlocked || !sfx[name]) return; const sound = sfx[name].cloneNode(); sound.volume = 0.6; sound.play(); }
 
-    let CLASS_DB = {}, grid = [], path = [], players = []; 
+    let CLASS_DB = {}, grid = [], path = [], players = [], amulets = []; 
     let boss = { x: 4, y: 0, hp: 0, maxHp: 0, type: 'BOITATA', dead: false };
     let currentPlayerIdx = 0, editingIdx = 0, gameActive = true, mode = "BOSS", skillActive = false;
 
@@ -221,7 +222,7 @@
         let s = 0; for(let i=0; i<p.name.length; i++) s += p.name.charCodeAt(i);
         p.element = COLORS[s % 4];
         const ed = document.getElementById('pElem'); ed.innerText = p.element; ed.className = `elem-display bg-${p.element}`;
-        document.getElementById('pStatsDisplay').innerHTML = `HP: <b>${p.hp}</b> / ${p.maxHp} | ATK: <b>${CLASS_DB[p.class].atk}</b>`;
+        document.getElementById('pStatsDisplay').innerHTML = `HP: <b>${p.hp}</b> / ${p.maxHp} | ATK: <b>${CLASS_DB[p.class].atk + p.bonusAtk}</b>`;
         const img = document.getElementById(`imgP${p.id}`); if(img) img.src = SPRITES[p.class];
         const isMyTurn = (editingIdx === currentPlayerIdx);
         document.getElementById('btnPlay').disabled = !isMyTurn;
@@ -234,20 +235,39 @@
         saveAndRefresh(); updateVisuals();
     }
 
+    // Função central de geração de Tile (V5.3)
+    function createTile(idx) {
+        const c = COLORS[Math.floor(Math.random()*4)];
+        grid[idx] = c;
+        
+        const chance = parseFloat(document.getElementById('amulet_chance').value) || 1;
+        amulets[idx] = (Math.random() * 100 < chance);
+
+        const tile = document.createElement('div');
+        tile.className = `tile bg-${c}`;
+        tile.onclick = () => handleSelect(idx);
+        
+        if(amulets[idx]) {
+            const img = document.createElement('img');
+            img.src = SPRITES.Muiraquita;
+            img.className = 'amulet-img';
+            tile.appendChild(img);
+        }
+        return tile;
+    }
+
     function initGame() {
         gameActive = true; mode = document.getElementById('gameMode').value;
         document.getElementById('gameOverlay').style.display = 'none';
         if(audioUnlocked) sfx.bgm.play();
 
         const count = mode === "PVP" ? 2 : parseInt(document.getElementById('playerCount').value);
-        updateClassBase(); grid = []; path = []; players = [];
-        document.getElementById('log').innerHTML = '<div>VERSÃO 5.1 CARREGADA</div>';
+        updateClassBase(); grid = []; path = []; players = []; amulets = [];
+        document.getElementById('log').innerHTML = '<div>VERSÃO 5.3 CARREGADA</div>';
         
         const gridEl = document.getElementById('grid'); gridEl.innerHTML = '';
         for(let i=0; i<64; i++) {
-            const c = COLORS[Math.floor(Math.random()*4)]; grid.push(c);
-            const tile = document.createElement('div'); tile.className = `tile bg-${c}`;
-            tile.onclick = () => handleSelect(i); gridEl.appendChild(tile);
+            gridEl.appendChild(createTile(i));
         }
 
         const tabBar = document.getElementById('tabBar'); tabBar.innerHTML = '';
@@ -259,9 +279,9 @@
         document.querySelectorAll('.token').forEach(t => t.remove());
         const board = document.getElementById('board');
         for(let i=0; i<count; i++) {
-            players.push({ id: i, x: 2 + i, y: 7, hp: CLASS_DB.Tupa.hp, maxHp: CLASS_DB.Tupa.hp, class: 'Tupa', element: 'FOGO', name: `P${i+1}`, skillUsed: false, dead: false });
+            players.push({ id: i, x: 2 + i, y: 7, hp: 10, maxHp: 10, class: 'Tupa', element: 'FOGO', name: `P${i+1}`, skillUsed: false, dead: false, bonusAtk: 0 });
             const token = document.createElement('div');
-            token.id = `tokenP${i}`; token.className = `token p-hue-${i}`; // Aplica tons diferentes baseados no index
+            token.id = `tokenP${i}`; token.className = `token p-hue-${i}`;
             token.innerHTML = `<div class="hp-container"><div id="hpBarP${i}" class="hp-bar"></div></div><img id="imgP${i}" src="${SPRITES.Tupa}">`;
             board.appendChild(token);
         }
@@ -281,6 +301,23 @@
         currentPlayerIdx = 0; switchConfig(0); updateVisuals();
     }
 
+    function isOccupied(nx, ny, excludeId) {
+        if (mode === "BOSS" && boss.x === nx && boss.y === ny && !boss.dead) return true;
+        return players.some(p => !p.dead && p.id !== excludeId && p.x === nx && p.y === ny);
+    }
+
+    function checkAmulet(p, x, y) {
+        const idx = y * 8 + x;
+        if(amulets[idx]) {
+            amulets[idx] = false;
+            p.bonusAtk += 1;
+            const tile = document.querySelectorAll('.tile')[idx];
+            if(tile) tile.innerHTML = '';
+            addLog(`${p.name} coletou o Muiraquitã! +1 ATK Permanente.`);
+            saveAndRefresh();
+        }
+    }
+
     function handleSelect(idx) {
         if(!gameActive) return;
         const p = players[currentPlayerIdx];
@@ -290,7 +327,7 @@
             addLog(`${p.name} ativou Ultimate!`); saveAndRefresh(); return;
         }
         const x = idx % 8, y = Math.floor(idx / 8);
-        const occupied = players.some(other => !other.dead && other.id !== p.id && other.x === x && other.y === y) || (mode === "BOSS" && boss.x === x && boss.y === y);
+        const occupied = isOccupied(x, y, p.id);
         if(occupied || (x === p.x && y === p.y)) return;
         
         if(path.length === 0) { if((Math.abs(x-p.x)+Math.abs(y-p.y)) === 1) { path.push(idx); playSfx('click'); } }
@@ -304,23 +341,24 @@
 
     function renderPath() { document.querySelectorAll('.tile').forEach((t, i) => t.classList.toggle('selected', path.includes(i))); }
 
+    // Motor de Reconhecimento Versão 5.2
     function detectShape(pIdxs) {
-        if(pIdxs.length < 4) return null;
+        if(pIdxs.length !== 4) return null;
         const coords = pIdxs.map(i => ({x: i%8, y: Math.floor(i/8)}));
         const xs = coords.map(c => c.x), ys = coords.map(c => c.y);
         const minX = Math.min(...xs), maxX = Math.max(...xs), minY = Math.min(...ys), maxY = Math.max(...ys);
-        const diffX = maxX - minX, diffY = maxY - minY;
-        if (diffX === 0 || diffY === 0) return "LINHA";
-        if (pIdxs.length === 4 && diffX === 1 && diffY === 1) return "QUADRADO";
-        if (pIdxs.length === 4) { if ((diffX === 1 && diffY === 2) || (diffX === 2 && diffY === 1)) return "L"; }
-        let totalTurns = 0; for(let i=2; i<coords.length; i++) { if(coords[i].x-coords[i-1].x !== coords[i-1].x-coords[i-2].x || coords[i].y-coords[i-1].y !== coords[i-1].y-coords[i-2].y) totalTurns++; }
-        if(totalTurns >= 2) return "ZIGZAG"; return null;
-    }
-
-    // V5.1 - Função Auxiliar de Colisão
-    function isOccupied(nx, ny, excludeId) {
-        if (mode === "BOSS" && boss.x === nx && boss.y === ny && !boss.dead) return true;
-        return players.some(p => !p.dead && p.id !== excludeId && p.x === nx && p.y === ny);
+        const w = maxX - minX, h = maxY - minY;
+        if (w === 0 || h === 0) return "LINHA";
+        if (w === 1 && h === 1) return "QUADRADO";
+        let vectors = [];
+        for(let i=1; i<coords.length; i++) vectors.push({ dx: coords[i].x - coords[i-1].x, dy: coords[i].y - coords[i-1].y });
+        let turns = 0;
+        for(let i=1; i<vectors.length; i++) if (vectors[i].dx !== vectors[i-1].dx || vectors[i].dy !== vectors[i-1].dy) turns++;
+        const sameFirstTwo = (vectors[0].dx === vectors[1].dx && vectors[0].dy === vectors[1].dy);
+        const sameLastTwo = (vectors[1].dx === vectors[2].dx && vectors[1].dy === vectors[2].dy);
+        if ((sameFirstTwo || sameLastTwo) && turns === 1) return "L";
+        if (turns === 2 && vectors[0].dx === vectors[2].dx && vectors[0].dy === vectors[2].dy) return "ZIGZAG";
+        return null;
     }
 
     async function executeAction() {
@@ -340,22 +378,38 @@
         }
 
         let bonusElem = (usedPath.length > 0 && grid[usedPath[0]] === active.element) ? 1 : 0;
+        let totalAtk = info.atk + active.bonusAtk + bonusElem + skillAtkBonus;
 
         if(active.class === "Tupa") {
-            const dealGueDmg = () => { if(!target.dead && (Math.abs(active.x-target.x)+Math.abs(active.y-target.y)) <= 1) { playSfx('atkg'); applyDmg(target, info.atk + bonusElem + skillAtkBonus); spawnSwordEffect(target.x, target.y); } };
+            const dealGueDmg = () => { if(!target.dead && (Math.abs(active.x-target.x)+Math.abs(active.y-target.y)) <= 1) { playSfx('atkg'); applyDmg(target, totalAtk); spawnSwordEffect(target.x, target.y); } };
             dealGueDmg();
-            for(const idx of usedPath) { active.x = idx%8; active.y = Math.floor(idx/8); updateVisuals(); await new Promise(r => setTimeout(r, 120)); dealGueDmg(); }
+            for(const idx of usedPath) { 
+                active.x = idx%8; active.y = Math.floor(idx/8); 
+                checkAmulet(active, active.x, active.y);
+                updateVisuals(); 
+                await new Promise(r => setTimeout(r, 120)); 
+                dealGueDmg(); 
+            }
         } else {
-            for(const idx of usedPath) { active.x = idx%8; active.y = Math.floor(idx/8); updateVisuals(); await new Promise(r => setTimeout(r, 100)); }
+            for(const idx of usedPath) { 
+                active.x = idx%8; active.y = Math.floor(idx/8); 
+                checkAmulet(active, active.x, active.y);
+                updateVisuals(); 
+                await new Promise(r => setTimeout(r, 100)); 
+            }
             if(usedPath.length >= info.min && !target.dead) {
                 let extra = usedPath.length - info.min;
                 playSfx(active.class === 'Sume' ? 'atkm' : 'atka');
                 await spawnProjectile(active, target, active.class === "Caipora" ? 'Arrow' : 'Magic');
-                applyDmg(target, info.atk + bonusElem + skillAtkBonus + (active.class === "Sume" ? extra : Math.floor(extra/2)));
+                applyDmg(target, totalAtk + (active.class === "Sume" ? extra : Math.floor(extra/2)));
             }
         }
 
-        usedPath.forEach(idx => { grid[idx] = COLORS[Math.floor(Math.random()*4)]; document.querySelectorAll('.tile')[idx].className = `tile bg-${grid[idx]}`; });
+        const gridEl = document.getElementById('grid');
+        usedPath.forEach(idx => { 
+            const newTile = createTile(idx);
+            gridEl.replaceChild(newTile, gridEl.childNodes[idx]);
+        });
         path = []; renderPath();
         
         if(gameActive) {
@@ -395,7 +449,7 @@
         const bossAtk = parseInt(document.getElementById('atk_BOSS_cfg').value);
         
         for(let i=0; i<4; i++) {
-            let mvs = [{x:boss.x+1,y:boss.y},{x:boss.x-1,y:boss.y},{x:boss.x,y:boss.y+1},{x:boss.x,y:boss.y-1}].filter(m => m.x>=0 && m.x<8 && m.y>=0 && m.y<8 && !players.some(p => !p.dead && p.x===m.x && p.y===m.y));
+            let mvs = [{x:boss.x+1,y:boss.y},{x:boss.x-1,y:boss.y},{x:boss.x,y:boss.y+1},{x:boss.x,y:boss.y-1}].filter(m => m.x>=0 && m.x<8 && m.y>=0 && m.y<8 && !isOccupied(m.x, m.y, -1));
             if(mvs.length > 0) { let m = mvs[Math.floor(Math.random()*mvs.length)]; boss.x = m.x; boss.y = m.y; updateVisuals(); await new Promise(r => setTimeout(r, 200)); }
         }
 
@@ -414,7 +468,7 @@
                     let idx = Math.floor(Math.random()*64);
                     if(grid[idx] === 'FOGO') {
                         triggerFlare(idx%8, Math.floor(idx/8));
-                        players.forEach(p => { if(!p.dead && p.x === idx%8 && p.y === Math.floor(idx/8)) applyDmg(p, bossAtk + 2); });
+                        players.forEach(p => { if(!p.dead && p.x === idx%8 && p.y === Math.floor(idx/8)) applyDmg(p, bossAtk); });
                         count++;
                     }
                     attempts++;
@@ -458,11 +512,7 @@
                         let nx = p.x, ny = p.y;
                         if(Math.abs(p.x-3.5) > Math.abs(p.y-3.5)) { if(p.x+dx>=0 && p.x+dx<8) nx += dx; } 
                         else { if(p.y+dy>=0 && p.y+dy<8) ny += dy; }
-                        
-                        // V5.1 - Checagem de Colisão no Empurrão (Não empurra se estiver ocupado)
                         if (!isOccupied(nx, ny, p.id)) { p.x = nx; p.y = ny; }
-                        // Coleta item mesmo se for empurrado
-                        if (grid[p.y*8 + p.x] === p.element) { /* Futura lógica de coleta automática se necessário */ }
                     } 
                 });
                 updateVisuals();
@@ -487,12 +537,30 @@
     function triggerTsunami() { const t = document.createElement('div'); t.className = 'tsunami-fx'; document.getElementById('board').appendChild(t); setTimeout(() => t.remove(), 1200); }
     function triggerWaterJet(bx, by) { const s = getStep(); const h = document.createElement('div'); h.className = 'water-jet-fx'; h.style.width = '100%'; h.style.height = s + 'px'; h.style.left = '0'; h.style.top = (by * s + 8) + 'px'; document.getElementById('board').appendChild(h); const v = document.createElement('div'); v.className = 'water-jet-fx'; v.style.width = s + 'px'; v.style.height = '100%'; v.style.top = '0'; v.style.left = (bx * s + 8) + 'px'; v.style.background = 'linear-gradient(0deg, transparent, #fff, #3498db, #fff, transparent)'; document.getElementById('board').appendChild(v); setTimeout(() => { h.remove(); v.remove(); }, 600); }
     function triggerVortex(x, y, d = 0) { setTimeout(() => { const v = document.createElement('img'); v.src = SPRITES.VortexFX; v.className = 'vortex-fx'; const s = getStep(); v.style.width = s + 'px'; v.style.height = s + 'px'; v.style.left = (x * s + 8) + 'px'; v.style.top = (y * s + 8) + 'px'; document.getElementById('board').appendChild(v); setTimeout(() => { v.style.opacity = '0'; v.style.transform = 'scale(0.5)'; }, 500); setTimeout(() => v.remove(), 800); }, d); }
+
     function getStep() { return parseInt(getComputedStyle(document.documentElement).getPropertyValue('--step')); }
 
     function updateVisuals() {
         const s = getStep();
-        players.forEach(p => { const t = document.getElementById(`tokenP${p.id}`); if(t && !p.dead) { t.style.left = (p.x*s+8)+'px'; t.style.top = (p.y*s+8)+'px'; document.getElementById(`hpBarP${p.id}`).style.width = (p.hp/p.maxHp)*100+'%'; } });
-        if(mode === "BOSS") { const bt = document.getElementById('tokenBoss'); if(bt) { bt.style.left = (boss.x*s+8)+'px'; bt.style.top = (boss.y*s+8)+'px'; document.getElementById('hpBarBoss').style.width = (boss.hp/boss.maxHp)*100+'%'; } document.getElementById('bossStatsDisplay').innerHTML = `Boss: <b>${boss.hp}</b> / ${boss.maxHp}`; }
+        players.forEach(p => { 
+            const t = document.getElementById(`tokenP${p.id}`); 
+            if(t && !p.dead) { 
+                t.style.left = (p.x*s+8)+'px'; 
+                t.style.top = (p.y*s+8)+'px'; 
+                const hpBar = document.getElementById(`hpBarP${p.id}`);
+                if(hpBar) hpBar.style.width = (p.hp/p.maxHp)*100+'%'; 
+            } 
+        });
+        if(mode === "BOSS") { 
+            const bt = document.getElementById('tokenBoss'); 
+            if(bt) { 
+                bt.style.left = (boss.x*s+8)+'px'; 
+                bt.style.top = (boss.y*s+8)+'px'; 
+                const bHpBar = document.getElementById('hpBarBoss');
+                if(bHpBar) bHpBar.style.width = (boss.hp/boss.maxHp)*100+'%'; 
+            } 
+            document.getElementById('bossStatsDisplay').innerHTML = `${boss.type}: <b>${boss.hp}</b> / ${boss.maxHp}`; 
+        }
     }
 
     function activateSkill() { if (!gameActive || players[currentPlayerIdx].skillUsed) return; skillActive = true; document.querySelectorAll('.tile').forEach(t => t.classList.add('skill-mode')); }
