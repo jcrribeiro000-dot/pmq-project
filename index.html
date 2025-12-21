@@ -34,7 +34,6 @@
         .tile.selected { border: 2px solid white; transform: scale(0.85); box-shadow: inset 0 0 10px #fff; z-index: 5; }
         .tile.skill-mode { animation: pulseSkill 1s infinite; border: 2px solid gold; z-index: 20; }
         
-        /* Estilo do Amuleto */
         .amulet-img { width: 80%; height: 80%; object-fit: contain; pointer-events: none; position: absolute; filter: drop-shadow(0 0 3px black); }
 
         .bg-FOGO { background: linear-gradient(135deg, #e74c3c, #c0392b); } 
@@ -55,7 +54,6 @@
 
         @keyframes breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1) translateY(-4px); } }
         
-        /* Efeitos Visuais Originais V5.2 */
         .tsunami-fx { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, rgba(0,120,255,0.9) 40%, rgba(0,0,50,0.5) 100%); z-index: 180; pointer-events: none; animation: tsunamiBlast 1.2s forwards; border-radius: 50%; }
         @keyframes tsunamiBlast { 0% { transform: scale(0); opacity: 1; } 100% { transform: scale(3); opacity: 0; } }
         .water-jet-fx { position: absolute; z-index: 195; pointer-events: none; background: linear-gradient(90deg, transparent, #fff, #3498db, #fff, transparent); box-shadow: 0 0 25px #3498db; animation: jetFlash 0.6s ease-out forwards; opacity: 0; }
@@ -105,7 +103,7 @@
     </style>
 </head>
 <body onclick="unlockAudio()">
-    <div class="version-tag">VERSÃO 5.3</div>
+    <div class="version-tag">VERSÃO 5.3 (CORRIGIDA)</div>
     <div id="gameOverlay">
         <h1 id="overlayTitle">VITORIA</h1>
         <button onclick="initGame()" style="width: 200px; margin-top: 20px; background: #27ae60; color: white; font-size: 20px;">JOGAR NOVAMENTE</button>
@@ -158,42 +156,21 @@
 <script>
     const COLORS = ['FOGO', 'AGUA', 'TERRA', 'AR'];
     const SPRITES = {
-        Tupa: "https://i.ibb.co/6c328D1m/tupa.png",
-        Sume: "https://i.ibb.co/G4RdNKm9/sume.png",
-        Caipora: "https://i.ibb.co/C5RNg4Vq/caipora.png",
-        BOITATA: "https://i.ibb.co/DDjQ65GV/boitata.png",
-        MAPINGUARI: "https://i.ibb.co/tMLK2pcX/mapinguari.png",
-        SACI: "https://i.ibb.co/0psrrg1S/saci-token.png",
-        IARA: "https://i.ibb.co/LDsxbV3X/iara-token.png",
-        Muiraquita: "https://i.ibb.co/JjYQszc0/muiraquita.png",
-        VortexFX: "https://cdn-icons-png.flaticon.com/512/1344/1344933.png",
-        SwordFX: "https://cdn-icons-png.flaticon.com/512/6720/6720973.png",
-        ArrowFX: "https://cdn-icons-png.flaticon.com/512/95/95460.png",
-        MagicFX: "https://cdn-icons-png.flaticon.com/512/1310/1310630.png",
-        BiteFX: "https://cdn-icons-png.flaticon.com/512/3504/3504404.png",
-        RockFX: "https://cdn-icons-png.flaticon.com/512/3223/3223193.png"
+        Tupa: "https://i.ibb.co/6c328D1m/tupa.png", Sume: "https://i.ibb.co/G4RdNKm9/sume.png", Caipora: "https://i.ibb.co/C5RNg4Vq/caipora.png",
+        BOITATA: "https://i.ibb.co/DDjQ65GV/boitata.png", MAPINGUARI: "https://i.ibb.co/tMLK2pcX/mapinguari.png", SACI: "https://i.ibb.co/0psrrg1S/saci-token.png", IARA: "https://i.ibb.co/LDsxbV3X/iara-token.png",
+        Muiraquita: "https://i.ibb.co/JjYQszc0/muiraquita.png", VortexFX: "https://cdn-icons-png.flaticon.com/512/1344/1344933.png", SwordFX: "https://cdn-icons-png.flaticon.com/512/6720/6720973.png", ArrowFX: "https://cdn-icons-png.flaticon.com/512/95/95460.png", MagicFX: "https://cdn-icons-png.flaticon.com/512/1310/1310630.png", BiteFX: "https://cdn-icons-png.flaticon.com/512/3504/3504404.png", RockFX: "https://cdn-icons-png.flaticon.com/512/3223/3223193.png"
     };
 
     let audioUnlocked = false;
     const sfx = {
-        skill1: new Audio("dramatic-synth-echo-43970.mp3"),
-        atkg: new Audio("atkg.mp3"), atkm: new Audio("atkm.mp3"), atka: new Audio("atka.mp3"),
-        click: new Audio("click.mp3"), bgm: new Audio("fundoboss.mp3"),
-        minoa1: new Audio("minoa1.mp3"), minoa2: new Audio("minoa2.mp3"),
-        saci: new Audio("saci.mp3"), saci1: new Audio("saci1.mp3"),
-        iara1: new Audio("iara1.mp3"), iara2: new Audio("iara2.mp3"),
+        skill1: new Audio("dramatic-synth-echo-43970.mp3"), atkg: new Audio("atkg.mp3"), atkm: new Audio("atkm.mp3"), atka: new Audio("atka.mp3"),
+        click: new Audio("click.mp3"), bgm: new Audio("fundoboss.mp3"), minoa1: new Audio("minoa1.mp3"), minoa2: new Audio("minoa2.mp3"),
+        saci: new Audio("saci.mp3"), saci1: new Audio("saci1.mp3"), iara1: new Audio("iara1.mp3"), iara2: new Audio("iara2.mp3"),
         win: new Audio("win.mp3"), gameover: new Audio("gameover.mp3")
     };
-
     sfx.bgm.loop = true; sfx.bgm.volume = 0.3;
 
-    function unlockAudio() {
-        if (!audioUnlocked) {
-            Object.values(sfx).forEach(a => { a.play().then(() => { a.pause(); if(a === sfx.bgm) { a.currentTime = 0; a.play(); } }).catch(()=>{}); });
-            audioUnlocked = true; addLog("Áudio ativado. V5.3");
-        }
-    }
-
+    function unlockAudio() { if (!audioUnlocked) { Object.values(sfx).forEach(a => { a.play().then(() => { a.pause(); if(a === sfx.bgm) { a.currentTime = 0; a.play(); } }).catch(()=>{}); }); audioUnlocked = true; addLog("Áudio ativado. V5.3"); } }
     function playSfx(name) { if (!audioUnlocked || !sfx[name]) return; const sound = sfx[name].cloneNode(); sound.volume = 0.6; sound.play(); }
 
     let CLASS_DB = {}, grid = [], path = [], players = [], amulets = []; 
@@ -229,30 +206,14 @@
         document.getElementById('btnSkill').disabled = !isMyTurn || players[currentPlayerIdx].skillUsed;
     }
 
-    function resetPlayerHP() {
-        const p = players[editingIdx]; p.class = document.getElementById('pClass').value;
-        p.hp = CLASS_DB[p.class].hp; p.maxHp = p.hp;
-        saveAndRefresh(); updateVisuals();
-    }
+    function resetPlayerHP() { const p = players[editingIdx]; p.class = document.getElementById('pClass').value; p.hp = CLASS_DB[p.class].hp; p.maxHp = p.hp; saveAndRefresh(); updateVisuals(); }
 
-    // Função central de geração de Tile (V5.3)
     function createTile(idx) {
-        const c = COLORS[Math.floor(Math.random()*4)];
-        grid[idx] = c;
-        
+        const c = COLORS[Math.floor(Math.random()*4)]; grid[idx] = c;
         const chance = parseFloat(document.getElementById('amulet_chance').value) || 1;
         amulets[idx] = (Math.random() * 100 < chance);
-
-        const tile = document.createElement('div');
-        tile.className = `tile bg-${c}`;
-        tile.onclick = () => handleSelect(idx);
-        
-        if(amulets[idx]) {
-            const img = document.createElement('img');
-            img.src = SPRITES.Muiraquita;
-            img.className = 'amulet-img';
-            tile.appendChild(img);
-        }
+        const tile = document.createElement('div'); tile.className = `tile bg-${c}`; tile.onclick = () => handleSelect(idx);
+        if(amulets[idx]) { const img = document.createElement('img'); img.src = SPRITES.Muiraquita; img.className = 'amulet-img'; tile.appendChild(img); }
         return tile;
     }
 
@@ -260,43 +221,33 @@
         gameActive = true; mode = document.getElementById('gameMode').value;
         document.getElementById('gameOverlay').style.display = 'none';
         if(audioUnlocked) sfx.bgm.play();
-
         const count = mode === "PVP" ? 2 : parseInt(document.getElementById('playerCount').value);
         updateClassBase(); grid = []; path = []; players = []; amulets = [];
-        document.getElementById('log').innerHTML = '<div>VERSÃO 5.3 CARREGADA</div>';
-        
         const gridEl = document.getElementById('grid'); gridEl.innerHTML = '';
-        for(let i=0; i<64; i++) {
-            gridEl.appendChild(createTile(i));
-        }
-
+        for(let i=0; i<64; i++) gridEl.appendChild(createTile(i));
         const tabBar = document.getElementById('tabBar'); tabBar.innerHTML = '';
         for(let i=0; i<count; i++) {
             const btn = document.createElement('button'); btn.innerText = `P${i+1}`;
             btn.onclick = () => switchConfig(i); btn.id = `tab${i}`; tabBar.appendChild(btn);
         }
-
         document.querySelectorAll('.token').forEach(t => t.remove());
         const board = document.getElementById('board');
         for(let i=0; i<count; i++) {
-            players.push({ id: i, x: 2 + i, y: 7, hp: 10, maxHp: 10, class: 'Tupa', element: 'FOGO', name: `P${i+1}`, skillUsed: false, dead: false, bonusAtk: 0 });
-            const token = document.createElement('div');
-            token.id = `tokenP${i}`; token.className = `token p-hue-${i}`;
-            token.innerHTML = `<div class="hp-container"><div id="hpBarP${i}" class="hp-bar"></div></div><img id="imgP${i}" src="${SPRITES.Tupa}">`;
+            // CORREÇÃO: Pega o HP do Tupã do banco de dados (CLASS_DB) e não fixo em 10
+            const initialHP = CLASS_DB['Tupa'].hp;
+            players.push({ id: i, x: 2 + i, y: 7, hp: initialHP, maxHp: initialHP, class: 'Tupa', element: 'FOGO', name: `P${i+1}`, skillUsed: false, dead: false, bonusAtk: 0 });
+            const token = document.createElement('div'); token.id = `tokenP${i}`; token.className = `token p-hue-${i}`;
+            token.innerHTML = `<div class="hp-container"><div id="hpBarP${i}" class=\"hp-bar\"></div></div><img id="imgP${i}" src="${SPRITES.Tupa}">`;
             board.appendChild(token);
         }
-
         if(mode === "BOSS") {
-            boss.type = document.getElementById('bossSelect').value;
-            boss.maxHp = parseInt(document.getElementById('hp_BOSS_cfg').value);
+            boss.type = document.getElementById('bossSelect').value; boss.maxHp = parseInt(document.getElementById('hp_BOSS_cfg').value);
             boss.hp = boss.maxHp; boss.x = 4; boss.y = 0; boss.dead = false;
             document.getElementById('turnBoss').innerText = `${boss.type} BOSS`;
-            const bToken = document.createElement('div');
-            bToken.id = `tokenBoss`; bToken.className = `token`;
+            const bToken = document.createElement('div'); bToken.id = `tokenBoss`; bToken.className = `token`;
             bToken.innerHTML = `<div class="hp-container"><div id="hpBarBoss" class="hp-bar"></div></div><img src="${SPRITES[boss.type]}">`;
             board.appendChild(bToken);
         } else { players[1].y = 0; players[1].x = 4; players[1].hp = CLASS_DB[players[1].class].hp; players[1].maxHp = players[1].hp; }
-
         document.getElementById('pClass').innerHTML = '<option value="Tupa">Tupã</option><option value="Sume">Sumé</option><option value="Caipora">Caipora</option>';
         currentPlayerIdx = 0; switchConfig(0); updateVisuals();
     }
@@ -309,12 +260,9 @@
     function checkAmulet(p, x, y) {
         const idx = y * 8 + x;
         if(amulets[idx]) {
-            amulets[idx] = false;
-            p.bonusAtk += 1;
-            const tile = document.querySelectorAll('.tile')[idx];
-            if(tile) tile.innerHTML = '';
-            addLog(`${p.name} coletou o Muiraquitã! +1 ATK Permanente.`);
-            saveAndRefresh();
+            amulets[idx] = false; p.bonusAtk += 1;
+            const tile = document.querySelectorAll('.tile')[idx]; if(tile) tile.innerHTML = '';
+            addLog(`${p.name} coletou o Muiraquitã! +1 ATK Permanente.`); saveAndRefresh();
         }
     }
 
@@ -329,7 +277,6 @@
         const x = idx % 8, y = Math.floor(idx / 8);
         const occupied = isOccupied(x, y, p.id);
         if(occupied || (x === p.x && y === p.y)) return;
-        
         if(path.length === 0) { if((Math.abs(x-p.x)+Math.abs(y-p.y)) === 1) { path.push(idx); playSfx('click'); } }
         else {
             const lastIdx = path[path.length-1];
@@ -341,7 +288,6 @@
 
     function renderPath() { document.querySelectorAll('.tile').forEach((t, i) => t.classList.toggle('selected', path.includes(i))); }
 
-    // Motor de Reconhecimento Versão 5.2
     function detectShape(pIdxs) {
         if(pIdxs.length !== 4) return null;
         const coords = pIdxs.map(i => ({x: i%8, y: Math.floor(i/8)}));
@@ -354,19 +300,16 @@
         for(let i=1; i<coords.length; i++) vectors.push({ dx: coords[i].x - coords[i-1].x, dy: coords[i].y - coords[i-1].y });
         let turns = 0;
         for(let i=1; i<vectors.length; i++) if (vectors[i].dx !== vectors[i-1].dx || vectors[i].dy !== vectors[i-1].dy) turns++;
-        const sameFirstTwo = (vectors[0].dx === vectors[1].dx && vectors[0].dy === vectors[1].dy);
-        const sameLastTwo = (vectors[1].dx === vectors[2].dx && vectors[1].dy === vectors[2].dy);
-        if ((sameFirstTwo || sameLastTwo) && turns === 1) return "L";
+        if ((vectors[0].dx === vectors[1].dx && vectors[0].dy === vectors[1].dy || vectors[1].dx === vectors[2].dx && vectors[1].dy === vectors[2].dy) && turns === 1) return "L";
         if (turns === 2 && vectors[0].dx === vectors[2].dx && vectors[0].dy === vectors[2].dy) return "ZIGZAG";
         return null;
     }
 
     async function executeAction() {
-        if(!gameActive) return;
+        if(!gameActive || path.length === 0) return;
         const active = players[currentPlayerIdx];
         const target = (mode === "BOSS") ? boss : players.find(p => p.id !== active.id && !p.dead);
         const info = CLASS_DB[active.class], usedPath = [...path];
-        
         let skillAtkBonus = 0;
         const shape = detectShape(usedPath);
         if(shape) {
@@ -376,193 +319,71 @@
             if(shape === "ZIGZAG") skillAtkBonus = 3;
             if(shape === "QUADRADO") { active.skillUsed = false; addLog("Ultimate Recarregada!"); }
         }
-
-        let bonusElem = (usedPath.length > 0 && grid[usedPath[0]] === active.element) ? 1 : 0;
-        let totalAtk = info.atk + active.bonusAtk + bonusElem + skillAtkBonus;
-
+        let totalAtk = info.atk + active.bonusAtk + (usedPath.length > 0 && grid[usedPath[0]] === active.element ? 1 : 0) + skillAtkBonus;
         if(active.class === "Tupa") {
             const dealGueDmg = () => { if(!target.dead && (Math.abs(active.x-target.x)+Math.abs(active.y-target.y)) <= 1) { playSfx('atkg'); applyDmg(target, totalAtk); spawnSwordEffect(target.x, target.y); } };
             dealGueDmg();
-            for(const idx of usedPath) { 
-                active.x = idx%8; active.y = Math.floor(idx/8); 
-                checkAmulet(active, active.x, active.y);
-                updateVisuals(); 
-                await new Promise(r => setTimeout(r, 120)); 
-                dealGueDmg(); 
-            }
+            for(const idx of usedPath) { active.x = idx%8; active.y = Math.floor(idx/8); checkAmulet(active, active.x, active.y); updateVisuals(); await new Promise(r => setTimeout(r, 120)); dealGueDmg(); }
         } else {
-            for(const idx of usedPath) { 
-                active.x = idx%8; active.y = Math.floor(idx/8); 
-                checkAmulet(active, active.x, active.y);
-                updateVisuals(); 
-                await new Promise(r => setTimeout(r, 100)); 
-            }
+            for(const idx of usedPath) { active.x = idx%8; active.y = Math.floor(idx/8); checkAmulet(active, active.x, active.y); updateVisuals(); await new Promise(r => setTimeout(r, 100)); }
             if(usedPath.length >= info.min && !target.dead) {
-                let extra = usedPath.length - info.min;
-                playSfx(active.class === 'Sume' ? 'atkm' : 'atka');
-                await spawnProjectile(active, target, active.class === "Caipora" ? 'Arrow' : 'Magic');
+                let extra = usedPath.length - info.min; playSfx(active.class === 'Sume' ? 'atkm' : 'atka'); await spawnProjectile(active, target, active.class === "Caipora" ? 'Arrow' : 'Magic');
                 applyDmg(target, totalAtk + (active.class === "Sume" ? extra : Math.floor(extra/2)));
             }
         }
-
-        const gridEl = document.getElementById('grid');
-        usedPath.forEach(idx => { 
-            const newTile = createTile(idx);
-            gridEl.replaceChild(newTile, gridEl.childNodes[idx]);
-        });
+        const gridEl = document.getElementById('grid'); usedPath.forEach(idx => gridEl.replaceChild(createTile(idx), gridEl.childNodes[idx]));
         path = []; renderPath();
-        
         if(gameActive) {
             if(mode === "BOSS") {
                 let next = currentPlayerIdx + 1; while(next < players.length && players[next].dead) next++;
+                // CORREÇÃO: Lógica restaurada para passar para o Boss quando todos os jogadores terminarem
                 if(next < players.length) { currentPlayerIdx = next; switchConfig(next); }
-                else { currentPlayerIdx = 0; document.getElementById('turnP_Active').classList.remove('active-turn'); setTimeout(bossAI, 600); }
-            } else { let next = (currentPlayerIdx === 0) ? 1 : 0; currentPlayerIdx = next; switchConfig(next); }
+                else { currentPlayerIdx = -1; document.getElementById('turnP_Active').classList.remove('active-turn'); setTimeout(bossAI, 600); }
+            } else { currentPlayerIdx = (currentPlayerIdx === 0) ? 1 : 0; switchConfig(currentPlayerIdx); }
         }
     }
 
-    function showEndGame(msg, isWin) {
-        gameActive = false; sfx.bgm.pause();
-        const overlay = document.getElementById('gameOverlay');
-        overlay.style.display = 'flex'; document.getElementById('overlayTitle').innerText = msg;
-        document.getElementById('overlayTitle').className = isWin ? "win-text" : "lose-text";
-        playSfx(isWin ? 'win' : 'gameover');
-    }
-
+    function showEndGame(msg, isWin) { gameActive = false; sfx.bgm.pause(); const o = document.getElementById('gameOverlay'); o.style.display = 'flex'; document.getElementById('overlayTitle').innerText = msg; document.getElementById('overlayTitle').className = isWin ? "win-text" : "lose-text"; playSfx(isWin ? 'win' : 'gameover'); }
     function applyDmg(t, amt) {
-        if(t.dead) return;
-        t.hp -= amt; showDmgEffect(t.x, t.y, amt);
-        if(t.hp <= 0) { 
-            t.hp = 0; t.dead = true;
-            if(mode === "BOSS") {
-                if(['BOITATA','MAPINGUARI','SACI','IARA'].includes(t.type) || t.id === undefined) { showEndGame("VITÓRIA!", true); }
-                else if(players.every(p => p.dead)) { showEndGame("GAME OVER", false); }
-            } else { showEndGame(`VITÓRIA DO ${players.find(p => !p.dead).name}`, true); }
-            if(t.id !== undefined) document.getElementById(`tokenP${t.id}`).style.display = 'none';
-        }
+        if(t.dead) return; t.hp -= amt; showDmgEffect(t.x, t.y, amt);
+        if(t.hp <= 0) { t.hp = 0; t.dead = true; if(mode === "BOSS") { if(t === boss) showEndGame("VITÓRIA!", true); else if(players.every(p => p.dead)) showEndGame("GAME OVER", false); } else showEndGame(`VITÓRIA DO ${players.find(p => !p.dead).name}`, true); if(t.id !== undefined) document.getElementById(`tokenP${t.id}`).style.display = 'none'; }
         updateVisuals();
     }
 
     async function bossAI() {
-        if(!gameActive) return;
-        document.getElementById('turnBoss').classList.add('active-turn');
+        if(!gameActive) return; document.getElementById('turnBoss').classList.add('active-turn');
         const bossAtk = parseInt(document.getElementById('atk_BOSS_cfg').value);
-        
         for(let i=0; i<4; i++) {
             let mvs = [{x:boss.x+1,y:boss.y},{x:boss.x-1,y:boss.y},{x:boss.x,y:boss.y+1},{x:boss.x,y:boss.y-1}].filter(m => m.x>=0 && m.x<8 && m.y>=0 && m.y<8 && !isOccupied(m.x, m.y, -1));
             if(mvs.length > 0) { let m = mvs[Math.floor(Math.random()*mvs.length)]; boss.x = m.x; boss.y = m.y; updateVisuals(); await new Promise(r => setTimeout(r, 200)); }
         }
-
         if(boss.type === "BOITATA") {
-            const r = Math.random();
-            if(r < 0.6) {
-                addLog("COLUNA DE FOGO!"); playSfx('skill1');
-                const cols = [boss.x-1, boss.x, boss.x+1];
-                cols.forEach(c => { if(c>=0 && c<=7) triggerFireColumn(c); });
-                await new Promise(r => setTimeout(r, 600));
-                players.forEach(p => { if(!p.dead && cols.includes(p.x)) applyDmg(p, bossAtk); });
-            } else {
-                addLog("LABAREDAS!"); playSfx('skill1');
-                let count = 0; let attempts = 0;
-                while(count < 5 && attempts < 50) {
-                    let idx = Math.floor(Math.random()*64);
-                    if(grid[idx] === 'FOGO') {
-                        triggerFlare(idx%8, Math.floor(idx/8));
-                        players.forEach(p => { if(!p.dead && p.x === idx%8 && p.y === Math.floor(idx/8)) applyDmg(p, bossAtk); });
-                        count++;
-                    }
-                    attempts++;
-                }
-            }
-        } 
-        else if(boss.type === "MAPINGUARI") {
-            const r = Math.random();
-            if(r < 0.5) {
-                addLog("MORDIDA GIGANTE!"); playSfx('minoa1');
-                triggerBite(boss.x, boss.y);
-                await new Promise(r => setTimeout(r, 600));
-                players.forEach(p => { if(!p.dead && Math.abs(p.x-boss.x)<=2 && Math.abs(p.y-boss.y)<=2) applyDmg(p, bossAtk); });
-            } else {
-                addLog("LANÇAMENTO DE ROCHAS!"); playSfx('minoa2');
-                triggerRocks(boss.x, boss.y);
-                await new Promise(r => setTimeout(r, 600));
-                const rows = [boss.y-1, boss.y, boss.y+1];
-                players.forEach(p => { if(!p.dead && rows.includes(p.y)) applyDmg(p, bossAtk); });
-            }
+            if(Math.random() < 0.6) { addLog("COLUNA DE FOGO!"); playSfx('skill1'); const cs = [boss.x-1, boss.x, boss.x+1]; cs.forEach(c => { if(c>=0 && c<=7) triggerFireColumn(c); }); await new Promise(r => setTimeout(r, 600)); players.forEach(p => { if(!p.dead && cs.includes(p.x)) applyDmg(p, bossAtk); }); }
+            else { addLog("LABAREDAS!"); playSfx('skill1'); let c=0, a=0; while(c<5 && a<50) { let i = Math.floor(Math.random()*64); if(grid[i] === 'FOGO') { triggerFlare(i%8, Math.floor(i/8)); players.forEach(p => { if(!p.dead && p.x === i%8 && p.y === Math.floor(i/8)) applyDmg(p, bossAtk); }); c++; } a++; } }
+        } else if(boss.type === "MAPINGUARI") {
+            if(Math.random() < 0.5) { addLog("MORDIDA GIGANTE!"); playSfx('minoa1'); triggerBite(boss.x, boss.y); await new Promise(r => setTimeout(r, 600)); players.forEach(p => { if(!p.dead && Math.abs(p.x-boss.x)<=2 && Math.abs(p.y-boss.y)<=2) applyDmg(p, bossAtk); }); }
+            else { addLog("LANÇAMENTO DE ROCHAS!"); playSfx('minoa2'); triggerRocks(boss.x, boss.y); await new Promise(r => setTimeout(r, 600)); const rs = [boss.y-1, boss.y, boss.y+1]; players.forEach(p => { if(!p.dead && rs.includes(p.y)) applyDmg(p, bossAtk); }); }
+        } else if(boss.type === "SACI") {
+            if(Math.random() < 0.5) { addLog("REDEMOINHO!"); playSfx('saci1'); grid.forEach((c, i) => { if(c === 'AR') { triggerVortex(i%8, Math.floor(i/8)); players.forEach(p => { if(!p.dead && p.x === i%8 && p.y === Math.floor(i/8)) applyDmg(p, bossAtk); }); } }); }
+            else { addLog("TUFÃO DIAGONAL!"); playSfx('saci'); [{dx:1,dy:1},{dx:1,dy:-1},{dx:-1,dy:1},{dx:-1,dy:-1}].forEach(d => { for(let s=1; s<8; s++) { let nx=boss.x+d.dx*s, ny=boss.y+d.dy*s; if(nx>=0 && nx<8 && ny>=0 && ny<8) { triggerVortex(nx, ny, s*100); players.forEach(p => { if(!p.dead && p.x===nx && p.y===ny) setTimeout(()=>applyDmg(p, bossAtk), s*100); }); } } }); }
+        } else if(boss.type === "IARA") {
+            if(Math.random() < 0.5) { addLog("POROROCA!"); playSfx('iara1'); triggerTsunami(); await new Promise(r => setTimeout(r, 500)); players.forEach(p => { if(!p.dead) { applyDmg(p, 1); let dx = p.x < 4 ? -1 : 1, dy = p.y < 4 ? -1 : 1, nx = p.x, ny = p.y; if(Math.abs(p.x-3.5) > Math.abs(p.y-3.5)) { if(p.x+dx>=0 && p.x+dx<8) nx += dx; } else { if(p.y+dy>=0 && p.y+dy<8) ny += dy; } if (!isOccupied(nx, ny, p.id)) { p.x = nx; p.y = ny; } } }); updateVisuals(); }
+            else { addLog("JATO DE ÁGUA!"); playSfx('iara2'); triggerWaterJet(boss.x, boss.y); await new Promise(r => setTimeout(r, 600)); players.forEach(p => { if(!p.dead && (p.x === boss.x || p.y === boss.y)) applyDmg(p, bossAtk); }); }
         }
-        else if(boss.type === "SACI") {
-            const r = Math.random();
-            if(r < 0.5) {
-                addLog("REDEMOINHO!"); playSfx('saci1');
-                grid.forEach((c, idx) => { if(c === 'AR') { triggerVortex(idx%8, Math.floor(idx/8)); players.forEach(p => { if(!p.dead && p.x === idx%8 && p.y === Math.floor(idx/8)) applyDmg(p, bossAtk); }); } });
-            } else {
-                addLog("TUFÃO DIAGONAL!"); playSfx('saci');
-                [{dx:1,dy:1},{dx:1,dy:-1},{dx:-1,dy:1},{dx:-1,dy:-1}].forEach(d => { for(let s=1; s<8; s++) { let nx=boss.x+d.dx*s, ny=boss.y+d.dy*s; if(nx>=0 && nx<8 && ny>=0 && ny<8) { triggerVortex(nx, ny, s*100); players.forEach(p => { if(!p.dead && p.x===nx && p.y===ny) setTimeout(()=>applyDmg(p, bossAtk), s*100); }); } } });
-            }
-        }
-        else if(boss.type === "IARA") {
-            const r = Math.random();
-            if(r < 0.5) {
-                addLog("POROROCA!"); playSfx('iara1'); triggerTsunami();
-                await new Promise(r => setTimeout(r, 500));
-                players.forEach(p => { 
-                    if(!p.dead) { 
-                        applyDmg(p, 1); 
-                        let dx = p.x < 4 ? -1 : 1, dy = p.y < 4 ? -1 : 1;
-                        let nx = p.x, ny = p.y;
-                        if(Math.abs(p.x-3.5) > Math.abs(p.y-3.5)) { if(p.x+dx>=0 && p.x+dx<8) nx += dx; } 
-                        else { if(p.y+dy>=0 && p.y+dy<8) ny += dy; }
-                        if (!isOccupied(nx, ny, p.id)) { p.x = nx; p.y = ny; }
-                    } 
-                });
-                updateVisuals();
-            } else {
-                addLog("JATO DE ÁGUA!"); playSfx('iara2');
-                triggerWaterJet(boss.x, boss.y);
-                await new Promise(r => setTimeout(r, 600));
-                players.forEach(p => { if(!p.dead && (p.x === boss.x || p.y === boss.y)) applyDmg(p, bossAtk); });
-            }
-        }
-
-        await new Promise(r => setTimeout(r, 600));
-        document.getElementById('turnBoss').classList.remove('active-turn');
-        currentPlayerIdx = 0; while(players[currentPlayerIdx] && players[currentPlayerIdx].dead) currentPlayerIdx++;
-        if(players[currentPlayerIdx]) switchConfig(currentPlayerIdx);
+        await new Promise(r => setTimeout(r, 600)); document.getElementById('turnBoss').classList.remove('active-turn');
+        currentPlayerIdx = 0; while(players[currentPlayerIdx] && players[currentPlayerIdx].dead) currentPlayerIdx++; if(players[currentPlayerIdx]) switchConfig(currentPlayerIdx);
     }
 
-    function triggerFireColumn(col) { const f = document.createElement('div'); f.className = 'fire-column'; f.style.left = (col * getStep() + 8) + 'px'; document.getElementById('board').appendChild(f); setTimeout(() => f.remove(), 1200); }
+    function triggerFireColumn(c) { const f = document.createElement('div'); f.className = 'fire-column'; f.style.left = (c * getStep() + 8) + 'px'; document.getElementById('board').appendChild(f); setTimeout(() => f.remove(), 1200); }
     function triggerFlare(x, y) { const f = document.createElement('div'); f.className = 'flare-fx'; const s = getStep(); f.style.left = (x*s+8)+'px'; f.style.top = (y*s+8)+'px'; document.getElementById('board').appendChild(f); setTimeout(() => f.remove(), 600); }
-    function triggerBite(x, y) { const b = document.createElement('img'); b.src = SPRITES.BiteFX; b.className = 'bite-fx'; const s = getStep(); b.style.width = (s*4)+'px'; b.style.height = (s*4)+'px'; b.style.left = (x*s - s*1.5 + 8)+'px'; b.style.top = (y*s - s*1.5 + 8)+'px'; b.style.animation = 'biteAnim 0.7s forwards'; document.getElementById('board').appendChild(b); setTimeout(() => b.remove(), 700); }
-    function triggerRocks(x, y) { const s = getStep(); ['L', 'R'].forEach(dir => { const r = document.createElement('img'); r.src = SPRITES.RockFX; r.className = 'rock-projectile'; r.style.width = (s*2.5)+'px'; r.style.left = (x*s - s*0.5)+'px'; r.style.top = (y*s - s*0.5)+'px'; document.getElementById('board').appendChild(r); setTimeout(() => { r.style.left = (dir === 'L' ? -400 : 800) + 'px'; r.style.transform = 'rotate(720deg)'; r.style.opacity = '0'; }, 50); setTimeout(() => r.remove(), 1000); }); }
+    function triggerBite(x, y) { const b = document.createElement('img'); b.src = SPRITES.BiteFX; b.className = 'bite-fx'; const s = getStep(); b.style.width = (s*4)+'px'; b.style.height = (s*4)+'px'; b.style.left = (x*s-s*1.5+8)+'px'; b.style.top = (y*s-s*1.5+8)+'px'; b.style.animation = 'biteAnim 0.7s forwards'; document.getElementById('board').appendChild(b); setTimeout(() => b.remove(), 700); }
+    function triggerRocks(x, y) { const s = getStep(); ['L', 'R'].forEach(d => { const r = document.createElement('img'); r.src = SPRITES.RockFX; r.className = 'rock-projectile'; r.style.width = (s*2.5)+'px'; r.style.left = (x*s-s*0.5)+'px'; r.style.top = (y*s-s*0.5)+'px'; document.getElementById('board').appendChild(r); setTimeout(() => { r.style.left = (d === 'L' ? -400 : 800) + 'px'; r.style.transform = 'rotate(720deg)'; r.style.opacity = '0'; }, 50); setTimeout(() => r.remove(), 1000); }); }
     function triggerTsunami() { const t = document.createElement('div'); t.className = 'tsunami-fx'; document.getElementById('board').appendChild(t); setTimeout(() => t.remove(), 1200); }
     function triggerWaterJet(bx, by) { const s = getStep(); const h = document.createElement('div'); h.className = 'water-jet-fx'; h.style.width = '100%'; h.style.height = s + 'px'; h.style.left = '0'; h.style.top = (by * s + 8) + 'px'; document.getElementById('board').appendChild(h); const v = document.createElement('div'); v.className = 'water-jet-fx'; v.style.width = s + 'px'; v.style.height = '100%'; v.style.top = '0'; v.style.left = (bx * s + 8) + 'px'; v.style.background = 'linear-gradient(0deg, transparent, #fff, #3498db, #fff, transparent)'; document.getElementById('board').appendChild(v); setTimeout(() => { h.remove(); v.remove(); }, 600); }
     function triggerVortex(x, y, d = 0) { setTimeout(() => { const v = document.createElement('img'); v.src = SPRITES.VortexFX; v.className = 'vortex-fx'; const s = getStep(); v.style.width = s + 'px'; v.style.height = s + 'px'; v.style.left = (x * s + 8) + 'px'; v.style.top = (y * s + 8) + 'px'; document.getElementById('board').appendChild(v); setTimeout(() => { v.style.opacity = '0'; v.style.transform = 'scale(0.5)'; }, 500); setTimeout(() => v.remove(), 800); }, d); }
 
     function getStep() { return parseInt(getComputedStyle(document.documentElement).getPropertyValue('--step')); }
-
-    function updateVisuals() {
-        const s = getStep();
-        players.forEach(p => { 
-            const t = document.getElementById(`tokenP${p.id}`); 
-            if(t && !p.dead) { 
-                t.style.left = (p.x*s+8)+'px'; 
-                t.style.top = (p.y*s+8)+'px'; 
-                const hpBar = document.getElementById(`hpBarP${p.id}`);
-                if(hpBar) hpBar.style.width = (p.hp/p.maxHp)*100+'%'; 
-            } 
-        });
-        if(mode === "BOSS") { 
-            const bt = document.getElementById('tokenBoss'); 
-            if(bt) { 
-                bt.style.left = (boss.x*s+8)+'px'; 
-                bt.style.top = (boss.y*s+8)+'px'; 
-                const bHpBar = document.getElementById('hpBarBoss');
-                if(bHpBar) bHpBar.style.width = (boss.hp/boss.maxHp)*100+'%'; 
-            } 
-            document.getElementById('bossStatsDisplay').innerHTML = `${boss.type}: <b>${boss.hp}</b> / ${boss.maxHp}`; 
-        }
-    }
-
+    function updateVisuals() { const s = getStep(); players.forEach(p => { const t = document.getElementById(`tokenP${p.id}`); if(t && !p.dead) { t.style.left = (p.x*s+8)+'px'; t.style.top = (p.y*s+8)+'px'; const h = document.getElementById(`hpBarP${p.id}`); if(h) h.style.width = (p.hp/p.maxHp)*100+'%'; } }); if(mode === "BOSS") { const bt = document.getElementById('tokenBoss'); if(bt) { bt.style.left = (boss.x*s+8)+'px'; bt.style.top = (boss.y*s+8)+'px'; const bh = document.getElementById('hpBarBoss'); if(bh) bh.style.width = (boss.hp/boss.maxHp)*100+'%'; } document.getElementById('bossStatsDisplay').innerHTML = `${boss.type}: <b>${boss.hp}</b> / ${boss.maxHp}`; } }
     function activateSkill() { if (!gameActive || players[currentPlayerIdx].skillUsed) return; skillActive = true; document.querySelectorAll('.tile').forEach(t => t.classList.add('skill-mode')); }
     function showDmgEffect(x,y,a){ const s=getStep(), f=document.createElement('div'); f.className='dmg-float'; f.innerText=`-${a}`; f.style.left=(x*s+20)+'px'; f.style.top=(y*s)+'px'; document.getElementById('board').appendChild(f); setTimeout(()=>f.remove(), 1200); }
     function showHealEffect(x,y,a){ const s=getStep(), f=document.createElement('div'); f.className='heal-float'; f.innerText=`+${a}`; f.style.left=(x*s+20)+'px'; f.style.top=(y*s)+'px'; document.getElementById('board').appendChild(f); setTimeout(()=>f.remove(), 1200); }
