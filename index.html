@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <title>Entidades: Confronto de Lendas - V5.3</title>
+    <title>Entidades: Confronto de Lendas - V5.3 Bravely Final</title>
     <style>
         :root { --tile-size: 55px; --gap: 4px; --step: 59px; }
         
@@ -32,8 +32,11 @@
         .grid { display: grid; grid-template-columns: repeat(8, var(--tile-size)); gap: var(--gap); position: relative; z-index: 2; }
         .tile { width: var(--tile-size); height: var(--tile-size); cursor: pointer; border-radius: 4px; transition: background 0.2s; position: relative; display: flex; align-items: center; justify-content: center; }
         .tile.selected { border: 2px solid white; transform: scale(0.85); box-shadow: inset 0 0 10px #fff; z-index: 5; }
+        .tile.bravely-ready { border: 3px solid gold !important; animation: goldPulse 0.5s infinite alternate; z-index: 6; }
         .tile.skill-mode { animation: pulseSkill 1s infinite; border: 2px solid gold; z-index: 20; }
         
+        @keyframes goldPulse { from { box-shadow: 0 0 5px gold; } to { box-shadow: 0 0 20px gold; } }
+
         .amulet-img { width: 80%; height: 80%; object-fit: contain; pointer-events: none; position: absolute; filter: drop-shadow(0 0 3px black); }
 
         .bg-FOGO { background: linear-gradient(135deg, #e74c3c, #c0392b); } 
@@ -56,13 +59,20 @@
         
         .tsunami-fx { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, rgba(0,120,255,0.9) 40%, rgba(0,0,50,0.5) 100%); z-index: 180; pointer-events: none; animation: tsunamiBlast 1.2s forwards; border-radius: 50%; }
         @keyframes tsunamiBlast { 0% { transform: scale(0); opacity: 1; } 100% { transform: scale(3); opacity: 0; } }
+        
         .water-jet-fx { position: absolute; z-index: 195; pointer-events: none; background: linear-gradient(90deg, transparent, #fff, #3498db, #fff, transparent); box-shadow: 0 0 25px #3498db; animation: jetFlash 0.6s ease-out forwards; opacity: 0; }
         @keyframes jetFlash { 0% { opacity: 0; transform: scaleY(0.1); } 50% { opacity: 1; transform: scaleY(1); } 100% { opacity: 0; transform: scaleY(0.5); } }
+        
         .fire-column { position: absolute; top: 0; width: var(--tile-size); height: 100%; background: linear-gradient(to top, rgba(255, 0, 0, 0.9) 0%, rgba(255, 69, 0, 1) 50%, rgba(255, 255, 0, 0.7) 100%); z-index: 200; pointer-events: none; animation: fireFlashLento 1.2s ease-in-out forwards; filter: drop-shadow(0 0 15px #ff4500); }
-        @keyframes fireFlashLento { 0% { opacity: 0; transform: scaleX(0); } 30% { opacity: 1; transform: scaleX(1.2); } 100% { opacity: 0; transform: scaleX(0.8); } }
+        .fire-row { position: absolute; left: 0; height: var(--tile-size); width: 100%; background: linear-gradient(to right, rgba(255, 0, 0, 0.9) 0%, rgba(255, 69, 0, 1) 50%, rgba(255, 255, 0, 0.7) 100%); z-index: 200; pointer-events: none; animation: fireFlashLento 1.2s ease-in-out forwards; filter: drop-shadow(0 0 15px #ff4500); }
+        @keyframes fireFlashLento { 0% { opacity: 0; transform: scale(0); } 30% { opacity: 1; transform: scale(1.1); } 100% { opacity: 0; transform: scale(1); } }
+        
         .bite-fx { position: absolute; z-index: 210; pointer-events: none; transform: scale(0); filter: drop-shadow(0 0 15px #ff0000); }
         @keyframes biteAnim { 0% { transform: scale(0.2); opacity: 0; } 30% { transform: scale(3.5); opacity: 1; } 100% { transform: scale(2.5); opacity: 0; } }
-        .rock-projectile { position: absolute; z-index: 200; pointer-events: none; filter: drop-shadow(4px 4px 5px #000); transition: all 1s cubic-bezier(0.25, 0.1, 0.25, 1); }
+        
+        /* ROCHA - VELOCIDADE AUMENTADA */
+        .rock-projectile { position: absolute; z-index: 200; pointer-events: none; filter: drop-shadow(4px 4px 5px #000); transition: all 0.4s cubic-bezier(0.25, 0.1, 0.25, 1); }
+        
         .flare-fx { position: absolute; width: var(--tile-size); height: var(--tile-size); background: radial-gradient(circle, #ff0, #f00, transparent); z-index: 180; pointer-events: none; animation: flareUp 0.6s forwards; border-radius: 50%; }
         @keyframes flareUp { 0% { transform: scale(0); opacity: 1; } 100% { transform: scale(2); opacity: 0; } }
         .vortex-fx { position: absolute; z-index: 200; pointer-events: none; animation: spin 0.3s linear infinite; }
@@ -100,14 +110,20 @@
         .win-text { color: #f1c40f; text-shadow: 0 0 30px gold !important; }
         .lose-text { color: #c0392b; text-shadow: 0 0 30px red !important; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* POPUP BRAVELY */
+        #bravelyPop { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0); color: gold; font-size: 60px; font-weight: 900; text-shadow: 0 0 20px #000, 0 0 40px orange; z-index: 2000; pointer-events: none; white-space: nowrap; font-style: italic; }
+        .pop-anim { animation: popBravely 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        @keyframes popBravely { 0% { transform: translate(-50%, -50%) scale(0); opacity: 0; } 30% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; } 70% { transform: translate(-50%, -50%) scale(1); opacity: 1; } 100% { transform: translate(-50%, -150%) scale(0.8); opacity: 0; } }
     </style>
 </head>
 <body onclick="unlockAudio()">
-    <div class="version-tag">VERSÃO 5.3 (CORRIGIDA)</div>
+    <div class="version-tag">VERSÃO 5.3 (BRAVELY CHAIN FINAL)</div>
     <div id="gameOverlay">
         <h1 id="overlayTitle">VITORIA</h1>
         <button onclick="initGame()" style="width: 200px; margin-top: 20px; background: #27ae60; color: white; font-size: 20px;">JOGAR NOVAMENTE</button>
     </div>
+    <div id="bravelyPop">BRAVELY CHAIN!</div>
 
     <div class="skills-guide">
         <div class="skill-item"><b style="color:#f1c40f">LINHA (4)</b><small>+2 ATK / +1 HP</small></div>
@@ -121,7 +137,7 @@
             <tr><td>Tupã: HP <input type="number" id="hp_Tupa" value="15"> ATK <input type="number" id="atk_Tupa" value="2"></td></tr>
             <tr><td>Sumé: HP <input type="number" id="hp_Sume" value="8"> ATK <input type="number" id="atk_Sume" value="2"></td></tr>
             <tr><td>Caipora: HP <input type="number" id="hp_Caipora" value="10"> ATK <input type="number" id="atk_Caipora" value="2"></td></tr>
-            <tr><td>Muiraquitã: <input type="number" id="amulet_chance" value="1" min="0" max="100">% chance</td></tr>
+            <tr><td>Muiraquitã: <input type="number" id="amulet_chance" value="1">% | Bravely: <input type="number" id="bravely_tiles" value="8" style="width:30px"> tiles</td></tr>
             <tr style="border-top: 1px solid #555"><td>BOSS: HP <input type="number" id="hp_BOSS_cfg" value="60"> ATK <input type="number" id="atk_BOSS_cfg" value="4"></td></tr>
         </table>
         <div>MODO: <select id="gameMode" onchange="initGame()"><option value="BOSS">BOSS (CO-OP)</option><option value="PVP">PVP (1vs1)</option></select></div>
@@ -170,7 +186,7 @@
     };
     sfx.bgm.loop = true; sfx.bgm.volume = 0.3;
 
-    function unlockAudio() { if (!audioUnlocked) { Object.values(sfx).forEach(a => { a.play().then(() => { a.pause(); if(a === sfx.bgm) { a.currentTime = 0; a.play(); } }).catch(()=>{}); }); audioUnlocked = true; addLog("Áudio ativado. V5.3"); } }
+    function unlockAudio() { if (!audioUnlocked) { Object.values(sfx).forEach(a => { a.play().then(() => { a.pause(); if(a === sfx.bgm) { a.currentTime = 0; a.play(); } }).catch(()=>{}); }); audioUnlocked = true; addLog("Áudio ativado."); } }
     function playSfx(name) { if (!audioUnlocked || !sfx[name]) return; const sound = sfx[name].cloneNode(); sound.volume = 0.6; sound.play(); }
 
     let CLASS_DB = {}, grid = [], path = [], players = [], amulets = []; 
@@ -233,7 +249,6 @@
         document.querySelectorAll('.token').forEach(t => t.remove());
         const board = document.getElementById('board');
         for(let i=0; i<count; i++) {
-            // CORREÇÃO: Pega o HP do Tupã do banco de dados (CLASS_DB) e não fixo em 10
             const initialHP = CLASS_DB['Tupa'].hp;
             players.push({ id: i, x: 2 + i, y: 7, hp: initialHP, maxHp: initialHP, class: 'Tupa', element: 'FOGO', name: `P${i+1}`, skillUsed: false, dead: false, bonusAtk: 0 });
             const token = document.createElement('div'); token.id = `tokenP${i}`; token.className = `token p-hue-${i}`;
@@ -286,7 +301,14 @@
         renderPath();
     }
 
-    function renderPath() { document.querySelectorAll('.tile').forEach((t, i) => t.classList.toggle('selected', path.includes(i))); }
+    function renderPath() {
+        const threshold = parseInt(document.getElementById('bravely_tiles').value) || 8;
+        const isBravely = path.length >= threshold;
+        document.querySelectorAll('.tile').forEach((t, i) => {
+            t.classList.toggle('selected', path.includes(i));
+            t.classList.toggle('bravely-ready', isBravely && path.includes(i));
+        });
+    }
 
     function detectShape(pIdxs) {
         if(pIdxs.length !== 4) return null;
@@ -305,11 +327,20 @@
         return null;
     }
 
+    async function triggerBravelyPop() {
+        const pop = document.getElementById('bravelyPop');
+        pop.classList.remove('pop-anim'); void pop.offsetWidth;
+        pop.classList.add('pop-anim');
+    }
+
     async function executeAction() {
         if(!gameActive || path.length === 0) return;
         const active = players[currentPlayerIdx];
         const target = (mode === "BOSS") ? boss : players.find(p => p.id !== active.id && !p.dead);
         const info = CLASS_DB[active.class], usedPath = [...path];
+        const threshold = parseInt(document.getElementById('bravely_tiles').value) || 8;
+        const isBravely = usedPath.length >= threshold;
+
         let skillAtkBonus = 0;
         const shape = detectShape(usedPath);
         if(shape) {
@@ -319,7 +350,9 @@
             if(shape === "ZIGZAG") skillAtkBonus = 3;
             if(shape === "QUADRADO") { active.skillUsed = false; addLog("Ultimate Recarregada!"); }
         }
+
         let totalAtk = info.atk + active.bonusAtk + (usedPath.length > 0 && grid[usedPath[0]] === active.element ? 1 : 0) + skillAtkBonus;
+
         if(active.class === "Tupa") {
             const dealGueDmg = () => { if(!target.dead && (Math.abs(active.x-target.x)+Math.abs(active.y-target.y)) <= 1) { playSfx('atkg'); applyDmg(target, totalAtk); spawnSwordEffect(target.x, target.y); } };
             dealGueDmg();
@@ -331,15 +364,113 @@
                 applyDmg(target, totalAtk + (active.class === "Sume" ? extra : Math.floor(extra/2)));
             }
         }
-        const gridEl = document.getElementById('grid'); usedPath.forEach(idx => gridEl.replaceChild(createTile(idx), gridEl.childNodes[idx]));
+
+        // --- BRAVELY CHAIN LOGIC ---
+        if(isBravely) {
+            await triggerBravelyPop();
+            let affectedIndices = [];
+            if(active.class === "Tupa") {
+                triggerElementalFX(active.element, active.x, 'COL', active.x, active.y);
+                for(let row=0; row<8; row++) affectedIndices.push(row * 8 + active.x);
+                if(!target.dead && target.x === active.x) applyDmg(target, totalAtk);
+            } 
+            else if(active.class === "Sume") {
+                triggerElementalFX(active.element, active.y, 'ROW', active.x, active.y);
+                for(let col=0; col<8; col++) affectedIndices.push(active.y * 8 + col);
+                if(!target.dead && target.y === active.y) applyDmg(target, totalAtk);
+                players.forEach(p => { if(!p.dead && p.y === active.y) { p.hp = Math.min(p.maxHp, p.hp+2); showHealEffect(p.x, p.y, 2); } });
+            }
+            else if(active.class === "Caipora") {
+                addLog("Chuva de Flechas!");
+                playSfx('atka');
+                for(let dy=-1; dy<=1; dy++) {
+                    for(let dx=-1; dx<=1; dx++) {
+                        let nx = target.x + dx, ny = target.y + dy;
+                        if(nx>=0 && nx<8 && ny>=0 && ny<8) {
+                            affectedIndices.push(ny * 8 + nx);
+                            spawnProjectile({x:nx, y:-1}, {x:nx, y:ny}, 'Arrow');
+                        }
+                    }
+                }
+                await new Promise(r => setTimeout(r, 400));
+                if(!target.dead) applyDmg(target, totalAtk);
+            }
+            affectedIndices.forEach(idx => {
+                grid[idx] = active.element;
+                const tile = document.querySelectorAll('.tile')[idx];
+                tile.className = `tile bg-${active.element}`;
+                tile.innerHTML = amulets[idx] ? `<img src="${SPRITES.Muiraquita}" class="amulet-img">` : '';
+            });
+        }
+
+        const gridEl = document.getElementById('grid');
+        usedPath.forEach(idx => {
+            if(!isBravely || (active.class === "Tupa" && idx % 8 !== active.x) || (active.class === "Sume" && Math.floor(idx/8) !== active.y) || active.class === "Caipora") {
+                 gridEl.replaceChild(createTile(idx), gridEl.childNodes[idx]);
+            }
+        });
+
         path = []; renderPath();
         if(gameActive) {
             if(mode === "BOSS") {
                 let next = currentPlayerIdx + 1; while(next < players.length && players[next].dead) next++;
-                // CORREÇÃO: Lógica restaurada para passar para o Boss quando todos os jogadores terminarem
                 if(next < players.length) { currentPlayerIdx = next; switchConfig(next); }
                 else { currentPlayerIdx = -1; document.getElementById('turnP_Active').classList.remove('active-turn'); setTimeout(bossAI, 600); }
             } else { currentPlayerIdx = (currentPlayerIdx === 0) ? 1 : 0; switchConfig(currentPlayerIdx); }
+        }
+    }
+
+    function triggerElementalFX(element, pos, type, heroX, heroY) {
+        const s = getStep();
+        const board = document.getElementById('board');
+        
+        // SONORIZAÇÃO BRAVELY
+        if(element === 'FOGO') playSfx('skill1');
+        else if(element === 'AGUA') playSfx('iara2');
+        else if(element === 'TERRA') playSfx('minoa2');
+        else if(element === 'AR') playSfx('saci1');
+
+        if(element === 'FOGO') {
+            const f = document.createElement('div');
+            f.className = (type === 'COL') ? 'fire-column' : 'fire-row';
+            if(type === 'COL') f.style.left = (pos * s + 8) + 'px';
+            else f.style.top = (pos * s + 8) + 'px';
+            board.appendChild(f);
+            setTimeout(() => f.remove(), 1200);
+        } else if(element === 'AGUA') {
+            const w = document.createElement('div');
+            w.className = 'water-jet-fx';
+            w.style.opacity = '1';
+            if(type === 'COL') { w.style.width = s + 'px'; w.style.height = '100%'; w.style.top = '0'; w.style.left = (pos * s + 8) + 'px'; w.style.background = 'linear-gradient(0deg, transparent, #fff, #3498db, #fff, transparent)'; }
+            else { w.style.width = '100%'; w.style.height = s + 'px'; w.style.left = '0'; w.style.top = (pos * s + 8) + 'px'; }
+            board.appendChild(w);
+            setTimeout(() => w.remove(), 800);
+        } else if(element === 'TERRA') {
+            // ROCHA PERCORRENDO CAMINHO DO HERÓI PARA OS CANTOS
+            for(let i=0; i<8; i++) {
+                const tx = (type === 'COL') ? pos : i;
+                const ty = (type === 'COL') ? i : pos;
+                const dist = Math.abs(tx - heroX) + Math.abs(ty - heroY);
+                
+                setTimeout(() => {
+                    const r = document.createElement('img'); r.src = SPRITES.RockFX; r.className = 'rock-projectile';
+                    r.style.width = (s*1.2)+'px';
+                    r.style.left = (tx*s+8)+'px'; r.style.top = (ty*s+8)+'px';
+                    board.appendChild(r);
+                    setTimeout(() => { 
+                        r.style.transform = 'scale(2) rotate(1080deg)'; // GIRA MAIS RÁPIDO (3 voltas)
+                        r.style.opacity = '0'; 
+                    }, 50);
+                    setTimeout(() => r.remove(), 450);
+                }, dist * 80); // VELOCIDADE DA ONDA
+            }
+        } else if(element === 'AR') {
+            for(let i=0; i<8; i++) {
+                const tx = (type === 'COL') ? pos : i;
+                const ty = (type === 'COL') ? i : pos;
+                const dist = Math.abs(tx - heroX) + Math.abs(ty - heroY);
+                triggerVortex(tx, ty, dist * 80);
+            }
         }
     }
 
