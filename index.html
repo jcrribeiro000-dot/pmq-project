@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <title>Entidades: Confronto de Lendas - V6.4</title>
+    <title>Entidades: Confronto de Lendas - V6.5</title>
     <style>
-        /* Estilos INTEGRALMENTE mantidos da V6.3 */
+        /* Estilos INTEGRALMENTE mantidos da V6.4 */
         :root { --tile-size: 55px; --gap: 4px; --step: 59px; }
         @media (max-width: 600px) {
             :root { --tile-size: 42px; --gap: 2px; --step: 44px; }
@@ -38,7 +38,14 @@
         .bg-AGUA { background: linear-gradient(135deg, #3498db, #2980b9); }
         .bg-TERRA { background: linear-gradient(135deg, #27ae60, #1e8449); } 
         .bg-AR { background: linear-gradient(135deg, #f1c40f, #f39c12); }
+        
+        /* CORREÇÃO: Restaurando os tons de cores para os tokens dos jogadores */
         .token { position: absolute; width: var(--tile-size); height: var(--tile-size); z-index: 100; transition: all 0.3s ease-in-out; pointer-events: none; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        .p-hue-0 { filter: hue-rotate(0deg); }
+        .p-hue-1 { filter: hue-rotate(90deg); }
+        .p-hue-2 { filter: hue-rotate(180deg); }
+        .p-hue-3 { filter: hue-rotate(270deg); }
+        
         .token img { width: 120%; height: 120%; object-fit: contain; animation: breathe 2s infinite ease-in-out; }
         .hp-container { position: absolute; top: -12px; width: 80%; height: 6px; background: rgba(0,0,0,0.5); border: 1px solid #000; border-radius: 3px; overflow: hidden; }
         .hp-bar { height: 100%; background: #2ecc71; transition: width 0.3s ease, background 0.3s ease; }
@@ -86,7 +93,7 @@
     </style>
 </head>
 <body onclick="unlockAudio()">
-    <div class="version-tag">VERSÃO 6.4 (DANO DE CONTATO)</div>
+    <div class="version-tag">VERSÃO 6.5 (CORES CORRIGIDAS)</div>
     <div id="gameOverlay">
         <h1 id="overlayTitle">VITORIA</h1>
         <button onclick="initGame()" style="width: 200px; margin-top: 20px; background: #27ae60; color: white; font-size: 20px;">JOGAR NOVAMENTE</button>
@@ -190,22 +197,18 @@
 
         let totalAtk = info.atk + active.bonusAtk + (usedPath.length > 0 && grid[usedPath[0]] === active.element ? 1 : 0) + skillAtkBonus;
         
-        // --- CONSOLIDADO: DANO DE CONTATO TUPÃ ---
         if(active.class === "Tupa") {
             const dealGueDmg = () => { 
                 if(!target.dead && (Math.abs(active.x-target.x)+Math.abs(active.y-target.y)) <= 1) { 
                     playSfx('atkg'); applyDmg(target, totalAtk); spawnSwordEffect(target.x, target.y); 
                 } 
             };
-            
-            // DANO DE PRIMEIRO CONTATO (Caso já comece adjacente ao alvo)
             dealGueDmg();
-
             for(const idx of usedPath) { 
                 active.x = idx%8; active.y = Math.floor(idx/8); 
                 checkAmulet(active, active.x, active.y); 
                 updateVisuals(); 
-                dealGueDmg(); // Dano a cada tile percorrido
+                dealGueDmg();
                 await new Promise(r => setTimeout(r, 120)); 
             }
         } else {
@@ -239,10 +242,7 @@
             arcadeIndex++; addLog(`BOSS DERROTADO!`); playSfx('win');
             const bt = document.getElementById('tokenBoss'); bt.style.opacity = "0";
             await new Promise(r => setTimeout(r, 800)); 
-            boss.type = ARCADE_ORDER[arcadeIndex]; 
-            boss.hp = boss.maxHp; 
-            boss.dead = false;
-            boss.x = 4; boss.y = 0; 
+            boss.type = ARCADE_ORDER[arcadeIndex]; boss.hp = boss.maxHp; boss.dead = false; boss.x = 4; boss.y = 0; 
             document.getElementById('imgBoss').src = SPRITES[boss.type]; bt.style.opacity = "1";
             document.getElementById('turnBoss').innerText = `${boss.type} BOSS`; updateVisuals();
             triggerPop(`ESTÁGIO ${arcadeIndex + 1}`);
@@ -250,7 +250,6 @@
         else if (mode === "BOSS") { showEndGame("BOSS DERROTADO!", true); }
     }
 
-    /* Suporte Técnico (Mantido da V6.3) */
     function switchConfig(idx) { editingIdx = idx; const p = players[idx]; if(!p) return; document.getElementById('pName').value = p.name; document.getElementById('pClass').value = p.class; document.querySelectorAll('.config-tabs button').forEach(b => b.classList.remove('active-tab')); if(document.getElementById(`tab${idx}`)) document.getElementById(`tab${idx}`).classList.add('active-tab'); saveAndRefresh(); }
     function saveAndRefresh() { const p = players[editingIdx]; if(!p) return; p.name = document.getElementById('pName').value.toUpperCase(); let s = 0; for(let i=0; i<p.name.length; i++) s += p.name.charCodeAt(i); p.element = COLORS[s % 4]; const ed = document.getElementById('pElem'); ed.innerText = p.element; ed.className = `elem-display bg-${p.element}`; document.getElementById('pStatsDisplay').innerHTML = `HP: <b>${p.hp}</b> / ${p.maxHp} | ATK: <b>${CLASS_DB[p.class].atk + p.bonusAtk}</b>`; const img = document.getElementById(`imgP${p.id}`); if(img) img.src = SPRITES[p.class]; const isMyTurn = (editingIdx === currentPlayerIdx); document.getElementById('btnPlay').disabled = !isMyTurn; document.getElementById('btnSkill').disabled = !isMyTurn || players[currentPlayerIdx].skillUsed; document.getElementById('turnP_Active').classList.toggle('active-turn', currentPlayerIdx >= 0); }
     function resetPlayerHP() { const p = players[editingIdx]; p.class = document.getElementById('pClass').value; p.hp = CLASS_DB[p.class].hp; p.maxHp = p.hp; saveAndRefresh(); updateVisuals(); }
