@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <title>Entidades: Confronto de Lendas - V7.0</title>
+    <title>Entidades: Confronto de Lendas - V7.1</title>
     <style>
-        /* Estilos mantidos integralmente da V6.9 */
+        /* Estilos mantidos integralmente da V7.0 */
         :root { --tile-size: 55px; --gap: 4px; --step: 59px; }
         @media (max-width: 600px) {
             :root { --tile-size: 42px; --gap: 2px; --step: 44px; }
@@ -88,7 +88,7 @@
     </style>
 </head>
 <body onclick="unlockAudio()">
-    <div class="version-tag">VERSÃO 7.0 (BRAVELY SFX FIX)</div>
+    <div class="version-tag">VERSÃO 7.1 (TUPÃ BUFF & MAPINGUARI NERF)</div>
     <div id="gameOverlay">
         <h1 id="overlayTitle">VITÓRIA</h1>
         <button onclick="initGame()" style="width: 200px; margin-top: 20px; background: #27ae60; color: white; font-size: 20px;">JOGAR NOVAMENTE</button>
@@ -104,13 +104,13 @@
 
     <div class="setup-row">
         <table class="config-table">
-            <tr><td>Tupã: HP <input type="number" id="hp_Tupa" value="15"> ATK <input type="number" id="atk_Tupa" value="2"></td></tr>
+            <tr><td>Tupã: HP <input type="number" id="hp_Tupa" value="20"> ATK <input type="number" id="atk_Tupa" value="3"></td></tr>
             <tr><td>Sumé: HP <input type="number" id="hp_Sume" value="8"> ATK <input type="number" id="atk_Sume" value="2"></td></tr>
             <tr><td>Caipora: HP <input type="number" id="hp_Caipora" value="10"> ATK <input type="number" id="atk_Caipora" value="2"></td></tr>
             <tr><td>Muiraquitã: <input type="number" id="amulet_chance" value="1">% | Bravely: <input type="number" id="bravely_tiles" value="9" style="width:30px"> tiles</td></tr>
-            <tr style="border-top: 1px solid #555"><td>BOSS: HP <input type="number" id="hp_BOSS_cfg" value="50"> ATK <input type="number" id="atk_BOSS_cfg" value="4"></td></tr>
+            <tr style="border-top: 1px solid #555"><td>BOSS: HP <input type="number" id="hp_BOSS_cfg" value="30"> ATK <input type="number" id="atk_BOSS_cfg" value="4"></td></tr>
         </table>
-        <div>MODO: <select id="gameMode" onchange="initGame()"><option value="BOSS">BOSS (CO-OP)</option><option value="ARCADE">ARCADE (RUSH)</option><option value="PVP">PVP (1vs1)</option></select></div>
+        <div>MODO: <select id="gameMode" onchange="initGame()"><option value="BOSS">BOSS (CO-OP)</option><option value="ARCADE" selected>ARCADE (RUSH)</option><option value="PVP">PVP (1vs1)</option></select></div>
         <div>BOSS: <select id="bossSelect" onchange="initGame()"><option value="BOITATA">Boitatá</option><option value="MAPINGUARI">Mapinguari</option><option value="SACI">Saci</option><option value="IARA">Iara</option></select></div>
         <div>PLAYERS: <select id="playerCount" onchange="initGame()"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option></select></div>
         <button onclick="initGame()" style="background:#16a085; color:white; width:auto;">REINICIAR</button>
@@ -193,7 +193,14 @@
         const gridEl = document.getElementById('grid'); gridEl.innerHTML = ''; for(let i=0; i<64; i++) gridEl.appendChild(createTile(i));
         const tabBar = document.getElementById('tabBar'); tabBar.innerHTML = ''; for(let i=0; i<count; i++) { const btn = document.createElement('button'); btn.innerText = `P${i+1}`; btn.onclick = () => switchConfig(i); btn.id = `tab${i}`; tabBar.appendChild(btn); }
         document.querySelectorAll('.token').forEach(t => t.remove()); const board = document.getElementById('board');
-        for(let i=0; i<count; i++) { const initialHP = CLASS_DB['Tupa'].hp; players.push({ id: i, x: 2 + i, y: 7, hp: initialHP, maxHp: initialHP, class: 'Tupa', element: 'FOGO', name: `P${i+1}`, skillUsed: false, dead: false, bonusAtk: 0 }); const token = document.createElement('div'); token.id = `tokenP${i}`; token.className = `token p-hue-${i}`; token.innerHTML = `<div class="hp-container"><div id="hpBarP${i}" class=\"hp-bar\"></div></div><img id="imgP${i}" src="${SPRITES.Tupa}">`; board.appendChild(token); }
+        for(let i=0; i<count; i++) { 
+            const cls = (i === 0) ? 'Tupa' : 'Tupa'; // Apenas exemplo, switchConfig ajusta depois
+            const initialHP = CLASS_DB['Tupa'].hp; 
+            players.push({ id: i, x: 2 + i, y: 7, hp: initialHP, maxHp: initialHP, class: 'Tupa', element: 'FOGO', name: `P${i+1}`, skillUsed: false, dead: false, bonusAtk: 0 }); 
+            const token = document.createElement('div'); token.id = `tokenP${i}`; token.className = `token p-hue-${i}`; 
+            token.innerHTML = `<div class=\"hp-container\"><div id=\"hpBarP${i}\" class=\"hp-bar\"></div></div><img id=\"imgP${i}\" src=\"${SPRITES.Tupa}\">`; 
+            board.appendChild(token); 
+        }
         if(mode === "BOSS" || mode === "ARCADE") {
             if(mode === "ARCADE") { arcadeIndex = 0; boss.type = ARCADE_ORDER[0]; triggerPop("ESTÁGIO 1"); } 
             else { boss.type = document.getElementById('bossSelect').value; }
@@ -263,7 +270,10 @@
         for(let i=0; i<4; i++) { if(boss.dead) break; let mvs = [{x:boss.x+1,y:boss.y},{x:boss.x-1,y:boss.y},{x:boss.x,y:boss.y+1},{x:boss.x,y:boss.y-1}].filter(m => m.x>=0 && m.x<8 && m.y>=0 && m.y<8 && !isOccupied(m.x, m.y, -1)); if(mvs.length > 0) { let m = mvs[Math.floor(Math.random()*mvs.length)]; boss.x = m.x; boss.y = m.y; updateVisuals(); await new Promise(r => setTimeout(r, 250)); } }
         if(!boss.dead) {
             if(boss.type === "BOITATA") { if(Math.random() < 0.6) { playSfx('skill1'); const cs = [boss.x-1, boss.x, boss.x+1]; cs.forEach(c => { if(c>=0 && c<=7) triggerFireColumn(c); }); await new Promise(r => setTimeout(r, 600)); players.forEach(p => { if(!p.dead && cs.includes(p.x)) applyDmg(p, bossAtk); }); } else { playSfx('skill1'); let c=0, a=0; while(c<5 && a<50) { let i = Math.floor(Math.random()*64); if(grid[i] === 'FOGO') { triggerFlare(i%8, Math.floor(i/8)); players.forEach(p => { if(!p.dead && p.x === i%8 && p.y === Math.floor(i/8)) applyDmg(p, bossAtk); }); c++; } a++; } } }
-            else if(boss.type === "MAPINGUARI") { if(Math.random() < 0.5) { playSfx('minoa1'); triggerBite(boss.x, boss.y); await new Promise(r => setTimeout(r, 600)); players.forEach(p => { if(!p.dead && Math.abs(p.x-boss.x)<=2 && Math.abs(p.y-boss.y)<=2) applyDmg(p, bossAtk); }); } else { playSfx('minoa2'); triggerRocks(boss.x, boss.y); await new Promise(r => setTimeout(r, 600)); const rs = [boss.y-1, boss.y, boss.y+1]; players.forEach(p => { if(!p.dead && rs.includes(p.y)) applyDmg(p, bossAtk); }); } }
+            else if(boss.type === "MAPINGUARI") { if(Math.random() < 0.5) { playSfx('minoa1'); triggerBite(boss.x, boss.y); await new Promise(r => setTimeout(r, 600)); players.forEach(p => { if(!p.dead && Math.abs(p.x-boss.x)<=2 && Math.abs(p.y-boss.y)<=2) applyDmg(p, bossAtk); }); } else { playSfx('minoa2'); triggerRocks(boss.x, boss.y); await new Promise(r => setTimeout(r, 600)); const rs = [boss.y-1, boss.y, boss.y+1]; players.forEach(p => { 
+                let danoRocha = 2; // NERF: Dano da rocha fixado em 2 para equilíbrio do Tupã
+                if(!p.dead && rs.includes(p.y)) applyDmg(p, danoRocha); 
+            }); } }
             else if(boss.type === "SACI") { if(Math.random() < 0.5) { playSfx('saci1'); grid.forEach((c, i) => { if(c === 'AR') { triggerVortex(i%8, Math.floor(i/8)); players.forEach(p => { if(!p.dead && p.x === i%8 && p.y === Math.floor(i/8)) applyDmg(p, bossAtk); }); } }); } else { playSfx('saci'); [{dx:1,dy:1},{dx:1,dy:-1},{dx:-1,dy:1},{dx:-1,dy:-1}].forEach(d => { for(let s=1; s<8; s++) { let nx=boss.x+d.dx*s, ny=boss.y+d.dy*s; if(nx>=0 && nx<8 && ny>=0 && ny<8) { triggerVortex(nx, ny, s*100); players.forEach(p => { if(!p.dead && p.x===nx && p.y===ny) setTimeout(()=>applyDmg(p, bossAtk), s*100); }); } } }); } }
             else if(boss.type === "IARA") { if(Math.random() < 0.5) { playSfx('iara1'); triggerTsunami(); await new Promise(r => setTimeout(r, 500)); players.forEach(p => { if(!p.dead) { applyDmg(p, 1); let dx = p.x < 4 ? -1 : 1, dy = p.y < 4 ? -1 : 1, nx = p.x, ny = p.y; if(Math.abs(p.x-3.5) > Math.abs(p.y-3.5)) { if(p.x+dx>=0 && p.x+dx<8) nx += dx; } else { if(p.y+dy>=0 && p.y+dy<8) ny += dy; } if (!isOccupied(nx, ny, p.id)) { p.x = nx; p.y = ny; } } }); updateVisuals(); } else { playSfx('iara2'); triggerWaterJet(boss.x, boss.y); await new Promise(r => setTimeout(r, 600)); players.forEach(p => { if(!p.dead && (p.x === boss.x || p.y === boss.y)) applyDmg(p, bossAtk); }); } }
         }
@@ -299,16 +309,16 @@
     function triggerElementalFX(element, pos, type, heroX, heroY) { 
         const s = getStep(); const board = document.getElementById('board'); 
         if(element === 'FOGO') { 
-            playSfx('skill1'); // Som do Boitatá
+            playSfx('skill1'); 
             const f = document.createElement('div'); f.className = (type === 'COL') ? 'fire-column' : 'fire-row'; if(type === 'COL') f.style.left = (pos * s + 8) + 'px'; else f.style.top = (pos * s + 8) + 'px'; board.appendChild(f); setTimeout(() => f.remove(), 1200); 
         } else if(element === 'AGUA') { 
-            playSfx('iara2'); // Som do Jato da Iara
+            playSfx('iara2'); 
             triggerWaterJetEffect(type === 'COL' ? pos : -1, type === 'ROW' ? pos : -1); 
         } else if(element === 'TERRA') { 
-            playSfx('minoa2'); // Som da Rocha do Mapinguari
+            playSfx('minoa2'); 
             for(let i=0; i<8; i++) { const tx = (type === 'COL') ? pos : i, ty = (type === 'COL') ? i : pos, dist = Math.abs(tx - heroX) + Math.abs(ty - heroY); setTimeout(() => { const r = document.createElement('img'); r.src = SPRITES.RockFX; r.className = 'rock-projectile'; r.style.width = (s*1.2)+'px'; r.style.left = (tx*s+8)+'px'; r.style.top = (ty*s+8)+'px'; board.appendChild(r); setTimeout(() => { r.style.transform = 'scale(2) rotate(1080deg)'; r.style.opacity = '0'; }, 50); setTimeout(() => r.remove(), 450); }, dist * 80); } 
         } else if(element === 'AR') { 
-            playSfx('saci1'); // Som do Saci (Redemoinhos)
+            playSfx('saci1'); 
             for(let i=0; i<8; i++) { const tx = (type === 'COL') ? pos : i, ty = (type === 'COL') ? i : pos, dist = Math.abs(tx - heroX) + Math.abs(ty - heroY); triggerVortex(tx, ty, dist * 80); } 
         } 
     }
