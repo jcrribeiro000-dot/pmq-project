@@ -968,7 +968,7 @@
             border-bottom: 1px solid rgba(0, 255, 0, 0.1);
         }
         
-        /* ================= EFEITOS VISUAIS ================= */
+        /* ================= EFEITOS VISUAIS COM FLIP CORRIGIDO ================= */
         .token {
             position: absolute;
             width: var(--tile-size);
@@ -988,15 +988,66 @@
         .p-hue-3 { filter: hue-rotate(270deg); }
         
         .token img {
-            width: 120%;
-            height: 120%;
+            width: 140%;
+            height: 140%;
             object-fit: contain;
-            animation: breathe 2s infinite ease-in-out;
+            transform-origin: center;
         }
         
-        @keyframes breathe {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1) translateY(-4px); }
+        /* Animação de respiração para sprites normais (olhando para direita) */
+        .token img.normal {
+            animation: breatheNormal 2s infinite ease-in-out;
+        }
+        
+        /* Animação de respiração para sprites virados (olhando para esquerda) */
+        .token img.flipped {
+            animation: breatheFlipped 2s infinite ease-in-out;
+        }
+        
+        @keyframes breatheNormal {
+            0%, 100% { 
+                transform: scale(1) translateY(0); 
+            }
+            50% { 
+                transform: scale(1.1) translateY(-4px); 
+            }
+        }
+        
+        @keyframes breatheFlipped {
+            0%, 100% { 
+                transform: scale(-1, 1) translateY(0); 
+            }
+            50% { 
+                transform: scale(-1.1, 1.1) translateY(-4px); 
+            }
+        }
+        
+        /* Animação de respiração para boss IARA (que já olha para esquerda) */
+        .token img.iara-normal {
+            animation: breatheIaraNormal 2s infinite ease-in-out;
+        }
+        
+        @keyframes breatheIaraNormal {
+            0%, 100% { 
+                transform: scale(-1, 1) translateY(0); 
+            }
+            50% { 
+                transform: scale(-1.1, 1.1) translateY(-4px); 
+            }
+        }
+        
+        /* Animação de respiração para boss IARA virada (olhando para direita) */
+        .token img.iara-flipped {
+            animation: breatheIaraFlipped 2s infinite ease-in-out;
+        }
+        
+        @keyframes breatheIaraFlipped {
+            0%, 100% { 
+                transform: scale(1, 1) translateY(0); 
+            }
+            50% { 
+                transform: scale(1.1) translateY(-4px); 
+            }
         }
         
         .hp-container {
@@ -1307,6 +1358,36 @@
             background: url('https://cdn-icons-png.flaticon.com/512/95/95460.png') center/contain no-repeat;
             z-index: 50;
             filter: drop-shadow(0 0 3px #000) hue-rotate(90deg);
+        }
+        
+        /* ================= NOVO: ANIMAÇÃO DO BRAVELY CHAIN ================= */
+        .bravely-animation-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            pointer-events: none;
+        }
+        
+        .bravely-animation-gif {
+            max-width: 500px;
+            max-height: 500px;
+            width: 80%;
+            height: auto;
+            border-radius: 15px;
+            box-shadow: 0 0 50px rgba(255, 215, 0, 0.5);
+            animation: bravelyPulse 0.5s ease-in-out 3;
+        }
+        
+        @keyframes bravelyPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
         }
         
         /* ================= MODAIS ================= */
@@ -1783,6 +1864,10 @@
             .title-tabs {
                 justify-content: center;
             }
+            
+            .bravely-animation-gif {
+                max-width: 300px;
+            }
         }
     </style>
 </head>
@@ -2156,7 +2241,7 @@
                         <h3 class="bestiary-boss-name">MAPINGUARI - Estágio 2</h3>
                         <h4 class="bestiary-boss-title">O Devorador Despertado</h4>
                         <p class="bestiary-boss-description">
-                            O gigante protetor das árvores foi consumido pela frustração. "Você é fraco, a floresta morre e você não pode impedir", ecoou em sua mente. Agora, ele devora o que jurado proteger.
+                            O gigante protetor das árvores foi consumido pela frustração. "Você é fraco, a floresta morre e você não pode impedir", ecoou em sua mente. Agora, he devora o que jurado proteger.
                         </p>
                         <p class="bestiary-boss-clue">
                             💬 Últimas palavras: "...o fogo serpente queima com ódio puro..."
@@ -2223,20 +2308,24 @@
     let currentScreen = 'title'; // title, config, mode, players, game
     let COLORS = ['FOGO', 'AGUA', 'TERRA', 'AR'];
     let SPRITES = {
-        Tupa: "https://i.ibb.co/6c328D1m/tupa.png",
-        Sume: "https://i.ibb.co/G4RdNKm9/sume.png",
-        Caipora: "https://i.ibb.co/C5RNg4Vq/caipora.png",
-        BOITATA: "https://i.ibb.co/DDjQ65GV/boitata.png",
-        MAPINGUARI: "https://i.ibb.co/tMLK2pcX/mapinguari.png",
-        SACI: "https://i.ibb.co/0psrrg1S/saci-token.png",
-        IARA: "https://i.ibb.co/LDsxbV3X/iara-token.png",
+        Tupa: "https://i.imgur.com/GKslMCA.gif",
+        Sume: "https://i.imgur.com/kk8JdPf.gif",
+        Caipora: "https://i.imgur.com/UMdh7bx.gif",
+        BOITATA: "https://i.imgur.com/jJMFcNN.gif",
+        MAPINGUARI: "https://i.imgur.com/WAzhnwj.gif",
+        SACI: "https://i.imgur.com/M1vtbH9.gif",
+        IARA: "https://i.imgur.com/sGTgi5h.gif",
         Muiraquita: "https://i.ibb.co/JjYQszc0/muiraquita.png",
         VortexFX: "https://cdn-icons-png.flaticon.com/512/1344/1344933.png",
         SwordFX: "https://cdn-icons-png.flaticon.com/512/6720/6720973.png",
         ArrowFX: "https://cdn-icons-png.flaticon.com/128/3854/3854999.png",
         MagicFX: "https://cdn-icons-png.flaticon.com/128/4325/4325956.png",
         BiteFX: "https://cdn-icons-png.flaticon.com/512/3504/3504404.png",
-        RockFX: "https://cdn-icons-png.flaticon.com/128/12912/12912366.png"
+        RockFX: "https://cdn-icons-png.flaticon.com/128/12912/12912366.png",
+        // NOVAS ANIMAÇÕES DO BRAVELY CHAIN
+        BRAVELY_TUPA: "https://i.imgur.com/pCrboAh.gif",
+        BRAVELY_SUME: "https://i.imgur.com/jDxEk8j.gif",
+        BRAVELY_CAIPORA: "https://i.imgur.com/xPUhbKG.gif"
     };
     
     // ================= VARIÁVEIS DO JOGO =================
@@ -2246,6 +2335,8 @@
     let currentPlayerIdx = 0, editingIdx = 0, gameActive = true, mode = "BOSS", skillActive = false, arcadeIndex = 0;
     const ARCADE_ORDER = ['SACI', 'MAPINGUARI', 'IARA', 'BOITATA'];
     let bossAIIsRunning = false;
+    let arcadeBossTransition = false; // NOVA VARIÁVEL: flag para controlar transição
+    let isExecutingAction = false; // Flag para controlar execução de ações
     
     // ================= SISTEMA DE JOGADORES =================
     let playerCount = 1; // Padrão: 1 jogador
@@ -3187,8 +3278,7 @@
             <div style="font-size: 16px; font-weight: bold; color: #2ecc71;">${title.name}</div>
             <div style="font-size: 12px; color: #aaa; margin-top: 5px; padding: 5px; background: rgba(46, 204, 113, 0.1); border-radius: 4px;">
                 ${bonusText}
-            </div>
-        `;
+            `;
         
         desc.textContent = title.description;
     }
@@ -3813,6 +3903,173 @@
         }); 
     }
     
+    // ================= FUNÇÃO PARA ATUALIZAR DIREÇÃO DOS SPRITES =================
+    function updateAllSpriteDirections() {
+        if (!gameActive) return;
+        
+        // Atualizar sprites dos jogadores
+        players.forEach(player => {
+            if (player.dead) return;
+            
+            const img = document.getElementById(`imgP${player.id}`);
+            if (!img) return;
+            
+            let targetX, targetY;
+            
+            if (mode === "BOSS" || mode === "ARCADE") {
+                // Modo Boss: mirar no boss
+                if (boss.dead) {
+                    // Se boss morto, olhar para a direita (padrão)
+                    img.className = 'normal';
+                    return;
+                }
+                targetX = boss.x;
+                targetY = boss.y;
+            } else if (mode === "PVP") {
+                // Modo PVP: mirar no outro jogador
+                const otherPlayer = players.find(p => p.id !== player.id && !p.dead);
+                if (!otherPlayer) {
+                    img.className = 'normal';
+                    return;
+                }
+                targetX = otherPlayer.x;
+                targetY = otherPlayer.y;
+            } else {
+                // Modo desconhecido, manter padrão
+                img.className = 'normal';
+                return;
+            }
+            
+            // Determinar se precisa virar o sprite
+            const shouldFlip = targetX < player.x;
+            
+            // Aplicar classe apropriada
+            if (shouldFlip) {
+                img.className = 'flipped';
+            } else {
+                img.className = 'normal';
+            }
+        });
+        
+        // Atualizar sprite do boss
+        if (mode === "BOSS" || mode === "ARCADE") {
+            const bossImg = document.getElementById('imgBoss');
+            if (bossImg && !boss.dead) {
+                // Verificar se há jogadores vivos
+                const alivePlayers = players.filter(p => !p.dead);
+                if (alivePlayers.length > 0) {
+                    // Boss mirar no jogador mais próximo
+                    let nearestPlayer = alivePlayers[0];
+                    let minDistance = Math.abs(boss.x - nearestPlayer.x) + Math.abs(boss.y - nearestPlayer.y);
+                    
+                    for (let i = 1; i < alivePlayers.length; i++) {
+                        const distance = Math.abs(boss.x - alivePlayers[i].x) + Math.abs(boss.y - alivePlayers[i].y);
+                        if (distance < minDistance) {
+                            minDistance = distance;
+                            nearestPlayer = alivePlayers[i];
+                        }
+                    }
+                    
+                    // Determinar direção do boss
+                    const shouldBossFlip = nearestPlayer.x < boss.x;
+                    
+                    // Tratamento especial para IARA (que já olha para esquerda por padrão)
+                    if (boss.type === "IARA") {
+                        if (shouldBossFlip) {
+                            // IARA olhando para direita (precisa virar)
+                            bossImg.className = 'iara-flipped';
+                        } else {
+                            // IARA olhando para esquerda (padrão)
+                            bossImg.className = 'iara-normal';
+                        }
+                    } else {
+                        // Outros bosses (olham para direita por padrão)
+                        if (shouldBossFlip) {
+                            bossImg.className = 'flipped';
+                        } else {
+                            bossImg.className = 'normal';
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    // ================= NOVA FUNÇÃO: EXIBIR ANIMAÇÃO DO BRAVELY CHAIN =================
+    async function showBravelyAnimation(playerClass) {
+        return new Promise((resolve) => {
+            // Determinar qual GIF mostrar baseado na classe
+            let gifUrl = "";
+            switch(playerClass) {
+                case "Tupa":
+                    gifUrl = SPRITES.BRAVELY_TUPA;
+                    break;
+                case "Sume":
+                    gifUrl = SPRITES.BRAVELY_SUME;
+                    break;
+                case "Caipora":
+                    gifUrl = SPRITES.BRAVELY_CAIPORA;
+                    break;
+                default:
+                    gifUrl = SPRITES.BRAVELY_TUPA;
+            }
+            
+            // Criar overlay de animação
+            const overlay = document.createElement('div');
+            overlay.className = 'bravely-animation-overlay';
+            overlay.id = 'bravelyAnimationOverlay';
+            
+            // Criar elemento do GIF
+            const gif = document.createElement('img');
+            gif.src = gifUrl;
+            gif.className = 'bravely-animation-gif';
+            gif.alt = 'Bravely Chain Animation';
+            
+            // Adicionar texto
+            const text = document.createElement('div');
+            text.style.cssText = `
+                position: absolute;
+                bottom: 20%;
+                left: 0;
+                width: 100%;
+                text-align: center;
+                color: gold;
+                font-size: 32px;
+                font-weight: bold;
+                text-shadow: 0 0 10px #000;
+                z-index: 10001;
+            `;
+            text.textContent = 'BRAVELY CHAIN!';
+            
+            overlay.appendChild(gif);
+            overlay.appendChild(text);
+            
+            // Adicionar ao board
+            const board = document.getElementById('board');
+            board.appendChild(overlay);
+            
+            // Reproduzir som especial (se houver)
+            playSfx('skill1');
+            
+            // Remover após 2 segundos
+            setTimeout(() => {
+                if (overlay.parentNode) {
+                    overlay.style.opacity = '0';
+                    overlay.style.transition = 'opacity 0.5s ease';
+                    
+                    setTimeout(() => {
+                        if (overlay.parentNode) {
+                            overlay.parentNode.removeChild(overlay);
+                        }
+                        resolve();
+                    }, 500);
+                } else {
+                    resolve();
+                }
+            }, 2000);
+        });
+    }
+    
     // CORREÇÃO APLICADA: Função initGame atualizada para modo PVP
     function initGame() {
         // Resetar lore
@@ -3820,6 +4077,7 @@
         LORE.anhangáRevealed = false;
         
         bossAIIsRunning = false;
+        arcadeBossTransition = false; // Resetar flag de transição
         
         resetRankingStats();
         gameActive = true; 
@@ -3862,7 +4120,7 @@
             const token = document.createElement('div'); 
             token.id = `tokenP${i}`; 
             token.className = `token p-hue-${i}`; 
-            token.innerHTML = `<div class="hp-container"><div id="hpBarP${i}" class="hp-bar"></div></div><img id="imgP${i}" src="${SPRITES[config.class]}">`; 
+            token.innerHTML = `<div class="hp-container"><div id="hpBarP${i}" class="hp-bar"></div></div><img id="imgP${i}" src="${SPRITES[config.class]}" class="normal">`; 
             board.appendChild(token); 
         }
         
@@ -3883,7 +4141,9 @@
             const bToken = document.createElement('div'); 
             bToken.id = `tokenBoss`; 
             bToken.className = `token`;
-            bToken.innerHTML = `<div class="hp-container"><div id="hpBarBoss" class="hp-bar"></div></div><img id="imgBoss" src="${SPRITES[boss.type]}">`; 
+            // Aplicar classe correta para IARA
+            const bossClass = boss.type === "IARA" ? "iara-normal" : "normal";
+            bToken.innerHTML = `<div class="hp-container"><div id="hpBarBoss" class="hp-bar"></div></div><img id="imgBoss" src="${SPRITES[boss.type]}" class="${bossClass}">`; 
             board.appendChild(bToken);
             
             document.getElementById('bossNameDisplay').textContent = boss.type;
@@ -3916,6 +4176,10 @@
         currentPlayerIdx = 0; 
         switchConfig(0); 
         updateVisuals(); 
+        
+        // Atualizar direção dos sprites
+        updateAllSpriteDirections();
+        
         playBossTheme();
         
         // Limpar log
@@ -3940,12 +4204,9 @@
         }
     }
 
-    // ================= FUNÇÃO EXECUTEACTION CORRIGIDA =================
-    let isExecutingAction = false;
-
+    // ================= FUNÇÃO EXECUTEACTION MODIFICADA =================
     async function executeAction() {
-        if(!gameActive || path.length === 0 || bossAIIsRunning) return;
-        if(isExecutingAction) return;
+        if(!gameActive || path.length === 0 || bossAIIsRunning || arcadeBossTransition || isExecutingAction) return;
         
         isExecutingAction = true;
         
@@ -4013,7 +4274,7 @@
                 await sleep(120); 
             }
         } else {
-            // Move tile por tile para Sumé e Caipora também
+            // Move tile por tile para Sumé e Caipora
             for(const idx of usedPath) { 
                 active.x = idx%8; 
                 active.y = Math.floor(idx/8); 
@@ -4029,7 +4290,13 @@
                 await sleep(100); 
             }
             
-            // Ataque à distância
+            // NOVA MECÂNICA: Se for Bravely Chain, mostrar animação antes do ataque
+            if (isBravely) {
+                // Pausar o jogo e mostrar animação
+                await showBravelyAnimation(active.class);
+            }
+            
+            // Ataque à distância (após animação, se for Bravely)
             if(usedPath.length >= info.min && !target.dead) {
                 let extra = usedPath.length - info.min; 
                 playSfx(active.class === 'Sume' ? 'atkm' : 'atka'); 
@@ -4052,6 +4319,11 @@
         });
 
         if(isBravely) {
+            // Se for Tupã (que já atacou durante o movimento), mostrar animação após movimento
+            if (active.class === "Tupa") {
+                await showBravelyAnimation(active.class);
+            }
+            
             await triggerBravelyChain(active, target, totalAtk);
             updateTitleStats('bravely_chain');
             
@@ -4060,9 +4332,23 @@
             renderPath();
             RANKING.turns++;
             
+            // CORREÇÃO CRÍTICA: Verificar se boss morreu antes de chamar manageTurns
+            if (mode === "ARCADE" && boss.dead) {
+                console.log("⚡ Boss morto no bravely chain, pulando manageTurns");
+                isExecutingAction = false;
+                return;
+            }
+            
             // Gerenciar turnos imediatamente para modo BOSS/ARCADE
             if (mode === "BOSS" || mode === "ARCADE") {
                 isExecutingAction = false;
+                
+                // CORREÇÃO: Se boss morreu (em modo ARCADE), não mude turno
+                if (mode === "ARCADE" && boss.dead) {
+                    console.log("⚡ Boss morto, pulando manageTurns");
+                    return;
+                }
+                
                 manageTurns();
                 return; // Sair da função para evitar execução duplicada
             }
@@ -4072,8 +4358,18 @@
         renderPath();
         RANKING.turns++;
 
+        // CORREÇÃO: Verificar se boss morreu antes de gerenciar turnos
+        if (mode === "ARCADE" && boss.dead) {
+            console.log("⚡ Boss morto, pulando manageTurns");
+            isExecutingAction = false;
+            return;
+        }
+
         // Gerenciar turnos
         manageTurns();
+        
+        // Atualizar direção dos sprites após movimento
+        updateAllSpriteDirections();
         
         isExecutingAction = false;
     }
@@ -4104,19 +4400,19 @@
             if(!target.dead && target.x === active.x) applyDmg(target, totalAtk); 
         } 
         else if(active.class === "Sume") { 
-    triggerElementalFX(active.element, active.y, 'ROW', active.x, active.y); 
-    for(let col=0; col<8; col++) affectedIndices.push(active.y * 8 + col); 
-    if(!target.dead && target.y === active.y) applyDmg(target, totalAtk); 
-    
-    // RESTAURADO: cura para todos os elementos (mecânica original)
-    players.forEach(p => { 
-        if(!p.dead && p.y === active.y) { 
-            p.hp = Math.min(p.maxHp, p.hp+2); 
-            showHealEffect(p.x, p.y, 2); 
-            updateTitleStats('healing', 2);
-        } 
-    }); 
-}
+            triggerElementalFX(active.element, active.y, 'ROW', active.x, active.y); 
+            for(let col=0; col<8; col++) affectedIndices.push(active.y * 8 + col); 
+            if(!target.dead && target.y === active.y) applyDmg(target, totalAtk); 
+            
+            // RESTAURADO: cura para todos os elementos (mecânica original)
+            players.forEach(p => { 
+                if(!p.dead && p.y === active.y) { 
+                    p.hp = Math.min(p.maxHp, p.hp+2); 
+                    showHealEffect(p.x, p.y, 2); 
+                    updateTitleStats('healing', 2);
+                } 
+            }); 
+        }
         else if(active.class === "Caipora") { 
             playSfx('atka'); 
             for(let dy=-1; dy<=1; dy++) { 
@@ -4144,7 +4440,13 @@
     }
 
     function manageTurns() {
-        if (!gameActive) return;
+        if (!gameActive || arcadeBossTransition) return;
+
+        // CORREÇÃO: Se boss morreu (em modo ARCADE), não mude turno
+        if (mode === "ARCADE" && boss.dead) {
+            console.log("⚡ Boss morto, pulando manageTurns");
+            return;
+        }
         
         if (mode === "PVP") {
             // Modo PVP: passa para próximo jogador
@@ -4192,7 +4494,7 @@
                 
                 // Chamar bossAI após um breve delay
                 setTimeout(() => {
-                    if(gameActive && !boss.dead && players.some(p => !p.dead)) {
+                    if(gameActive && !boss.dead && players.some(p => !p.dead) && !arcadeBossTransition) {
                         bossAI();
                     } else if (!players.some(p => !p.dead)) {
                         showEndGame("GAME OVER", false);
@@ -4200,11 +4502,14 @@
                 }, 1000);
             }
         }
+        
+        // Atualizar direção dos sprites após mudança de turno
+        updateAllSpriteDirections();
     }
 
     // ================= BOSSAI CORRIGIDO =================
     async function bossAI() {
-        if (bossAIIsRunning) return;
+        if (bossAIIsRunning || arcadeBossTransition) return;
         
         bossAIIsRunning = true;
         
@@ -4241,6 +4546,9 @@
                 await sleep(250); // Pausa entre movimentos
             } 
         }
+        
+        // Atualizar direção do boss após movimento
+        updateAllSpriteDirections();
         
         if(!boss.dead) {
             // Ataques específicos do boss
@@ -4386,7 +4694,7 @@
         
         bossAIIsRunning = false;
         
-        if (!gameActive) return;
+        if (!gameActive || arcadeBossTransition) return;
         
         // Verificar se boss foi derrotado
         if (boss.dead) {
@@ -4420,39 +4728,82 @@
         } else {
             showEndGame("GAME OVER", false);
         }
+        
+        // Atualizar direção dos sprites após turno do boss
+        updateAllSpriteDirections();
     }
 
     function handleBossDefeat() {
-        if (mode === "ARCADE" && arcadeIndex < ARCADE_ORDER.length - 1) {
-            const defeatedBoss = ARCADE_ORDER[arcadeIndex];
-            const clue = LORE.bossLore[defeatedBoss].clue;
-            
-            addLog(`💬 ${defeatedBoss} sussurra antes de cair: "${clue}"`);
-            
-            updateTitleStats('boss_defeated', 1, defeatedBoss);
-            
-            arcadeIndex++; 
-            LORE.currentStage++;
-            
-            boss.type = ARCADE_ORDER[arcadeIndex]; 
-            boss.hp = boss.maxHp; 
-            boss.dead = false; 
-            boss.x = 4; 
-            boss.y = 0; 
-            
-            document.getElementById('imgBoss').src = SPRITES[boss.type]; 
-            document.getElementById('turnBoss').innerText = `${boss.type} BOSS`; 
-            updateVisuals(); 
-            playBossTheme(); 
-            
-        } else if (mode === "ARCADE") {
-            LORE.anhangáRevealed = true;
-            showEndGame("VITÓRIA TOTAL!", true);
-            
-        } else if (mode === "BOSS") {
-            showEndGame("BOSS DERROTADO!", true);
+    if (mode === "ARCADE" && arcadeIndex < ARCADE_ORDER.length - 1) {
+        const defeatedBoss = ARCADE_ORDER[arcadeIndex];
+        const clue = LORE.bossLore[defeatedBoss].clue;
+        
+        addLog(`💬 ${defeatedBoss} sussurra antes de cair: "${clue}"`);
+        
+        updateTitleStats('boss_defeated', 1, defeatedBoss);
+        
+        arcadeIndex++; 
+        LORE.currentStage++;
+        
+        boss.type = ARCADE_ORDER[arcadeIndex]; 
+        boss.hp = boss.maxHp; 
+        boss.dead = false; 
+        boss.x = 4; 
+        boss.y = 0; 
+        
+        document.getElementById('imgBoss').src = SPRITES[boss.type]; 
+        document.getElementById('turnBoss').innerText = `${boss.type} BOSS`; 
+        
+        // Aplicar classe correta para IARA
+        if (boss.type === "IARA") {
+            document.getElementById('imgBoss').className = "iara-normal";
+        } else {
+            document.getElementById('imgBoss').className = "normal";
         }
+        
+        updateVisuals(); 
+        playBossTheme(); 
+        
+        // CORREÇÃO CRÍTICA: Setar flag de transição
+        arcadeBossTransition = true;
+        
+        // Resetar completamente o turno
+        currentPlayerIdx = 0;
+        while (currentPlayerIdx < players.length && players[currentPlayerIdx] && players[currentPlayerIdx].dead) {
+            currentPlayerIdx++;
+        }
+        
+        if (currentPlayerIdx < players.length && players[currentPlayerIdx]) {
+            switchConfig(currentPlayerIdx);
+            addLog(`🔥 NOVO BOSS: ${boss.type}! Turno de ${players[currentPlayerIdx].name}`);
+            
+            // Garantir que é turno dos jogadores
+            document.getElementById('turnP_Active').classList.add('active-turn');
+            document.getElementById('turnBoss').classList.remove('active-turn');
+            
+            // Habilitar botões do jogador
+            saveAndRefresh();
+            
+            // Atualizar direção dos sprites
+            updateAllSpriteDirections();
+            
+            // Adicionar um delay e limpar a flag de transição
+            setTimeout(() => {
+                arcadeBossTransition = false;
+                if (gameActive) {
+                    addLog(`🎮 Os heróis atacam primeiro contra ${boss.type}!`);
+                }
+            }, 1000);
+        }
+        
+    } else if (mode === "ARCADE") {
+        LORE.anhangáRevealed = true;
+        showEndGame("VITÓRIA TOTAL!", true);
+        
+    } else if (mode === "BOSS") {
+        showEndGame("BOSS DERROTADO!", true);
     }
+}
 
     // ================= FUNÇÕES AUXILIARES DO JOGO =================
     function saveAndRefresh() { 
@@ -4501,6 +4852,9 @@
         } else {
             titleBonusDisplay.style.display = 'none';
         }
+        
+        // Atualizar direção do sprite
+        updateAllSpriteDirections();
     }
     
     function switchConfig(idx) { 
@@ -4519,6 +4873,7 @@
         p.maxHp = p.hp; 
         saveAndRefresh(); 
         updateVisuals(); 
+        updateAllSpriteDirections();
     }
     
     function createTile(idx) { 
@@ -4559,7 +4914,7 @@
     }
     
     function handleSelect(idx) { 
-        if(!gameActive) return; 
+        if(!gameActive || arcadeBossTransition) return; 
         const p = players[currentPlayerIdx]; 
         if (skillActive) { 
             grid[idx] = p.element; 
@@ -4760,6 +5115,9 @@
         } else if (t === players[1]) {
             document.getElementById('bossStatsDisplay').innerHTML = `HP: <b>${t.hp}</b> / ${t.maxHp}`;
         }
+        
+        // Atualizar direção dos sprites após dano
+        updateAllSpriteDirections();
     }
     
     function triggerFireColumn(c) { 
@@ -4946,7 +5304,7 @@
         RANKING.ultimates++;
         updateTitleStats('ultimate_used');
         
-        if (!gameActive || players[currentPlayerIdx].skillUsed) return; 
+        if (!gameActive || players[currentPlayerIdx].skillUsed || arcadeBossTransition) return; 
         skillActive = true; 
         document.querySelectorAll('.tile').forEach(t => t.classList.add('skill-mode')); 
     }
