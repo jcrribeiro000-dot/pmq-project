@@ -2540,7 +2540,6 @@
         CORPOSECO: "https://i.imgur.com/XPUrK5S.gif",
         LOBISOMEM: "https://i.imgur.com/SHPVBJp.gif",
         CUCA: "https://i.imgur.com/oxrLSyq.gif",
-        ANHANGA: "https://i.imgur.com/bmCTfRc.gif", // NOVO BOSS FINAL
         
         Muiraquita: "https://i.ibb.co/JjYQszc0/muiraquita.png",
         VortexFX: "https://cdn-icons-png.flaticon.com/512/1344/1344933.png",
@@ -2552,8 +2551,8 @@
         // NOVOS EFEITOS VISUAIS
         FireballFX: "https://cdn-icons-png.flaticon.com/512/1163/1163657.png",
         ClawFX: "https://cdn-icons-png.flaticon.com/512/4600/4600704.png",
-        PotionFX: "https://i.imgur.com/1ngilGX.png",
-        PoisonFX: "https://i.imgur.com/1ngilGX.png",
+        PotionFX: "https://cdn-icons-png.flaticon.com/512/2436/2436874.png",
+        PoisonFX: "https://cdn-icons-png.flaticon.com/512/2490/2490422.png",
         // NOVAS ANIMAÇÕES DO BRAVELY CHAIN
         BRAVELY_TUPA: "https://i.imgur.com/pCrboAh.gif",
         BRAVELY_SUME: "https://i.imgur.com/jDxEk8j.gif",
@@ -2631,12 +2630,6 @@
                 title: 'A Bruxa da Floresta',
                 intro: 'Cuca, a velha bruxa, foi corrompida por Anhangá: "Seu conhecimento é fraco, apenas a destruição traz poder real". Suas poções agora são veneno puro.',
                 clue: '...Anhangá aguarda no final...'
-            },
-            // NOVO BOSS FINAL
-            'ANHANGA': {
-                title: 'O Espírito do Mal',
-                intro: 'Anhangá, a contraparte maligna de Tupã, é o espírito do mal na mitologia tupi-guaraní. Após corromper todos os outros seres da floresta, ele finalmente se revela para enfrentar os heróis pessoalmente.',
-                clue: '...a escuridão sempre retorna...'
             }
         },
         anhangáImage: 'https://i.ibb.co/cSr7cZG2/anhanga.png'
@@ -3942,7 +3935,6 @@
             "corposeco": "CORPOSECO",
             "lobisomem": "LOBISOMEM",
             "cuca": "CUCA",
-            "anhanga": "ANHANGA",
             "none": "NONE"
         };
         
@@ -4259,20 +4251,11 @@
         mulatema: new Audio("mulasemcabeca.mp3"),
         cucask1: new Audio("cucask1.mp3"),
         cucask2: new Audio("cucask2.mp3"),
-        garras: new Audio("garras.mp3"),
-        // NOVO BOSS FINAL
-        anhanga_skill1: null, // Será referenciado a skill1
-        anhanga_skill2: null, // Será referenciado a cucask2
-        anhangatema: new Audio("anhanga.mp3")
+        garras: new Audio("garras.mp3")
     };
 
-    // Referenciar sons existentes para evitar duplicação
-    sfx.anhanga_skill1 = sfx.skill1;
-    sfx.anhanga_skill2 = sfx.cucask2;
-
     [sfx.bgm, sfx.sacitema, sfx.mapinguaritema, sfx.boitatatema, sfx.iaratema, 
-     sfx.corposecotema, sfx.lobisomemtema, sfx.cucatema, sfx.mulatema, 
-     sfx.anhangatema].forEach(track => { 
+     sfx.corposecotema, sfx.lobisomemtema, sfx.cucatema, sfx.mulatema].forEach(track => { 
         track.loop = true; 
         track.volume = 0.3; 
     });
@@ -4285,8 +4268,7 @@
                 a.play().then(() => { 
                     a.pause(); 
                     if([sfx.bgm, sfx.sacitema, sfx.mapinguaritema, sfx.boitatatema, sfx.iaratema,
-                       sfx.corposecotema, sfx.lobisomemtema, sfx.cucatema, sfx.mulatema,
-                       sfx.anhangatema].includes(a)) a.currentTime = 0; 
+                       sfx.corposecotema, sfx.lobisomemtema, sfx.cucatema, sfx.mulatema].includes(a)) a.currentTime = 0; 
                 }).catch(()=>{}); 
             }); 
             audioUnlocked = true; 
@@ -4297,8 +4279,7 @@
     function playBossTheme() {
         if (!audioUnlocked) return;
         [sfx.bgm, sfx.sacitema, sfx.mapinguaritema, sfx.boitatatema, sfx.iaratema,
-         sfx.corposecotema, sfx.lobisomemtema, sfx.cucatema, sfx.mulatema,
-         sfx.anhangatema].forEach(track => track.pause());
+         sfx.corposecotema, sfx.lobisomemtema, sfx.cucatema, sfx.mulatema].forEach(track => track.pause());
         if (mode === "BOSS" || mode === "ARCADE") {
             switch(boss.type) {
                 case "SACI": currentBGM = sfx.sacitema; break;
@@ -4310,8 +4291,6 @@
                 case "CORPOSECO": currentBGM = sfx.corposecotema; break;
                 case "LOBISOMEM": currentBGM = sfx.lobisomemtema; break;
                 case "CUCA": currentBGM = sfx.cucatema; break;
-                // NOVO BOSS FINAL
-                case "ANHANGA": currentBGM = sfx.anhangatema; break;
                 default: currentBGM = sfx.bgm;
             }
         } else currentBGM = sfx.bgm;
@@ -4565,16 +4544,7 @@
                 boss.type = arcadeCurrentOrder[arcadeIndex]; 
             }
             
-            // Vida base do boss
-            let baseBossHP = parseInt(document.getElementById('hp_BOSS_cfg').value) || 30;
-            
-            // Se for o Anhangá, adicionar +10 de vida
-            if (boss.type === "ANHANGA") {
-                boss.maxHp = baseBossHP + 10;
-            } else {
-                boss.maxHp = baseBossHP;
-            }
-            
+            boss.maxHp = parseInt(document.getElementById('hp_BOSS_cfg').value); 
             boss.hp = boss.maxHp; 
             boss.x = 4; 
             boss.y = 0; 
@@ -5087,7 +5057,7 @@
         return quadrant;
     }
 
-    // ================= BOSSAI ATUALIZADO COM NOVOS BOSSES E ANHANGÁ =================
+    // ================= BOSSAI ATUALIZADO COM NOVOS BOSSES =================
     async function bossAI() {
         if (bossAIIsRunning || arcadeBossTransition) return;
         
@@ -5509,82 +5479,6 @@
                     addLog(`🧪 ${boss.type} recuperou 2 HP!`);
                 } 
             }
-            // NOVO BOSS FINAL: ANHANGÁ
-            else if(boss.type === "ANHANGA") { 
-                // 60% de chance para Skill 1, 40% para Skill 2
-                if(Math.random() < 0.6) { 
-                    playSfx('anhanga_skill1'); 
-                    addLog("🔥 ANHANGÁ: 'Sintam meu fogo intercalado!'");
-                    
-                    // Atacar colunas alternadas a partir da posição do boss
-                    // Coluna do boss: ataque completo
-                    // Colunas laterais: sem ataque
-                    const columnsToAttack = [];
-                    
-                    // Começar na coluna do boss e alternar
-                    for (let col = boss.x; col < 8; col += 2) {
-                        columnsToAttack.push(col);
-                    }
-                    for (let col = boss.x; col >= 0; col -= 2) {
-                        columnsToAttack.push(col);
-                    }
-                    
-                    // Remover duplicados
-                    const uniqueColumns = [...new Set(columnsToAttack)];
-                    
-                    // Efeito visual nas colunas atacadas
-                    uniqueColumns.forEach(col => {
-                        if(col >= 0 && col <= 7) {
-                            triggerFireColumn(col);
-                        }
-                    });
-                    
-                    await sleep(600);
-                    
-                    // Aplicar dano apenas nas colunas atacadas
-                    players.forEach(p => { 
-                        if(!p.dead && uniqueColumns.includes(p.x)) {
-                            applyDmg(p, bossAtk ); // Dano aumentado para o boss final
-                        }
-                    });
-                    
-                } else { 
-                    playSfx('anhanga_skill2'); 
-                    addLog("💀 ANHANGÁ: 'Eu me alimento da natureza!'");
-                    
-                    // Efeito visual de sucção de energia
-                    const board = document.getElementById('board');
-                    const s = getStep();
-                    
-                    // Criar efeito de energia sendo sugada para o Anhangá
-                    const suckEffect = document.createElement('div');
-                    suckEffect.style.position = 'absolute';
-                    suckEffect.style.left = (boss.x * s + 8) + 'px';
-                    suckEffect.style.top = (boss.y * s + 8) + 'px';
-                    suckEffect.style.width = '20px';
-                    suckEffect.style.height = '20px';
-                    suckEffect.style.background = 'radial-gradient(circle, #8e44ad, #9b59b6, transparent)';
-                    suckEffect.style.borderRadius = '50%';
-                    suckEffect.style.boxShadow = '0 0 20px #8e44ad';
-                    suckEffect.style.animation = 'pulseSkill 0.8s infinite alternate';
-                    suckEffect.style.zIndex = '55';
-                    
-                    board.appendChild(suckEffect);
-                    
-                    // Cura do Anhangá
-                    triggerPotion(boss.x, boss.y);
-                    await sleep(400);
-                    boss.hp = Math.min(boss.maxHp, boss.hp + 3);
-                    showHealEffect(boss.x, boss.y, 3);
-                    updateVisuals();
-                    addLog(`🧪 ${boss.type} recuperou 3 HP sugando energia da natureza!`);
-                    
-                    // Remover efeito
-                    setTimeout(() => {
-                        if (suckEffect.parentNode) suckEffect.remove();
-                    }, 1000);
-                } 
-            }
         }
         
         await sleep(600); 
@@ -5638,61 +5532,42 @@
             arcadeIndex++; 
             LORE.currentStage++;
             
-            // Verificar se completou os 4 bosses regulares do desafio
+            // Verificar se completou o desafio atual
             if (arcadeIndex >= arcadeCurrentOrder.length) {
-                // Se for o quinto boss (Anhangá), mostrar vitória total
-                if (boss.type === "ANHANGA") {
+                if (currentArcadeChallenge === 1) {
+                    // Completou o primeiro desafio
+                    addLog("🏆 PRIMEIRO DESAFIO COMPLETO!");
+                    addLog("🔥 NOVOS BOSSES DESBLOQUEADOS!");
+                    addLog("⭐ O SEGUNDO DESAFIO AGORA ESTÁ DISPONÍVEL!");
+                    
+                    // Salvar progresso
+                    const savedData = localStorage.getItem('entity_titles_data');
+                    if (savedData) {
+                        try {
+                            const data = JSON.parse(savedData);
+                            data.stats = data.stats || {};
+                            data.stats.first_challenge_completed = true;
+                            localStorage.setItem('entity_titles_data', JSON.stringify(data));
+                        } catch (e) {
+                            console.error("Erro ao salvar progresso:", e);
+                        }
+                    }
+                    
+                    showEndGame("DESAFIO 1 COMPLETO!", true);
+                } else {
+                    // Completou o segundo desafio
                     LORE.anhangáRevealed = true;
                     addLog("👑 DESAFIO FINAL COMPLETO!");
-                    addLog("🎉 ANHANGÁ FOI DERROTADO!");
+                    addLog("🎉 TODOS OS BOSSES FORAM DERROTADOS!");
                     addLog("🏆 VOCÊ É O VERDADEIRO HERÓI DA FLORESTA!");
                     
                     showEndGame("VITÓRIA TOTAL!", true);
-                    return;
                 }
-                
-                // Se completou 4 bosses normais, adicionar Anhangá como quinto
-                addLog("🔥 OS QUATRO BOSSES FORAM DERROTADOS!");
-                addLog("👹 MAS ALGO SOMBRIO SE APROXIMA...");
-                addLog("💀 ANHANGÁ, O ESPÍRITO DO MAL, DESPERTA!");
-                
-                // Inicializar Anhangá como boss final
-                boss.type = "ANHANGA";
-                
-                // Vida do Anhangá: 10 a mais que o boss normal
-                const baseBossHP = parseInt(document.getElementById('hp_BOSS_cfg').value) || 30;
-                boss.maxHp = baseBossHP + 10;
-                boss.hp = boss.maxHp;
-                boss.dead = false;
-                boss.x = 4;
-                boss.y = 0;
-                
-                // Atualizar sprite e interface
-                const bossImg = document.getElementById('imgBoss');
-                if (bossImg) bossImg.src = SPRITES.ANHANGA;
-                document.getElementById('turnBoss').innerText = `${boss.type} BOSS FINAL`;
-                document.getElementById('bossNameDisplay').textContent = "ANHANGÁ";
-                
-                updateVisuals();
-                playBossTheme();
-                updateAllSpriteDirections();
-                
-                // Mostrar lore do Anhangá
-                setTimeout(() => {
-                    addLog("👹 ANHANGÁ: 'Eu sou o espírito do mal...'");
-                    addLog("👹 ANHANGÁ: 'Vocês podem ter vencido meus servos...'");
-                    addLog("👹 ANHANGÁ: 'Mas agora enfrentam a escuridão em pessoa!'");
-                }, 1500);
-                
                 return;
             }
             
-            // Próximo boss regular
+            // Próximo boss no mesmo desafio
             boss.type = arcadeCurrentOrder[arcadeIndex];
-            
-            // Ajustar vida para boss normal (não Anhangá)
-            const baseBossHP = parseInt(document.getElementById('hp_BOSS_cfg').value) || 30;
-            boss.maxHp = baseBossHP;
             boss.hp = boss.maxHp;
             boss.dead = false;
             boss.x = 4;
@@ -5702,6 +5577,7 @@
             document.getElementById('turnBoss').innerText = `${boss.type} BOSS`;
             
             updateAllSpriteDirections();
+            
             updateVisuals();
             playBossTheme();
             
