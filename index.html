@@ -40,6 +40,60 @@
             touch-action: manipulation;
         }
         
+        /* ================= INTRO ANIMATION ================= */
+        #introScreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #2c3e50 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10001;
+            opacity: 1;
+            transition: opacity 0.8s ease;
+        }
+        
+        .intro-logo {
+            width: 80%;
+            max-width: 500px;
+            filter: drop-shadow(0 0 0 rgba(241, 196, 15, 0));
+            animation: 
+                logoFloat 3s ease-in-out infinite,
+                logoGlow 2s ease-in-out infinite alternate,
+                logoEntrance 1.5s ease-out forwards;
+        }
+        
+        @keyframes logoEntrance {
+            0% {
+                transform: translateY(100px) scale(0.8);
+                opacity: 0;
+                filter: blur(10px);
+            }
+            60% {
+                transform: translateY(-20px) scale(1.05);
+                opacity: 1;
+                filter: blur(0);
+            }
+            100% {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+                filter: blur(0);
+            }
+        }
+        
+        @keyframes logoFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+        
+        @keyframes logoGlow {
+            0% { filter: drop-shadow(0 0 10px rgba(241, 196, 15, 0.3)); }
+            100% { filter: drop-shadow(0 0 25px rgba(241, 196, 15, 0.7)); }
+        }
+        
         /* ================= TELA DE TÍTULO ================= */
         #titleScreen {
             position: fixed;
@@ -48,7 +102,7 @@
             width: 100%;
             height: 100%;
             background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #2c3e50 100%);
-            display: flex;
+            display: none;
             flex-direction: column;
             justify-content: center;
             align-items: center;
@@ -56,8 +110,16 @@
             transition: opacity 0.5s ease;
         }
         
+        .title-logo-image {
+            width: 180px;
+            height: auto;
+            margin-bottom: 10px;
+            filter: drop-shadow(0 0 15px rgba(241, 196, 15, 0.5));
+            animation: logoFloat 3s ease-in-out infinite;
+        }
+        
         .title-logo {
-            font-size: 3.5rem;
+            font-size: 2.8rem;
             color: var(--color-accent);
             text-shadow: 0 0 20px rgba(241, 196, 15, 0.7);
             margin-bottom: 0.5rem;
@@ -1390,6 +1452,85 @@
             50% { transform: scale(1.05); }
         }
         
+        /* ================= NOVOS EFEITOS PARA OS NOVOS BOSSES ================= */
+        .fireball-fx {
+            position: absolute;
+            width: var(--tile-size);
+            height: var(--tile-size);
+            animation: fireballAnim 0.8s ease-out;
+            z-index: 50;
+            filter: drop-shadow(0 0 10px #ff3300);
+        }
+        
+        @keyframes fireballAnim {
+            0% { transform: scale(0.5) rotate(0deg); opacity: 0; }
+            50% { transform: scale(1.2) rotate(180deg); opacity: 1; }
+            100% { transform: scale(1) rotate(360deg); opacity: 0; }
+        }
+        
+        .claw-spin-fx {
+            position: absolute;
+            width: calc(var(--tile-size) * 3);
+            height: calc(var(--tile-size) * 3);
+            animation: clawSpinAnim 1s linear;
+            z-index: 50;
+            filter: drop-shadow(0 0 8px #ff3300);
+        }
+        
+        @keyframes clawSpinAnim {
+            0% { transform: rotate(0deg) scale(0.5); opacity: 0; }
+            50% { transform: rotate(180deg) scale(1.2); opacity: 1; }
+            100% { transform: rotate(360deg) scale(1); opacity: 0; }
+        }
+        
+        .potion-fx {
+            position: absolute;
+            width: var(--tile-size);
+            height: var(--tile-size);
+            animation: potionAnim 0.6s ease-out;
+            z-index: 50;
+            filter: drop-shadow(0 0 8px #9b59b6);
+        }
+        
+        @keyframes potionAnim {
+            0% { transform: scale(0) rotate(0deg); opacity: 0; }
+            50% { transform: scale(1.3) rotate(180deg); opacity: 1; }
+            100% { transform: scale(1) rotate(360deg); opacity: 0; }
+        }
+        
+        .poison-gas-fx {
+            position: absolute;
+            width: calc(var(--tile-size) * 1.5);
+            height: calc(var(--tile-size) * 1.5);
+            background: radial-gradient(circle, #27ae60, #2ecc71, transparent);
+            border-radius: 50%;
+            animation: poisonGasAnim 1.2s ease-out;
+            z-index: 50;
+            box-shadow: 0 0 15px #27ae60;
+        }
+        
+        @keyframes poisonGasAnim {
+            0% { transform: scale(0); opacity: 0; }
+            50% { transform: scale(1.5); opacity: 0.8; }
+            100% { transform: scale(2); opacity: 0; }
+        }
+        
+        .earthquake-fx {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            animation: earthquakeAnim 0.8s ease-out;
+            z-index: 40;
+        }
+        
+        @keyframes earthquakeAnim {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+        
         /* ================= MODAIS ================= */
         #gameOverlay {
             position: fixed;
@@ -1868,12 +2009,26 @@
             .bravely-animation-gif {
                 max-width: 300px;
             }
+            
+            .intro-logo {
+                width: 95%;
+            }
+            
+            .title-logo-image {
+                width: 140px;
+            }
         }
     </style>
 </head>
 <body onclick="unlockAudio()">
+    <!-- TELA DE INTRODUÇÃO -->
+    <div id="introScreen">
+        <img src="https://i.imgur.com/LbVLpE8.png" class="intro-logo" alt="ENTIDADES Logo">
+    </div>
+    
     <!-- TELA DE TÍTULO -->
     <div id="titleScreen">
+        <img src="https://i.imgur.com/LbVLpE8.png" class="title-logo-image" alt="ENTIDADES Logo">
         <div class="title-logo">ENTIDADES</div>
         <div class="title-subtitle">Confronto de Lendas - V9.0</div>
         
@@ -2282,6 +2437,71 @@
                 </div>
             </div>
             
+            <!-- NOVOS BOSSES NO BESTIÁRIO -->
+            <div class="bestiary-entry locked-entry" id="mulaEntry" style="display: none;">
+                <div class="bestiary-entry-content">
+                    <img src="https://i.imgur.com/f47hpFR.gif" class="bestiary-boss-image">
+                    <div class="bestiary-boss-info">
+                        <h3 class="bestiary-boss-name">MULA SEM CABEÇA - Estágio 5</h3>
+                        <h4 class="bestiary-boss-title">O Relincho da Noite</h4>
+                        <p class="bestiary-boss-description">
+                            A Mula sem Cabeça, amaldiçoada por seus pecados, foi consumida pela fúria de Anhangá. "Sua forma é um castigo, aceite seu destino de destruição", sussurrou a sombra. Agora, ela relincha fogo e dor.
+                        </p>
+                        <p class="bestiary-boss-clue">
+                            💬 Últimas palavras: "...a secura consome tudo..."
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bestiary-entry locked-entry" id="corposecoEntry" style="display: none;">
+                <div class="bestiary-entry-content">
+                    <img src="https://i.imgur.com/XPUrK5S.gif" class="bestiary-boss-image">
+                    <div class="bestiary-boss-info">
+                        <h3 class="bestiary-boss-name">CORPO SECO - Estágio 6</h3>
+                        <h4 class="bestiary-boss-title">O Devorador de Almas</h4>
+                        <p class="bestiary-boss-description">
+                            O Corpo Seco, esqueleto faminto, foi tentado por Anhangá: "Sua fome nunca será saciada, a menos que devore tudo ao seu redor". Agora, sua fome é infinita.
+                        </p>
+                        <p class="bestiary-boss-clue">
+                            💬 Últimas palavras: "...o lobo uiva na lua cheia..."
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bestiary-entry locked-entry" id="lobisomemEntry" style="display: none;">
+                <div class="bestiary-entry-content">
+                    <img src="https://i.imgur.com/SHPVBJp.gif" class="bestiary-boss-image">
+                    <div class="bestiary-boss-info">
+                        <h3 class="bestiary-boss-name">LOBISOMEM - Estágio 7</h3>
+                        <h4 class="bestiary-boss-title">A Maldição da Lua</h4>
+                        <p class="bestiary-boss-description">
+                            O Lobisomem, amaldiçoado a se transformar, ouviu Anhangá: "Sua forma bestial é seu verdadeiro eu, liberte a fera". A lua agora desperta apenas ódio.
+                        </p>
+                        <p class="bestiary-boss-clue">
+                            💬 Últimas palavras: "...a bruxa prepara suas poções..."
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bestiary-entry locked-entry" id="cucaEntry" style="display: none;">
+                <div class="bestiary-entry-content">
+                    <img src="https://i.imgur.com/oxrLSyq.gif" class="bestiary-boss-image">
+                    <div class="bestiary-boss-info">
+                        <h3 class="bestiary-boss-name">CUCA - Estágio 8</h3>
+                        <h4 class="bestiary-boss-title">A Bruxa da Floresta</h4>
+                        <p class="bestiary-boss-description">
+                            Cuca, a velha bruxa, foi corrompida por Anhangá: "Seu conhecimento é fraco, apenas a destruição traz poder real". Suas poções agora são veneno puro.
+                        </p>
+                        <p class="bestiary-boss-clue">
+                            💬 Últimas palavras: "...Anhangá aguarda no final..."
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
             <div class="bestiary-anhanga-section">
                 <img src="https://i.ibb.co/cSr7cZG2/anhanga.png" class="bestiary-anhanga-image">
                 <h3 class="bestiary-anhanga-name">ANHANGÁ</h3>
@@ -2305,7 +2525,7 @@
 
 <script>
     // ================= VARIÁVEIS GLOBAIS =================
-    let currentScreen = 'title'; // title, config, mode, players, game
+    let currentScreen = 'intro'; // intro, title, config, mode, players, game
     let COLORS = ['FOGO', 'AGUA', 'TERRA', 'AR'];
     let SPRITES = {
         Tupa: "https://i.imgur.com/GKslMCA.gif",
@@ -2315,6 +2535,12 @@
         MAPINGUARI: "https://i.imgur.com/WAzhnwj.gif",
         SACI: "https://i.imgur.com/M1vtbH9.gif",
         IARA: "https://i.imgur.com/sGTgi5h.gif",
+        // NOVOS BOSSES
+        MULA: "https://i.imgur.com/f47hpFR.gif",
+        CORPOSECO: "https://i.imgur.com/XPUrK5S.gif",
+        LOBISOMEM: "https://i.imgur.com/SHPVBJp.gif",
+        CUCA: "https://i.imgur.com/oxrLSyq.gif",
+        
         Muiraquita: "https://i.ibb.co/JjYQszc0/muiraquita.png",
         VortexFX: "https://cdn-icons-png.flaticon.com/512/1344/1344933.png",
         SwordFX: "https://cdn-icons-png.flaticon.com/512/6720/6720973.png",
@@ -2322,6 +2548,11 @@
         MagicFX: "https://cdn-icons-png.flaticon.com/128/4325/4325956.png",
         BiteFX: "https://cdn-icons-png.flaticon.com/512/3504/3504404.png",
         RockFX: "https://cdn-icons-png.flaticon.com/128/12912/12912366.png",
+        // NOVOS EFEITOS VISUAIS
+        FireballFX: "https://cdn-icons-png.flaticon.com/512/1163/1163657.png",
+        ClawFX: "https://cdn-icons-png.flaticon.com/512/4600/4600704.png",
+        PotionFX: "https://cdn-icons-png.flaticon.com/512/2436/2436874.png",
+        PoisonFX: "https://cdn-icons-png.flaticon.com/512/2490/2490422.png",
         // NOVAS ANIMAÇÕES DO BRAVELY CHAIN
         BRAVELY_TUPA: "https://i.imgur.com/pCrboAh.gif",
         BRAVELY_SUME: "https://i.imgur.com/jDxEk8j.gif",
@@ -2332,11 +2563,18 @@
     let audioUnlocked = false;
     let CLASS_DB = {}, grid = [], path = [], players = [], amulets = [];
     let boss = { x: 4, y: 0, hp: 0, maxHp: 0, type: 'BOITATA', dead: false };
-    let currentPlayerIdx = 0, editingIdx = 0, gameActive = true, mode = "BOSS", skillActive = false, arcadeIndex = 0;
-    const ARCADE_ORDER = ['SACI', 'MAPINGUARI', 'IARA', 'BOITATA'];
+    let currentPlayerIdx = 0, editingIdx = 0, gameActive = true, mode = "BOSS", skillActive = false;
+    
+    // ================= SISTEMA DE ARCADE ATUALIZADO =================
+    const ARCADE_ORDER_FIRST = ['SACI', 'MAPINGUARI', 'IARA', 'BOITATA'];  // Primeiro desafio
+    const ARCADE_ORDER_SECOND = ['MULA', 'CORPOSECO', 'LOBISOMEM', 'CUCA']; // Segundo desafio
+    
+    let arcadeCurrentOrder = ARCADE_ORDER_FIRST;
+    let arcadeIndex = 0;
     let bossAIIsRunning = false;
-    let arcadeBossTransition = false; // NOVA VARIÁVEL: flag para controlar transição
-    let isExecutingAction = false; // Flag para controlar execução de ações
+    let arcadeBossTransition = false;
+    let isExecutingAction = false;
+    let currentArcadeChallenge = 1; // 1 = primeiro desafio, 2 = segundo desafio
     
     // ================= SISTEMA DE JOGADORES =================
     let playerCount = 1; // Padrão: 1 jogador
@@ -2371,6 +2609,27 @@
                 title: 'A Serpente de Fogo',
                 intro: 'Anhangá ofereceu poder ao Boitatá: "Seu fogo é fraco, apenas luzinhas na noite". A serpente aceitou, tornando-se um inferno ambulante que consome tudo.',
                 clue: '...ele vem... a sombra por trás de tudo...'
+            },
+            // NOVOS BOSSES
+            'MULA': {
+                title: 'O Relincho da Noite',
+                intro: 'A Mula sem Cabeça, amaldiçoada por seus pecados, foi consumida pela fúria de Anhangá. "Sua forma é um castigo, aceite seu destino de destruição", sussurrou a sombra. Agora, ela relincha fogo e dor.',
+                clue: '...a secura consome tudo...'
+            },
+            'CORPOSECO': {
+                title: 'O Devorador de Almas',
+                intro: 'O Corpo Seco, esqueleto faminto, foi tentado por Anhangá: "Sua fome nunca será saciada, a menos que devore tudo ao seu redor". Agora, sua fome é infinita.',
+                clue: '...o lobo uiva na lua cheia...'
+            },
+            'LOBISOMEM': {
+                title: 'A Maldição da Lua',
+                intro: 'O Lobisomem, amaldiçoado a se transformar, ouviu Anhangá: "Sua forma bestial é seu verdadeiro eu, liberte a fera". A lua agora desperta apenas ódio.',
+                clue: '...a bruxa prepara suas poções...'
+            },
+            'CUCA': {
+                title: 'A Bruxa da Floresta',
+                intro: 'Cuca, a velha bruxa, foi corrompida por Anhangá: "Seu conhecimento é fraco, apenas a destruição traz poder real". Suas poções agora são veneno puro.',
+                clue: '...Anhangá aguarda no final...'
             }
         },
         anhangáImage: 'https://i.ibb.co/cSr7cZG2/anhanga.png'
@@ -2632,6 +2891,26 @@
     // Título ativo do jogador
     let ACTIVE_TITLE = null;
 
+    // ================= FUNÇÕES DE INTRODUÇÃO =================
+    function showIntro() {
+        const introScreen = document.getElementById('introScreen');
+        const titleScreen = document.getElementById('titleScreen');
+        
+        introScreen.style.display = 'flex';
+        titleScreen.style.display = 'none';
+        
+        setTimeout(() => {
+            introScreen.style.opacity = '0';
+            
+            setTimeout(() => {
+                introScreen.style.display = 'none';
+                titleScreen.style.display = 'flex';
+                currentScreen = 'title';
+                unlockAudio();
+            }, 800);
+        }, 3000);
+    }
+
     // ================= FUNÇÕES DE NAVEGAÇÃO =================
     function startGame() {
         hideScreen('titleScreen');
@@ -2651,24 +2930,19 @@
         currentScreen = 'title';
     }
     
-    // CORREÇÃO APLICADA: Modo PVP agora vai direto para a tela de jogo
     function selectMode(selectedMode) {
         mode = selectedMode;
         
         if (mode === "PVP") {
-            // Modo PVP sempre tem 2 jogadores
             playerCount = 2;
             for (let i = 0; i < 4; i++) {
                 playerConfigs[i].active = (i < 2);
             }
-            
-             // CORREÇÃO: Mostrar tela de configuração de jogadores (igual aos outros modos)
-        showPlayersScreen();
-    } else {
-        // Modo BOSS ou ARCADE: mostrar tela de seleção de jogadores
-        showPlayersScreen();
+            showPlayersScreen();
+        } else {
+            showPlayersScreen();
+        }
     }
-}
     
     function showPlayersScreen() {
         hideScreen('modeScreen');
@@ -2686,7 +2960,6 @@
     function setPlayerCount(count) {
         playerCount = count;
         
-        // Atualizar botões
         document.querySelectorAll('.player-count-btn').forEach((btn, index) => {
             if (index + 1 === count) {
                 btn.classList.add('active');
@@ -2695,7 +2968,6 @@
             }
         });
         
-        // Atualizar configurações dos jogadores
         for (let i = 0; i < 4; i++) {
             playerConfigs[i].active = (i < count);
         }
@@ -2754,7 +3026,6 @@
             grid.appendChild(card);
         }
         
-        // Atualizar estatísticas
         updateClassBase();
         for (let i = 0; i < 4; i++) {
             const config = playerConfigs[i];
@@ -2769,7 +3040,6 @@
         if (playerConfigs[index]) {
             playerConfigs[index][field] = value;
             
-            // Atualizar estatísticas se a classe mudou
             if (field === 'class' && CLASS_DB[value]) {
                 const hpEl = document.getElementById(`player${index}HP`);
                 const atkEl = document.getElementById(`player${index}ATK`);
@@ -2782,23 +3052,17 @@
     }
     
     function startGameWithPlayers() {
-    // Para modos BOSS e ARCADE, mostrar seleção de boss
-    if (mode === "BOSS") {
-        showBossSelection();
-    } else if (mode === "ARCADE") {
-        // Modo arcade não precisa selecionar boss (começa com SACI)
-        hideScreen('playersScreen');
-        showScreen('gameScreen');
-        currentScreen = 'game';
-        initGameWithPlayers();
-    } else if (mode === "PVP") {
-        // CORREÇÃO: Modo PVP vai direto para o jogo
-        hideScreen('playersScreen');
-        showScreen('gameScreen');
-        currentScreen = 'game';
-        initGameWithPlayers();
+        if (mode === "BOSS") {
+            showBossSelection();
+        } else if (mode === "ARCADE") {
+            showArcadeChallengeSelection();
+        } else if (mode === "PVP") {
+            hideScreen('playersScreen');
+            showScreen('gameScreen');
+            currentScreen = 'game';
+            initGameWithPlayers();
+        }
     }
-}
     
     function showBossSelection() {
         const modal = document.createElement('div');
@@ -2809,33 +3073,34 @@
             align-items: center; color: white;
         `;
         
+        // Obter bosses disponíveis
+        let bossesHTML = '';
+        const allBosses = [
+            { type: 'BOITATA', name: 'BOITATÁ', desc: 'A Serpente de Fogo', color: '#e74c3c', sprite: SPRITES.BOITATA },
+            { type: 'MAPINGUARI', name: 'MAPINGUARI', desc: 'O Devorador', color: '#27ae60', sprite: SPRITES.MAPINGUARI },
+            { type: 'SACI', name: 'SACI', desc: 'O Travesso', color: '#9b59b6', sprite: SPRITES.SACI },
+            { type: 'IARA', name: 'IARA', desc: 'A Sedutora', color: '#3498db', sprite: SPRITES.IARA },
+            { type: 'MULA', name: 'MULA', desc: 'O Relincho da Noite', color: '#e67e22', sprite: SPRITES.MULA },
+            { type: 'CORPOSECO', name: 'CORPO SECO', desc: 'O Devorador de Almas', color: '#95a5a6', sprite: SPRITES.CORPOSECO },
+            { type: 'LOBISOMEM', name: 'LOBISOMEM', desc: 'A Maldição da Lua', color: '#34495e', sprite: SPRITES.LOBISOMEM },
+            { type: 'CUCA', name: 'CUCA', desc: 'A Bruxa da Floresta', color: '#8e44ad', sprite: SPRITES.CUCA }
+        ];
+        
+        allBosses.forEach(bossInfo => {
+            bossesHTML += `
+                <div style="background: #2c3e50; padding: 20px; border-radius: 10px; text-align: center; cursor: pointer; transition: all 0.3s; border: 2px solid #444;"
+                     onclick="selectBoss('${bossInfo.type}'); this.parentElement.parentElement.remove();">
+                    <img src="${bossInfo.sprite}" style="width: 100px; height: 100px; margin-bottom: 10px;">
+                    <h3 style="color: ${bossInfo.color}; margin-bottom: 5px;">${bossInfo.name}</h3>
+                    <p style="color: #ccc; font-size: 0.9rem;">${bossInfo.desc}</p>
+                </div>
+            `;
+        });
+        
         modal.innerHTML = `
             <h2 style="color: #f1c40f; font-size: 2.5rem; margin-bottom: 30px; text-align: center;">ESCOLHA O BOSS</h2>
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; width: 90%; max-width: 800px; margin-bottom: 30px;">
-                <div style="background: #2c3e50; padding: 20px; border-radius: 10px; text-align: center; cursor: pointer; transition: all 0.3s; border: 2px solid #444;"
-                     onclick="selectBoss('BOITATA'); this.parentElement.parentElement.remove();">
-                    <img src="${SPRITES.BOITATA}" style="width: 100px; height: 100px; margin-bottom: 10px;">
-                    <h3 style="color: #e74c3c; margin-bottom: 5px;">BOITATÁ</h3>
-                    <p style="color: #ccc; font-size: 0.9rem;">A Serpente de Fogo</p>
-                </div>
-                <div style="background: #2c3e50; padding: 20px; border-radius: 10px; text-align: center; cursor: pointer; transition: all 0.3s; border: 2px solid #444;"
-                     onclick="selectBoss('MAPINGUARI'); this.parentElement.parentElement.remove();">
-                    <img src="${SPRITES.MAPINGUARI}" style="width: 100px; height: 100px; margin-bottom: 10px;">
-                    <h3 style="color: #27ae60; margin-bottom: 5px;">MAPINGUARI</h3>
-                    <p style="color: #ccc; font-size: 0.9rem;">O Devorador</p>
-                </div>
-                <div style="background: #2c3e50; padding: 20px; border-radius: 10px; text-align: center; cursor: pointer; transition: all 0.3s; border: 2px solid #444;"
-                     onclick="selectBoss('SACI'); this.parentElement.parentElement.remove();">
-                    <img src="${SPRITES.SACI}" style="width: 100px; height: 100px; margin-bottom: 10px;">
-                    <h3 style="color: #9b59b6; margin-bottom: 5px;">SACI</h3>
-                    <p style="color: #ccc; font-size: 0.9rem;">O Travesso</p>
-                </div>
-                <div style="background: #2c3e50; padding: 20px; border-radius: 10px; text-align: center; cursor: pointer; transition: all 0.3s; border: 2px solid #444;"
-                     onclick="selectBoss('IARA'); this.parentElement.parentElement.remove();">
-                    <img src="${SPRITES.IARA}" style="width: 100px; height: 100px; margin-bottom: 10px;">
-                    <h3 style="color: #3498db; margin-bottom: 5px;">IARA</h3>
-                    <p style="color: #ccc; font-size: 0.9rem;">A Sedutora</p>
-                </div>
+                ${bossesHTML}
             </div>
             <button onclick="this.parentElement.remove();" 
                     style="padding: 12px 25px; background: #e74c3c; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold;">
@@ -2844,6 +3109,103 @@
         `;
         
         document.body.appendChild(modal);
+    }
+    
+    function showArcadeChallengeSelection() {
+        const modal = document.createElement('div');
+        modal.style.cssText = `
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95); z-index: 10001;
+            display: flex; flex-direction: column; justify-content: center;
+            align-items: center; color: white;
+        `;
+        
+        // Verificar se o segundo desafio está disponível
+        const savedData = localStorage.getItem('entity_titles_data');
+        let secondChallengeAvailable = false;
+        
+        if (savedData) {
+            try {
+                const data = JSON.parse(savedData);
+                const bossesDefeated = data.stats?.bosses_defeated || [];
+                const firstChallengeBosses = ['SACI', 'MAPINGUARI', 'IARA', 'BOITATA'];
+                secondChallengeAvailable = firstChallengeBosses.every(boss => bossesDefeated.includes(boss));
+            } catch (e) {
+                console.error("Erro ao verificar progresso:", e);
+            }
+        }
+        
+        modal.innerHTML = `
+            <h2 style="color: #f1c40f; font-size: 2.5rem; margin-bottom: 30px; text-align: center;">ESCOLHA O DESAFIO ARCADE</h2>
+            <div style="display: grid; grid-template-columns: ${secondChallengeAvailable ? '1fr 1fr' : '1fr'}; gap: 20px; width: 90%; max-width: 800px; margin-bottom: 30px;">
+                <div style="background: #2c3e50; padding: 25px; border-radius: 10px; text-align: center; cursor: pointer; transition: all 0.3s; border: 2px solid #444;"
+                     onclick="selectArcadeChallenge(1); this.parentElement.parentElement.remove();">
+                    <div style="font-size: 3rem; margin-bottom: 15px;">🏆</div>
+                    <h3 style="color: #f1c40f; margin-bottom: 5px;">DESAFIO 1</h3>
+                    <p style="color: #ccc; font-size: 0.9rem; margin-bottom: 15px;">Enfrente os 4 bosses iniciais</p>
+                    <div style="display: flex; justify-content: center; gap: 10px; margin-bottom: 15px;">
+                        <img src="${SPRITES.SACI}" style="width: 40px; height: 40px; border-radius: 5px;" title="SACI">
+                        <img src="${SPRITES.MAPINGUARI}" style="width: 40px; height: 40px; border-radius: 5px;" title="MAPINGUARI">
+                        <img src="${SPRITES.IARA}" style="width: 40px; height: 40px; border-radius: 5px;" title="IARA">
+                        <img src="${SPRITES.BOITATA}" style="width: 40px; height: 40px; border-radius: 5px;" title="BOITATÁ">
+                    </div>
+                    <div style="color: #2ecc71; font-size: 0.8rem;">✅ DISPONÍVEL</div>
+                </div>
+                
+                ${secondChallengeAvailable ? `
+                <div style="background: #2c3e50; padding: 25px; border-radius: 10px; text-align: center; cursor: pointer; transition: all 0.3s; border: 2px solid #9b59b6;"
+                     onclick="selectArcadeChallenge(2); this.parentElement.parentElement.remove();">
+                    <div style="font-size: 3rem; margin-bottom: 15px;">👑</div>
+                    <h3 style="color: #9b59b6; margin-bottom: 5px;">DESAFIO 2</h3>
+                    <p style="color: #ccc; font-size: 0.9rem; margin-bottom: 15px;">Enfrente os 4 novos bosses lendários</p>
+                    <div style="display: flex; justify-content: center; gap: 10px; margin-bottom: 15px;">
+                        <img src="${SPRITES.MULA}" style="width: 40px; height: 40px; border-radius: 5px;" title="MULA SEM CABEÇA">
+                        <img src="${SPRITES.CORPOSECO}" style="width: 40px; height: 40px; border-radius: 5px;" title="CORPO SECO">
+                        <img src="${SPRITES.LOBISOMEM}" style="width: 40px; height: 40px; border-radius: 5px;" title="LOBISOMEM">
+                        <img src="${SPRITES.CUCA}" style="width: 40px; height: 40px; border-radius: 5px;" title="CUCA">
+                    </div>
+                    <div style="color: #9b59b6; font-size: 0.8rem;">⭐ DESBLOQUEADO</div>
+                </div>
+                ` : `
+                <div style="background: #2c3e50; padding: 25px; border-radius: 10px; text-align: center; border: 2px dashed #7f8c8d; opacity: 0.7;">
+                    <div style="font-size: 3rem; margin-bottom: 15px;">🔒</div>
+                    <h3 style="color: #7f8c8d; margin-bottom: 5px;">DESAFIO 2</h3>
+                    <p style="color: #aaa; font-size: 0.9rem; margin-bottom: 15px;">Complete o Desafio 1 para desbloquear</p>
+                    <div style="display: flex; justify-content: center; gap: 10px; margin-bottom: 15px; opacity: 0.5;">
+                        <img src="${SPRITES.MULA}" style="width: 40px; height: 40px; border-radius: 5px; filter: grayscale(100%);" title="MULA SEM CABEÇA">
+                        <img src="${SPRITES.CORPOSECO}" style="width: 40px; height: 40px; border-radius: 5px; filter: grayscale(100%);" title="CORPO SECO">
+                        <img src="${SPRITES.LOBISOMEM}" style="width: 40px; height: 40px; border-radius: 5px; filter: grayscale(100%);" title="LOBISOMEM">
+                        <img src="${SPRITES.CUCA}" style="width: 40px; height: 40px; border-radius: 5px; filter: grayscale(100%);" title="CUCA">
+                    </div>
+                    <div style="color: #e74c3c; font-size: 0.8rem;">🔒 BLOQUEADO</div>
+                </div>
+                `}
+            </div>
+            <button onclick="this.parentElement.remove();" 
+                    style="padding: 12px 25px; background: #e74c3c; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold;">
+                CANCELAR
+            </button>
+        `;
+        
+        document.body.appendChild(modal);
+    }
+    
+    function selectArcadeChallenge(challengeNumber) {
+        currentArcadeChallenge = challengeNumber;
+        
+        if (challengeNumber === 1) {
+            arcadeCurrentOrder = ARCADE_ORDER_FIRST;
+        } else {
+            arcadeCurrentOrder = ARCADE_ORDER_SECOND;
+        }
+        
+        arcadeIndex = 0;
+        boss.type = arcadeCurrentOrder[arcadeIndex];
+        
+        hideScreen('playersScreen');
+        showScreen('gameScreen');
+        currentScreen = 'game';
+        initGameWithPlayers();
     }
     
     function selectBoss(bossType) {
@@ -2861,7 +3223,6 @@
         document.getElementById('modeIndicator').textContent = 
             mode === 'BOSS' ? '👾 COOP' : mode === 'ARCADE' ? '🏆 ARCADE' : '⚔️ PVP';
         
-        // Inicializar o jogo
         initGame();
     }
     
@@ -2930,7 +3291,6 @@
 
     // ================= FUNÇÕES DE CONFIGURAÇÃO =================
     function loadConfigToUI() {
-        // Configurar slider de muiraquitã
         const slider = document.getElementById('amulet_chance_slider');
         const valueDisplay = document.getElementById('amulet_chance_value');
         const hiddenInput = document.getElementById('amulet_chance');
@@ -2943,13 +3303,11 @@
             hiddenInput.value = this.value;
         });
         
-        // Configurar toggles de áudio
         document.getElementById('musicToggle').checked = true;
         document.getElementById('sfxToggle').checked = true;
     }
     
     function saveConfig() {
-        // Os valores já estão nos inputs, serão usados pelo initGame()
         addLog('⚙️ Configurações salvas!');
         hideConfig();
     }
@@ -3316,7 +3674,6 @@
             btn.classList.remove('title-tab-active');
         });
         
-        // Encontra o botão correspondente à categoria
         const buttons = document.querySelectorAll('.title-tab-btn');
         for (let btn of buttons) {
             if (btn.textContent.includes(category.toUpperCase()) || 
@@ -3388,7 +3745,6 @@
         
         content.innerHTML = html;
         
-        // Adicionar event listeners para os títulos desbloqueados
         const titleCards = document.querySelectorAll('.title-card.unlocked');
         titleCards.forEach((card, index) => {
             const titleId = Object.keys(filtered)[index];
@@ -3412,7 +3768,38 @@
 
     // ================= FUNÇÕES DO BESTIÁRIO =================
     function showBestiaryModal() {
-        document.getElementById('bestiaryModal').style.display = 'block';
+        const bestiaryModal = document.getElementById('bestiaryModal');
+        
+        // Verificar quais bosses estão disponíveis
+        const savedData = localStorage.getItem('entity_titles_data');
+        if (savedData) {
+            try {
+                const data = JSON.parse(savedData);
+                const bossesDefeated = data.stats?.bosses_defeated || [];
+                
+                // Mostrar novos bosses se o primeiro desafio foi completado
+                const firstChallengeBosses = ['SACI', 'MAPINGUARI', 'IARA', 'BOITATA'];
+                const hasDefeatedFirstChallenge = firstChallengeBosses.every(boss => bossesDefeated.includes(boss));
+                
+                const newBossEntries = ['mulaEntry', 'corposecoEntry', 'lobisomemEntry', 'cucaEntry'];
+                newBossEntries.forEach(entryId => {
+                    const entry = document.getElementById(entryId);
+                    if (entry) {
+                        if (hasDefeatedFirstChallenge) {
+                            entry.style.display = 'block';
+                            entry.classList.remove('locked-entry');
+                        } else {
+                            entry.style.display = 'block';
+                            entry.classList.add('locked-entry');
+                        }
+                    }
+                });
+            } catch (e) {
+                console.error("Erro ao verificar bosses desbloqueados:", e);
+            }
+        }
+        
+        bestiaryModal.style.display = 'block';
     }
 
     function closeBestiaryModal() {
@@ -3449,7 +3836,8 @@
             return `coop-${boss.type.toLowerCase()}-${diff}-${pc}`;
         }
         if(mode === "ARCADE") {
-            return `arcade-none-${diff}-${pc}`;
+            const challenge = currentArcadeChallenge === 1 ? "first" : "second";
+            return `arcade-${challenge}-${diff}-${pc}`;
         }
         return "";
     }
@@ -3488,7 +3876,6 @@
         
         RANKING.sent = true;
 
-        // USANDO PROXY PARA FUNCIONAR NO GITHUB PAGES
         const originalURL = 
             `http://dreamlo.com/lb/2xF2PddwTkWMAnom-drEWQetRWvH077ESYlrVT75GpDA/` +
             `add/${encodeURIComponent(nameWithMeta)}/${score}`;
@@ -3516,7 +3903,8 @@
                 mode: "UNKNOWN",
                 boss: "NONE",
                 difficulty: "FACIL",
-                players: "1P"
+                players: "1P",
+                challenge: "none"
             };
         }
         
@@ -3543,15 +3931,26 @@
             "boitata": "BOITATA",
             "mapinguari": "MAPINGUARI",
             "iara": "IARA",
+            "mula": "MULA",
+            "corposeco": "CORPOSECO",
+            "lobisomem": "LOBISOMEM",
+            "cuca": "CUCA",
+            "none": "NONE"
+        };
+        
+        const challengeMap = {
+            "first": "PRIMEIRO",
+            "second": "SEGUNDO",
             "none": "NONE"
         };
         
         return {
             displayName: displayName,
             mode: modeMap[metaParts[0]] || (metaParts[0] ? metaParts[0].toUpperCase() : "UNKNOWN"),
-            boss: bossMap[metaParts[1]] || (metaParts[1] ? metaParts[1].toUpperCase() : "NONE"),
-            difficulty: diffMap[metaParts[2]] || (metaParts[2] ? metaParts[2].toUpperCase() : "FACIL"),
+            boss: metaParts[0] === "arcade" ? challengeMap[metaParts[1]] || "NONE" : bossMap[metaParts[1]] || (metaParts[1] ? metaParts[1].toUpperCase() : "NONE"),
+            difficulty: diffMap[metaParts[2]] || (metaParts[2] ? metaParts[2].toUpperCase() : "FÁCIL"),
             players: metaParts[3] ? metaParts[3].toUpperCase() : "1P",
+            challenge: metaParts[0] === "arcade" ? challengeMap[metaParts[1]] || "NONE" : "NONE",
             metaString: meta
         };
     }
@@ -3597,7 +3996,6 @@
         content.innerHTML = '<div style="text-align:center; padding:20px; color:#aaa;">Carregando ranking...</div>';
         
         const timestamp = new Date().getTime();
-        // USANDO PROXY PARA FUNCIONAR NO GITHUB PAGES
         const originalURL = `http://dreamlo.com/lb/694de7e88f40bbcf806761a4/json?t=${timestamp}`;
         const proxiedURL = `https://corsproxy.io/?${encodeURIComponent(originalURL)}`;
         
@@ -3662,16 +4060,22 @@
         
         const bossFilter = document.getElementById("rf_boss");
         if (bossFilter) {
-            const bosses = [...new Set(RANKING_CACHE
-                .filter(e => e.mode === "COOP")
-                .map(e => e.boss)
-            )].filter(b => b && b !== "NONE");
+            const bosses = [...new Set(RANKING_CACHE.map(e => e.boss))].filter(b => b && b !== "NONE" && b !== "PRIMEIRO" && b !== "SEGUNDO");
             
             bossFilter.innerHTML = '<option value="">Todos os Bosses</option>';
             bosses.forEach(boss => {
                 const option = document.createElement("option");
                 option.value = boss;
                 option.textContent = boss;
+                bossFilter.appendChild(option);
+            });
+            
+            // Adicionar desafios do Arcade
+            const arcadeChallenges = [...new Set(RANKING_CACHE.filter(e => e.mode === "ARCADE").map(e => e.challenge))].filter(c => c && c !== "NONE");
+            arcadeChallenges.forEach(challenge => {
+                const option = document.createElement("option");
+                option.value = challenge;
+                option.textContent = `Desafio ${challenge}`;
                 bossFilter.appendChild(option);
             });
         }
@@ -3717,8 +4121,17 @@
             filtered = filtered.filter(e => e.mode === filters.mode);
         }
         
-        if (filters.boss && filters.mode === "COOP") {
-            filtered = filtered.filter(e => e.boss === filters.boss);
+        if (filters.boss) {
+            if (filters.mode === "COOP") {
+                filtered = filtered.filter(e => e.boss === filters.boss);
+            } else if (filters.mode === "ARCADE") {
+                if (filters.boss === "PRIMEIRO" || filters.boss === "SEGUNDO") {
+                    filtered = filtered.filter(e => e.challenge === filters.boss);
+                } else {
+                    // Se for um nome de boss específico no arcade
+                    filtered = filtered.filter(e => e.boss === filters.boss);
+                }
+            }
         }
         
         if (filters.players) {
@@ -3778,7 +4191,7 @@
             if (entry.mode === "COOP") {
                 details = `${entry.boss} | ${entry.players} | ${getDifficultyDisplayName(entry.difficulty)}`;
             } else if (entry.mode === "ARCADE") {
-                details = `Arcade | ${entry.players} | ${getDifficultyDisplayName(entry.difficulty)}`;
+                details = `Desafio ${entry.challenge} | ${entry.players} | ${getDifficultyDisplayName(entry.difficulty)}`;
             } else {
                 details = `${entry.players}`;
             }
@@ -3830,10 +4243,19 @@
         click: new Audio("click.mp3"), bgm: new Audio("fundoboss.mp3"), sacitema: new Audio("sacitema.mp3"), 
         mapinguaritema: new Audio("mapinguariteme.mp3"), boitatatema: new Audio("boitatatema.mp3"), iaratema: new Audio("iarateme.mp3"),
         minoa1: new Audio("minoa1.mp3"), minoa2: new Audio("minoa2.mp3"), saci: new Audio("saci.mp3"), saci1: new Audio("saci1.mp3"), 
-        iara1: new Audio("iara1.mp3"), iara2: new Audio("iara2.mp3"), win: new Audio("win.mp3"), gameover: new Audio("gameover.mp3") 
+        iara1: new Audio("iara1.mp3"), iara2: new Audio("iara2.mp3"), win: new Audio("win.mp3"), gameover: new Audio("gameover.mp3"),
+        // NOVOS SONS
+        corposecotema: new Audio("corposeco.mp3"),
+        lobisomemtema: new Audio("lobisomem.mp3"),
+        cucatema: new Audio("cuca.mp3"),
+        mulatema: new Audio("mulasemcabeca.mp3"),
+        cucask1: new Audio("cucask1.mp3"),
+        cucask2: new Audio("cucask2.mp3"),
+        garras: new Audio("garras.mp3")
     };
 
-    [sfx.bgm, sfx.sacitema, sfx.mapinguaritema, sfx.boitatatema, sfx.iaratema].forEach(track => { 
+    [sfx.bgm, sfx.sacitema, sfx.mapinguaritema, sfx.boitatatema, sfx.iaratema, 
+     sfx.corposecotema, sfx.lobisomemtema, sfx.cucatema, sfx.mulatema].forEach(track => { 
         track.loop = true; 
         track.volume = 0.3; 
     });
@@ -3845,7 +4267,8 @@
             Object.values(sfx).forEach(a => { 
                 a.play().then(() => { 
                     a.pause(); 
-                    if([sfx.bgm, sfx.sacitema, sfx.mapinguaritema, sfx.boitatatema, sfx.iaratema].includes(a)) a.currentTime = 0; 
+                    if([sfx.bgm, sfx.sacitema, sfx.mapinguaritema, sfx.boitatatema, sfx.iaratema,
+                       sfx.corposecotema, sfx.lobisomemtema, sfx.cucatema, sfx.mulatema].includes(a)) a.currentTime = 0; 
                 }).catch(()=>{}); 
             }); 
             audioUnlocked = true; 
@@ -3855,13 +4278,19 @@
 
     function playBossTheme() {
         if (!audioUnlocked) return;
-        [sfx.bgm, sfx.sacitema, sfx.mapinguaritema, sfx.boitatatema, sfx.iaratema].forEach(track => track.pause());
+        [sfx.bgm, sfx.sacitema, sfx.mapinguaritema, sfx.boitatatema, sfx.iaratema,
+         sfx.corposecotema, sfx.lobisomemtema, sfx.cucatema, sfx.mulatema].forEach(track => track.pause());
         if (mode === "BOSS" || mode === "ARCADE") {
             switch(boss.type) {
                 case "SACI": currentBGM = sfx.sacitema; break;
                 case "MAPINGUARI": currentBGM = sfx.mapinguaritema; break;
                 case "BOITATA": currentBGM = sfx.boitatatema; break;
                 case "IARA": currentBGM = sfx.iaratema; break;
+                // NOVOS BOSSES
+                case "MULA": currentBGM = sfx.mulatema; break;
+                case "CORPOSECO": currentBGM = sfx.corposecotema; break;
+                case "LOBISOMEM": currentBGM = sfx.lobisomemtema; break;
+                case "CUCA": currentBGM = sfx.cucatema; break;
                 default: currentBGM = sfx.bgm;
             }
         } else currentBGM = sfx.bgm;
@@ -3917,16 +4346,13 @@
             let targetX, targetY;
             
             if (mode === "BOSS" || mode === "ARCADE") {
-                // Modo Boss: mirar no boss
                 if (boss.dead) {
-                    // Se boss morto, olhar para a direita (padrão)
                     img.className = 'normal';
                     return;
                 }
                 targetX = boss.x;
                 targetY = boss.y;
             } else if (mode === "PVP") {
-                // Modo PVP: mirar no outro jogador
                 const otherPlayer = players.find(p => p.id !== player.id && !p.dead);
                 if (!otherPlayer) {
                     img.className = 'normal';
@@ -3935,15 +4361,12 @@
                 targetX = otherPlayer.x;
                 targetY = otherPlayer.y;
             } else {
-                // Modo desconhecido, manter padrão
                 img.className = 'normal';
                 return;
             }
             
-            // Determinar se precisa virar o sprite
             const shouldFlip = targetX < player.x;
             
-            // Aplicar classe apropriada
             if (shouldFlip) {
                 img.className = 'flipped';
             } else {
@@ -3955,10 +4378,8 @@
         if (mode === "BOSS" || mode === "ARCADE") {
             const bossImg = document.getElementById('imgBoss');
             if (bossImg && !boss.dead) {
-                // Verificar se há jogadores vivos
                 const alivePlayers = players.filter(p => !p.dead);
                 if (alivePlayers.length > 0) {
-                    // Boss mirar no jogador mais próximo
                     let nearestPlayer = alivePlayers[0];
                     let minDistance = Math.abs(boss.x - nearestPlayer.x) + Math.abs(boss.y - nearestPlayer.y);
                     
@@ -3970,20 +4391,16 @@
                         }
                     }
                     
-                    // Determinar direção do boss
                     const shouldBossFlip = nearestPlayer.x < boss.x;
                     
-                    // Tratamento especial para IARA (que já olha para esquerda por padrão)
-                    if (boss.type === "IARA") {
+                    // Tratamento especial para bosses que olham para esquerda
+                    if (boss.type === "IARA" || boss.type === "CORPOSECO") {
                         if (shouldBossFlip) {
-                            // IARA olhando para direita (precisa virar)
-                            bossImg.className = 'iara-flipped';
+                            bossImg.className = boss.type === "IARA" ? 'iara-flipped' : 'flipped';
                         } else {
-                            // IARA olhando para esquerda (padrão)
-                            bossImg.className = 'iara-normal';
+                            bossImg.className = boss.type === "IARA" ? 'iara-normal' : 'normal';
                         }
                     } else {
-                        // Outros bosses (olham para direita por padrão)
                         if (shouldBossFlip) {
                             bossImg.className = 'flipped';
                         } else {
@@ -3998,7 +4415,6 @@
     // ================= NOVA FUNÇÃO: EXIBIR ANIMAÇÃO DO BRAVELY CHAIN =================
     async function showBravelyAnimation(playerClass) {
         return new Promise((resolve) => {
-            // Determinar qual GIF mostrar baseado na classe
             let gifUrl = "";
             switch(playerClass) {
                 case "Tupa":
@@ -4014,18 +4430,15 @@
                     gifUrl = SPRITES.BRAVELY_TUPA;
             }
             
-            // Criar overlay de animação
             const overlay = document.createElement('div');
             overlay.className = 'bravely-animation-overlay';
             overlay.id = 'bravelyAnimationOverlay';
             
-            // Criar elemento do GIF
             const gif = document.createElement('img');
             gif.src = gifUrl;
             gif.className = 'bravely-animation-gif';
             gif.alt = 'Bravely Chain Animation';
             
-            // Adicionar texto
             const text = document.createElement('div');
             text.style.cssText = `
                 position: absolute;
@@ -4044,14 +4457,11 @@
             overlay.appendChild(gif);
             overlay.appendChild(text);
             
-            // Adicionar ao board
             const board = document.getElementById('board');
             board.appendChild(overlay);
             
-            // Reproduzir som especial (se houver)
             playSfx('skill1');
             
-            // Remover após 2 segundos
             setTimeout(() => {
                 if (overlay.parentNode) {
                     overlay.style.opacity = '0';
@@ -4070,19 +4480,23 @@
         });
     }
     
-    // CORREÇÃO APLICADA: Função initGame atualizada para modo PVP
+    // ================= FUNÇÕES DE INICIALIZAÇÃO DO JOGO =================
     function initGame() {
-        // Resetar lore
         LORE.currentStage = 1;
         LORE.anhangáRevealed = false;
         
         bossAIIsRunning = false;
-        arcadeBossTransition = false; // Resetar flag de transição
+        arcadeBossTransition = false;
+        
+        // RESETAR PROGRESSO DO ARCADE AO REINICIAR
+        arcadeIndex = 0;
+        if (mode === "ARCADE") {
+            boss.type = arcadeCurrentOrder[arcadeIndex];
+        }
         
         resetRankingStats();
         gameActive = true; 
         
-        // CORREÇÃO: Atualizar o display do modo
         document.getElementById('currentModeDisplay').textContent = 
             mode === 'BOSS' ? 'BOSS' : mode === 'ARCADE' ? 'ARCADE' : 'PVP';
         
@@ -4099,7 +4513,7 @@
         const board = document.getElementById('board');
         document.querySelectorAll('.token').forEach(t => t.remove()); 
         
-        // Criar jogadores baseado nas configurações
+        // Criar jogadores
         for(let i=0; i<playerCount; i++) { 
             const config = playerConfigs[i];
             const initialHP = CLASS_DB[config.class].hp; 
@@ -4126,10 +4540,9 @@
         
         if(mode === "BOSS" || mode === "ARCADE") {
             if(mode === "ARCADE") { 
-                arcadeIndex = 0; 
-                boss.type = ARCADE_ORDER[0]; 
+                // Configurar boss baseado no desafio atual
+                boss.type = arcadeCurrentOrder[arcadeIndex]; 
             }
-            // Para modo BOSS, o tipo já foi selecionado na função selectBoss
             
             boss.maxHp = parseInt(document.getElementById('hp_BOSS_cfg').value); 
             boss.hp = boss.maxHp; 
@@ -4141,25 +4554,28 @@
             const bToken = document.createElement('div'); 
             bToken.id = `tokenBoss`; 
             bToken.className = `token`;
-            // Aplicar classe correta para IARA
-            const bossClass = boss.type === "IARA" ? "iara-normal" : "normal";
+            
+            // Aplicar classe correta baseada no tipo de boss
+            let bossClass = 'normal';
+            if (boss.type === "IARA") {
+                bossClass = 'iara-normal';
+            } else if (boss.type === "CORPOSECO") {
+                bossClass = 'normal'; // Já olha para esquerda
+            }
+            
             bToken.innerHTML = `<div class="hp-container"><div id="hpBarBoss" class="hp-bar"></div></div><img id="imgBoss" src="${SPRITES[boss.type]}" class="${bossClass}">`; 
             board.appendChild(bToken);
             
             document.getElementById('bossNameDisplay').textContent = boss.type;
             document.getElementById('bossStatsDisplay').innerHTML = `HP: <b>${boss.hp}</b> / ${boss.maxHp}`;
         } else { 
-            // Modo PVP - CORREÇÃO: Posicionar jogadores corretamente
+            // Modo PVP
             if (players.length > 1) {
-                // Jogador 1 na parte inferior
                 players[0].x = 4;
                 players[0].y = 7;
-                
-                // Jogador 2 na parte superior
                 players[1].x = 4; 
                 players[1].y = 0; 
                 
-                // Ajustar HP para PVP (opcional - pode remover se quiser valores padrão)
                 players[0].hp = CLASS_DB[players[0].class].hp ; 
                 players[0].maxHp = players[0].hp; 
                 players[1].hp = CLASS_DB[players[1].class].hp ; 
@@ -4177,34 +4593,31 @@
         switchConfig(0); 
         updateVisuals(); 
         
-        // Atualizar direção dos sprites
         updateAllSpriteDirections();
         
         playBossTheme();
         
-        // Limpar log
         document.getElementById('log').innerHTML = '<div class="log-entry">Bem-vindo ao jogo!</div>';
         
-        // Carregar dados de títulos
         loadTitleData();
         
-        // Aplicar título ativo se houver
         if (ACTIVE_TITLE && gameActive) {
             players.forEach(p => applyTitleBonus(p));
         }
         
-        // Rastrear jogo jogado
         updateTitleStats('game_played');
         
         addLog(`🎮 Jogo iniciado no modo ${mode}!`);
         if (mode === "BOSS") {
             addLog(`👹 Boss selecionado: ${boss.type}`);
+        } else if (mode === "ARCADE") {
+            addLog(`🏆 Modo Arcade - Desafio ${currentArcadeChallenge}: ${boss.type}`);
         } else if (mode === "PVP") {
             addLog(`⚔️ Modo PVP iniciado! ${players[0].name} vs ${players[1].name}`);
         }
     }
 
-    // ================= FUNÇÃO EXECUTEACTION MODIFICADA =================
+    // ================= FUNÇÃO EXECUTEACTION =================
     async function executeAction() {
         if(!gameActive || path.length === 0 || bossAIIsRunning || arcadeBossTransition || isExecutingAction) return;
         
@@ -4241,7 +4654,6 @@
             if(shape === "QUADRADO") active.skillUsed = false;
         }
 
-        // Calcular ATK total incluindo título
         const titleAtkBonus = active.titleBonus?.ATK || 0;
         let totalAtk = info.atk + active.bonusAtk + (usedPath.length > 0 && grid[usedPath[0]] === active.element ? 1 : 0) + skillAtkBonus + titleAtkBonus;
         
@@ -4254,19 +4666,15 @@
                 } 
             };
             
-            // Primeiro verifica se está adjacente antes de mover
             dealGueDmg();
             
-            // Move tile por tile
             for(const idx of usedPath) { 
                 active.x = idx%8; 
                 active.y = Math.floor(idx/8); 
                 checkAmulet(active, active.x, active.y); 
                 updateVisuals(); 
                 
-                // Verifica colisão após cada movimento
                 if (isOccupied(active.x, active.y, active.id)) {
-                    // Se colidir, para o movimento
                     break;
                 }
                 
@@ -4274,34 +4682,27 @@
                 await sleep(120); 
             }
         } else {
-            // Move tile por tile para Sumé e Caipora
             for(const idx of usedPath) { 
                 active.x = idx%8; 
                 active.y = Math.floor(idx/8); 
                 checkAmulet(active, active.x, active.y); 
                 updateVisuals(); 
                 
-                // Verifica colisão após cada movimento
                 if (isOccupied(active.x, active.y, active.id)) {
-                    // Se colidir, para o movimento
                     break;
                 }
                 
                 await sleep(100); 
             }
             
-            // NOVA MECÂNICA: Se for Bravely Chain, mostrar animação antes do ataque
             if (isBravely) {
-                // Pausar o jogo e mostrar animação
                 await showBravelyAnimation(active.class);
             }
             
-            // Ataque à distância (após animação, se for Bravely)
             if(usedPath.length >= info.min && !target.dead) {
                 let extra = usedPath.length - info.min; 
                 playSfx(active.class === 'Sume' ? 'atkm' : 'atka'); 
                 
-                // Usa flecha específica para Caipora
                 if (active.class === "Caipora") {
                     await spawnArrowProjectile(active, target);
                 } else {
@@ -4312,14 +4713,12 @@
             }
         }
 
-        // Substitui os tiles usados
         usedPath.forEach(idx => { 
             const gridEl = document.getElementById('grid'); 
             gridEl.replaceChild(createTile(idx), gridEl.childNodes[idx]); 
         });
 
         if(isBravely) {
-            // Se for Tupã (que já atacou durante o movimento), mostrar animação após movimento
             if (active.class === "Tupa") {
                 await showBravelyAnimation(active.class);
             }
@@ -4327,30 +4726,26 @@
             await triggerBravelyChain(active, target, totalAtk);
             updateTitleStats('bravely_chain');
             
-            // Limpar path e incrementar turno
             path = []; 
             renderPath();
             RANKING.turns++;
             
-            // CORREÇÃO CRÍTICA: Verificar se boss morreu antes de chamar manageTurns
             if (mode === "ARCADE" && boss.dead) {
                 console.log("⚡ Boss morto no bravely chain, pulando manageTurns");
                 isExecutingAction = false;
                 return;
             }
             
-            // Gerenciar turnos imediatamente para modo BOSS/ARCADE
             if (mode === "BOSS" || mode === "ARCADE") {
                 isExecutingAction = false;
                 
-                // CORREÇÃO: Se boss morreu (em modo ARCADE), não mude turno
                 if (mode === "ARCADE" && boss.dead) {
                     console.log("⚡ Boss morto, pulando manageTurns");
                     return;
                 }
                 
                 manageTurns();
-                return; // Sair da função para evitar execução duplicada
+                return;
             }
         }
 
@@ -4358,17 +4753,14 @@
         renderPath();
         RANKING.turns++;
 
-        // CORREÇÃO: Verificar se boss morreu antes de gerenciar turnos
         if (mode === "ARCADE" && boss.dead) {
             console.log("⚡ Boss morto, pulando manageTurns");
             isExecutingAction = false;
             return;
         }
 
-        // Gerenciar turnos
         manageTurns();
         
-        // Atualizar direção dos sprites após movimento
         updateAllSpriteDirections();
         
         isExecutingAction = false;
@@ -4404,7 +4796,6 @@
             for(let col=0; col<8; col++) affectedIndices.push(active.y * 8 + col); 
             if(!target.dead && target.y === active.y) applyDmg(target, totalAtk); 
             
-            // RESTAURADO: cura para todos os elementos (mecânica original)
             players.forEach(p => { 
                 if(!p.dead && p.y === active.y) { 
                     p.hp = Math.min(p.maxHp, p.hp+2); 
@@ -4442,14 +4833,12 @@
     function manageTurns() {
         if (!gameActive || arcadeBossTransition) return;
 
-        // CORREÇÃO: Se boss morreu (em modo ARCADE), não mude turno
         if (mode === "ARCADE" && boss.dead) {
             console.log("⚡ Boss morto, pulando manageTurns");
             return;
         }
         
         if (mode === "PVP") {
-            // Modo PVP: passa para próximo jogador
             let next = currentPlayerIdx + 1; 
             while(next < players.length && players[next].dead) next++;
             
@@ -4466,33 +4855,27 @@
                 }
             }
         } else if (mode === "BOSS" || mode === "ARCADE") {
-            // Modo COOP/BOSS/ARCADE
             let nextPlayerIdx = currentPlayerIdx + 1;
             while(nextPlayerIdx < players.length && players[nextPlayerIdx].dead) {
                 nextPlayerIdx++;
             }
             
             if(nextPlayerIdx < players.length) {
-                // Ainda há jogadores para jogar neste round
                 currentPlayerIdx = nextPlayerIdx;
                 switchConfig(nextPlayerIdx);
                 addLog(`🎮 Turno de ${players[currentPlayerIdx].name}`);
                 
-                // Ativar turno do jogador
                 document.getElementById('turnBoss').classList.remove('active-turn');
                 document.getElementById('turnP_Active').classList.add('active-turn');
             } else {
-                // Todos os jogadores jogaram, agora é turno do BOSS
                 currentPlayerIdx = -1;
                 saveAndRefresh();
                 
                 addLog("👹 AGORA É O TURNO DO BOSS!");
                 
-                // Desativar turno do jogador, ativar do boss
                 document.getElementById('turnP_Active').classList.remove('active-turn');
                 document.getElementById('turnBoss').classList.add('active-turn');
                 
-                // Chamar bossAI após um breve delay
                 setTimeout(() => {
                     if(gameActive && !boss.dead && players.some(p => !p.dead) && !arcadeBossTransition) {
                         bossAI();
@@ -4503,11 +4886,178 @@
             }
         }
         
-        // Atualizar direção dos sprites após mudança de turno
         updateAllSpriteDirections();
     }
 
-    // ================= BOSSAI CORRIGIDO =================
+    // ================= NOVAS FUNÇÕES PARA OS NOVOS BOSSES =================
+    function triggerFireball(startX, startY, endX, endY) {
+        const board = document.getElementById('board');
+        const s = getStep();
+        
+        const fireball = document.createElement('img');
+        fireball.src = SPRITES.FireballFX;
+        fireball.className = 'fireball-fx';
+        fireball.style.width = (s * 1.5) + 'px';
+        fireball.style.height = (s * 1.5) + 'px';
+        fireball.style.left = (startX * s + 8) + 'px';
+        fireball.style.top = (startY * s + 8) + 'px';
+        fireball.style.zIndex = '60';
+        
+        board.appendChild(fireball);
+        
+        // Animação de movimento
+        setTimeout(() => {
+            fireball.style.left = (endX * s + 8) + 'px';
+            fireball.style.top = (endY * s + 8) + 'px';
+            
+            // Criar explosão no destino
+            setTimeout(() => {
+                triggerFlare(endX, endY);
+                
+                // Dano em cruz
+                const crossTiles = [
+                    {x: endX, y: endY-1},
+                    {x: endX, y: endY+1},
+                    {x: endX-1, y: endY},
+                    {x: endX+1, y: endY}
+                ];
+                
+                crossTiles.forEach(tile => {
+                    if(tile.x >= 0 && tile.x < 8 && tile.y >= 0 && tile.y < 8) {
+                        triggerFlare(tile.x, tile.y);
+                    }
+                });
+                
+                fireball.remove();
+            }, 300);
+        }, 50);
+        
+        setTimeout(() => {
+            if (fireball.parentNode) fireball.remove();
+        }, 1000);
+    }
+
+    function triggerClawSpin(x, y) {
+        const board = document.getElementById('board');
+        const s = getStep();
+        
+        const claw = document.createElement('img');
+        claw.src = SPRITES.ClawFX;
+        claw.className = 'claw-spin-fx';
+        claw.style.width = (s * 3) + 'px';
+        claw.style.height = (s * 3) + 'px';
+        claw.style.left = (x * s - s) + 'px';
+        claw.style.top = (y * s - s) + 'px';
+        claw.style.zIndex = '60';
+        
+        board.appendChild(claw);
+        
+        setTimeout(() => {
+            if (claw.parentNode) claw.remove();
+        }, 1000);
+    }
+
+    function triggerPotion(x, y) {
+        const board = document.getElementById('board');
+        const s = getStep();
+        
+        const potion = document.createElement('img');
+        potion.src = SPRITES.PotionFX;
+        potion.className = 'potion-fx';
+        potion.style.width = (s * 1.5) + 'px';
+        potion.style.height = (s * 1.5) + 'px';
+        potion.style.left = (x * s + 8) + 'px';
+        potion.style.top = (y * s + 8) + 'px';
+        potion.style.zIndex = '60';
+        
+        board.appendChild(potion);
+        
+        setTimeout(() => {
+            if (potion.parentNode) potion.remove();
+        }, 600);
+    }
+
+    function triggerPoisonGas(x, y) {
+        const board = document.getElementById('board');
+        const s = getStep();
+        
+        const poison = document.createElement('div');
+        poison.className = 'poison-gas-fx';
+        poison.style.left = (x * s + 8) + 'px';
+        poison.style.top = (y * s + 8) + 'px';
+        poison.style.zIndex = '60';
+        
+        board.appendChild(poison);
+        
+        setTimeout(() => {
+            if (poison.parentNode) poison.remove();
+        }, 1200);
+    }
+
+    function triggerEarthquake() {
+        const board = document.getElementById('board');
+        
+        const earthquake = document.createElement('div');
+        earthquake.className = 'earthquake-fx';
+        earthquake.style.zIndex = '40';
+        
+        board.appendChild(earthquake);
+        
+        setTimeout(() => {
+            if (earthquake.parentNode) earthquake.remove();
+        }, 800);
+    }
+    
+    // ================= NOVA FUNÇÃO: ATAQUE DA CUCA COM QUADRANTES =================
+    function triggerQuadrantPotionAttack() {
+        const board = document.getElementById('board');
+        const s = getStep();
+        
+        // Definir os 4 quadrantes do tabuleiro 8x8
+        const quadrants = [
+            { xStart: 0, xEnd: 3, yStart: 0, yEnd: 3, name: "Superior Esquerdo" },
+            { xStart: 4, xEnd: 7, yStart: 0, yEnd: 3, name: "Superior Direito" },
+            { xStart: 0, xEnd: 3, yStart: 4, yEnd: 7, name: "Inferior Esquerdo" },
+            { xStart: 4, xEnd: 7, yStart: 4, yEnd: 7, name: "Inferior Direito" }
+        ];
+        
+        // Escolher um quadrante aleatoriamente
+        const quadrant = quadrants[Math.floor(Math.random() * 4)];
+        
+        addLog(`🧙‍♀️ Cuca lança uma poção no quadrante ${quadrant.name}!`);
+        
+        // Criar efeito visual para o quadrante inteiro
+        const quadrantEffect = document.createElement('div');
+        quadrantEffect.style.position = 'absolute';
+        quadrantEffect.style.left = (quadrant.xStart * s) + 'px';
+        quadrantEffect.style.top = (quadrant.yStart * s) + 'px';
+        quadrantEffect.style.width = ((quadrant.xEnd - quadrant.xStart + 1) * s) + 'px';
+        quadrantEffect.style.height = ((quadrant.yEnd - quadrant.yStart + 1) * s) + 'px';
+        quadrantEffect.style.background = 'radial-gradient(circle, rgba(155, 89, 182, 0.7), rgba(155, 89, 182, 0.3), transparent)';
+        quadrantEffect.style.borderRadius = '10px';
+        quadrantEffect.style.boxShadow = '0 0 30px rgba(155, 89, 182, 0.8)';
+        quadrantEffect.style.animation = 'potionAnim 0.8s ease-out';
+        quadrantEffect.style.zIndex = '55';
+        
+        board.appendChild(quadrantEffect);
+        
+        // Adicionar efeito de poção em cada tile do quadrante
+        for (let x = quadrant.xStart; x <= quadrant.xEnd; x++) {
+            for (let y = quadrant.yStart; y <= quadrant.yEnd; y++) {
+                setTimeout(() => {
+                    triggerPotion(x, y);
+                }, (x + y) * 50);
+            }
+        }
+        
+        setTimeout(() => {
+            if (quadrantEffect.parentNode) quadrantEffect.remove();
+        }, 1000);
+        
+        return quadrant;
+    }
+
+    // ================= BOSSAI ATUALIZADO COM NOVOS BOSSES =================
     async function bossAI() {
         if (bossAIIsRunning || arcadeBossTransition) return;
         
@@ -4525,11 +5075,10 @@
         
         addLog(`👹 ${boss.type} ataca!`);
         
-        // Movimento do boss tile por tile
+        // Movimento do boss
         for(let i = 0; i < 4; i++) { 
             if(boss.dead) break; 
             
-            // Encontra movimentos possíveis
             let possibleMoves = [
                 {x: boss.x + 1, y: boss.y},
                 {x: boss.x - 1, y: boss.y},
@@ -4538,16 +5087,14 @@
             ].filter(m => m.x >= 0 && m.x < 8 && m.y >= 0 && m.y < 8 && !isOccupied(m.x, m.y, -1)); 
             
             if(possibleMoves.length > 0) { 
-                // Escolhe movimento aleatório
                 let move = possibleMoves[Math.floor(Math.random() * possibleMoves.length)]; 
                 boss.x = move.x; 
                 boss.y = move.y; 
                 updateVisuals(); 
-                await sleep(250); // Pausa entre movimentos
+                await sleep(250);
             } 
         }
         
-        // Atualizar direção do boss após movimento
         updateAllSpriteDirections();
         
         if(!boss.dead) {
@@ -4559,12 +5106,10 @@
                     const columns = [boss.x-1, boss.x, boss.x+1]; 
                     columns.forEach(col => { 
                         if(col >= 0 && col <= 7) {
-                            // Coluna de fogo que ocupa toda a coluna - ANIMAÇÃO CORRIGIDA
                             triggerFireColumn(col); 
                         }
                     }); 
                     await sleep(600);
-                    // Aplica dano a jogadores nas colunas
                     players.forEach(p => { 
                         if(!p.dead && columns.includes(p.x)) {
                             applyDmg(p, bossAtk); 
@@ -4607,9 +5152,8 @@
                     await sleep(600);
                     const rows = [boss.y - 1, boss.y, boss.y + 1]; 
                     players.forEach(p => { 
-                        let rockDamage = 2;
                         if(!p.dead && rows.includes(p.y)) {
-                            applyDmg(p, rockDamage); 
+                            applyDmg(p, 2); 
                         }
                     }); 
                 } 
@@ -4620,7 +5164,6 @@
                     addLog("💨 Saci cria vórtices de vento!");
                     grid.forEach((element, idx) => { 
                         if(element === 'AR') { 
-                            // Vórtice girando mais rápido
                             triggerVortex(idx % 8, Math.floor(idx / 8), 0, true); 
                             players.forEach(p => { 
                                 if(!p.dead && p.x === idx % 8 && p.y === Math.floor(idx / 8)) {
@@ -4641,7 +5184,6 @@
                         for(let step = 1; step < 8; step++) { 
                             let nx = boss.x + dir.dx * step, ny = boss.y + dir.dy * step; 
                             if(nx >= 0 && nx < 8 && ny >= 0 && ny < 8) { 
-                                // Vórtice girando mais rápido
                                 triggerVortex(nx, ny, step * 100, true); 
                                 players.forEach(p => { 
                                     if(!p.dead && p.x === nx && p.y === ny) {
@@ -4687,6 +5229,256 @@
                     }); 
                 } 
             }
+            // NOVOS BOSSES
+            else if(boss.type === "MULA") { 
+                if(Math.random() < 0.6) { 
+                    playSfx('skill1'); 
+                    addLog("🔥 Mula sem Cabeça relincha fogo em 3 colunas!");
+                    const columns = [boss.x-1, boss.x, boss.x+1].filter(col => col >= 0 && col <= 7); 
+                    columns.forEach(col => { 
+                        triggerFireColumn(col); 
+                    }); 
+                    await sleep(600);
+                    players.forEach(p => { 
+                        if(!p.dead && columns.includes(p.x)) {
+                            applyDmg(p, bossAtk); 
+                        }
+                    }); 
+                } else { 
+                    playSfx('skill1'); 
+                    addLog("🔥 Mula sem Cabeça lança bolas de fogo!");
+                    const directions = [
+                        {dx: 2, dy: 0},  // Direita
+                        {dx: -2, dy: 0}, // Esquerda
+                        {dx: 0, dy: 2},  // Baixo
+                        {dx: 0, dy: -2}  // Cima
+                    ];
+                    
+                    directions.forEach(dir => { 
+                        let nx = boss.x + dir.dx, ny = boss.y + dir.dy;
+                        if(nx >= 0 && nx < 8 && ny >= 0 && ny < 8) {
+                            triggerFireball(boss.x, boss.y, nx, ny);
+                            
+                            setTimeout(() => {
+                                players.forEach(p => { 
+                                    if(!p.dead && p.x === nx && p.y === ny) {
+                                        applyDmg(p, bossAtk); 
+                                    }
+                                });
+                                
+                                const crossTiles = [
+                                    {x: nx, y: ny-1},
+                                    {x: nx, y: ny+1},
+                                    {x: nx-1, y: ny},
+                                    {x: nx+1, y: ny}
+                                ];
+                                
+                                crossTiles.forEach(tile => {
+                                    if(tile.x >= 0 && tile.x < 8 && tile.y >= 0 && tile.y < 8) {
+                                        players.forEach(p => { 
+                                            if(!p.dead && p.x === tile.x && p.y === tile.y) {
+                                                applyDmg(p, 1); 
+                                            }
+                                        });
+                                    }
+                                });
+                            }, 300);
+                        }
+                    }); 
+                    await sleep(600);
+                } 
+            }
+            else if(boss.type === "CORPOSECO") { 
+                if(Math.random() < 0.5) { 
+                    playSfx('garras'); 
+                    addLog("💀 Corpo Seco sopra vapor podre em todas as direções (2 tiles)!");
+                    const directions = [
+                        {dx: 0, dy: -1}, {dx: 0, dy: -2}, // Cima
+                        {dx: 0, dy: 1}, {dx: 0, dy: 2},   // Baixo
+                        {dx: -1, dy: 0}, {dx: -2, dy: 0}, // Esquerda
+                        {dx: 1, dy: 0}, {dx: 2, dy: 0}    // Direita
+                    ];
+                    
+                    directions.forEach(dir => {
+                        let tileX = boss.x + dir.dx;
+                        let tileY = boss.y + dir.dy;
+                        if(tileX >= 0 && tileX < 8 && tileY >= 0 && tileY < 8) {
+                            triggerPoisonGas(tileX, tileY);
+                            players.forEach(p => { 
+                                if(!p.dead && p.x === tileX && p.y === tileY) {
+                                    applyDmg(p, bossAtk); 
+                                }
+                            });
+                        }
+                    });
+                    await sleep(600);
+                } else { 
+                    playSfx('garras'); 
+                    addLog("💀 Corpo Seco ataca com garras podres em 2 tiles!");
+                    const attackDirections = ['left', 'right', 'up', 'down'];
+                    const direction = attackDirections[Math.floor(Math.random() * 4)];
+                    
+                    let targetTiles = [];
+                    switch(direction) {
+                        case 'left':
+                            for(let dx = -2; dx <= 0; dx++) {
+                                for(let dy = -2; dy <= 2; dy++) {
+                                    targetTiles.push({x: boss.x + dx, y: boss.y + dy});
+                                }
+                            }
+                            break;
+                        case 'right':
+                            for(let dx = 0; dx <= 2; dx++) {
+                                for(let dy = -2; dy <= 2; dy++) {
+                                    targetTiles.push({x: boss.x + dx, y: boss.y + dy});
+                                }
+                            }
+                            break;
+                        case 'up':
+                            for(let dx = -2; dx <= 2; dx++) {
+                                for(let dy = -2; dy <= 0; dy++) {
+                                    targetTiles.push({x: boss.x + dx, y: boss.y + dy});
+                                }
+                            }
+                            break;
+                        case 'down':
+                            for(let dx = -2; dx <= 2; dx++) {
+                                for(let dy = 0; dy <= 2; dy++) {
+                                    targetTiles.push({x: boss.x + dx, y: boss.y + dy});
+                                }
+                            }
+                            break;
+                    }
+                    
+                    targetTiles.forEach(tile => {
+                        if(tile.x >= 0 && tile.x < 8 && tile.y >= 0 && tile.y < 8) {
+                            triggerClawSpin(tile.x, tile.y);
+                            players.forEach(p => { 
+                                if(!p.dead && p.x === tile.x && p.y === tile.y) {
+                                    applyDmg(p, bossAtk + 1); 
+                                }
+                            });
+                        }
+                    });
+                    await sleep(600);
+                } 
+            }
+            else if(boss.type === "LOBISOMEM") { 
+                if(Math.random() < 0.5) { 
+                    playSfx('garras'); 
+                    addLog("🐺 Lobisomem ataca com garras giratórias!");
+                    triggerClawSpin(boss.x, boss.y);
+                    await sleep(600);
+                    players.forEach(p => { 
+                        if(!p.dead && Math.abs(p.x - boss.x) <= 1 && Math.abs(p.y - boss.y) <= 1) {
+                            applyDmg(p, bossAtk); 
+                        }
+                    }); 
+                } else { 
+                    playSfx('minoa2'); 
+                    addLog("🐺 Lobisomem treme a terra e atrai os heróis!");
+                    triggerEarthquake();
+                    await sleep(800);
+                    
+                    // Dano em 2 tiles ao redor do boss
+                    for(let dx = -2; dx <= 2; dx++) {
+                        for(let dy = -2; dy <= 2; dy++) {
+                            if(dx === 0 && dy === 0) continue;
+                            const tileX = boss.x + dx;
+                            const tileY = boss.y + dy;
+                            
+                            if(tileX >= 0 && tileX < 8 && tileY >= 0 && tileY < 8) {
+                                triggerFlare(tileX, tileY);
+                                players.forEach(p => { 
+                                    if(!p.dead && p.x === tileX && p.y === tileY) {
+                                        applyDmg(p, 2); 
+                                    }
+                                });
+                            }
+                        }
+                    }
+                    
+                    // Atrair jogadores 1 tile em direção ao lobisomem
+                    players.forEach(p => { 
+                        if(!p.dead) {
+                            let dx = 0, dy = 0;
+                            
+                            if (p.x !== boss.x) {
+                                dx = p.x < boss.x ? 1 : -1;
+                            }
+                            
+                            if (p.y !== boss.y) {
+                                dy = p.y < boss.y ? 1 : -1;
+                            }
+                            
+                            // Prioridade: mover na diagonal em direção ao boss
+                            if (dx !== 0 && dy !== 0) {
+                                const nx = p.x + dx;
+                                const ny = p.y + dy;
+                                if (nx >= 0 && nx < 8 && ny >= 0 && ny < 8 && !isOccupied(nx, ny, p.id)) {
+                                    p.x = nx;
+                                    p.y = ny;
+                                }
+                            } else if (dx !== 0) {
+                                const nx = p.x + dx;
+                                if (nx >= 0 && nx < 8 && !isOccupied(nx, p.y, p.id)) {
+                                    p.x = nx;
+                                }
+                            } else if (dy !== 0) {
+                                const ny = p.y + dy;
+                                if (ny >= 0 && ny < 8 && !isOccupied(p.x, ny, p.id)) {
+                                    p.y = ny;
+                                }
+                            }
+                        } 
+                    });
+                    
+                    updateVisuals();
+                    addLog("🐺 Lobisomem atraiu os heróis para mais perto!");
+                } 
+            }
+            else if(boss.type === "CUCA") { 
+                if(Math.random() < 0.5) { 
+                    playSfx('cucask1'); 
+                    addLog("🧙‍♀️ Cuca lança uma poção venenosa em todo um quadrante!");
+                    const quadrant = triggerQuadrantPotionAttack();
+                    await sleep(600);
+                    
+                    // Aplicar dano a todos os jogadores no quadrante
+                    players.forEach(p => { 
+                        if(!p.dead && 
+                           p.x >= quadrant.xStart && p.x <= quadrant.xEnd &&
+                           p.y >= quadrant.yStart && p.y <= quadrant.yEnd) {
+                            applyDmg(p, bossAtk); 
+                        }
+                    });
+                    
+                    // Aplicar dano reduzido aos tiles adjacentes
+                    for(let dx = -1; dx <= 1; dx++) {
+                        for(let dy = -1; dy <= 1; dy++) {
+                            if(dx === 0 && dy === 0) continue;
+                            players.forEach(p => { 
+                                if(!p.dead && 
+                                   p.x >= quadrant.xStart - 1 && p.x <= quadrant.xEnd + 1 &&
+                                   p.y >= quadrant.yStart - 1 && p.y <= quadrant.yEnd + 1 &&
+                                   !(p.x >= quadrant.xStart && p.x <= quadrant.xEnd &&
+                                     p.y >= quadrant.yStart && p.y <= quadrant.yEnd)) {
+                                    applyDmg(p, 0); 
+                                }
+                            });
+                        }
+                    }
+                } else { 
+                    playSfx('cucask2'); 
+                    addLog("🧙‍♀️ Cuca bebe uma poção curativa!");
+                    triggerPotion(boss.x, boss.y);
+                    await sleep(400);
+                    boss.hp = Math.min(boss.maxHp, boss.hp + 2);
+                    showHealEffect(boss.x, boss.y, 2);
+                    updateVisuals();
+                    addLog(`🧪 ${boss.type} recuperou 2 HP!`);
+                } 
+            }
         }
         
         await sleep(600); 
@@ -4696,7 +5488,6 @@
         
         if (!gameActive || arcadeBossTransition) return;
         
-        // Verificar se boss foi derrotado
         if (boss.dead) {
             if (mode === "ARCADE") {
                 handleBossDefeat();
@@ -4706,14 +5497,12 @@
             return;
         }
         
-        // Verificar se ainda há jogadores vivos
         const stillAlivePlayers = players.filter(p => !p.dead);
         if (stillAlivePlayers.length === 0) {
             showEndGame("GAME OVER", false);
             return;
         }
         
-        // Passar turno para o PRIMEIRO jogador vivo
         currentPlayerIdx = 0; 
         while (currentPlayerIdx < players.length && players[currentPlayerIdx] && players[currentPlayerIdx].dead) {
             currentPlayerIdx++;
@@ -4723,87 +5512,104 @@
             switchConfig(currentPlayerIdx);
             addLog(`🎮 Turno dos jogadores! Começa com ${players[currentPlayerIdx].name}`);
             
-            // Ativar turno do jogador
             document.getElementById('turnP_Active').classList.add('active-turn');
         } else {
             showEndGame("GAME OVER", false);
         }
         
-        // Atualizar direção dos sprites após turno do boss
         updateAllSpriteDirections();
     }
 
     function handleBossDefeat() {
-    if (mode === "ARCADE" && arcadeIndex < ARCADE_ORDER.length - 1) {
-        const defeatedBoss = ARCADE_ORDER[arcadeIndex];
-        const clue = LORE.bossLore[defeatedBoss].clue;
-        
-        addLog(`💬 ${defeatedBoss} sussurra antes de cair: "${clue}"`);
-        
-        updateTitleStats('boss_defeated', 1, defeatedBoss);
-        
-        arcadeIndex++; 
-        LORE.currentStage++;
-        
-        boss.type = ARCADE_ORDER[arcadeIndex]; 
-        boss.hp = boss.maxHp; 
-        boss.dead = false; 
-        boss.x = 4; 
-        boss.y = 0; 
-        
-        document.getElementById('imgBoss').src = SPRITES[boss.type]; 
-        document.getElementById('turnBoss').innerText = `${boss.type} BOSS`; 
-        
-        // Aplicar classe correta para IARA
-        if (boss.type === "IARA") {
-            document.getElementById('imgBoss').className = "iara-normal";
-        } else {
-            document.getElementById('imgBoss').className = "normal";
-        }
-        
-        updateVisuals(); 
-        playBossTheme(); 
-        
-        // CORREÇÃO CRÍTICA: Setar flag de transição
-        arcadeBossTransition = true;
-        
-        // Resetar completamente o turno
-        currentPlayerIdx = 0;
-        while (currentPlayerIdx < players.length && players[currentPlayerIdx] && players[currentPlayerIdx].dead) {
-            currentPlayerIdx++;
-        }
-        
-        if (currentPlayerIdx < players.length && players[currentPlayerIdx]) {
-            switchConfig(currentPlayerIdx);
-            addLog(`🔥 NOVO BOSS: ${boss.type}! Turno de ${players[currentPlayerIdx].name}`);
+        if (mode === "ARCADE") {
+            const defeatedBoss = arcadeCurrentOrder[arcadeIndex];
+            const clue = LORE.bossLore[defeatedBoss]?.clue || "...";
             
-            // Garantir que é turno dos jogadores
-            document.getElementById('turnP_Active').classList.add('active-turn');
-            document.getElementById('turnBoss').classList.remove('active-turn');
+            addLog(`💬 ${defeatedBoss} sussurra antes de cair: "${clue}"`);
             
-            // Habilitar botões do jogador
-            saveAndRefresh();
+            updateTitleStats('boss_defeated', 1, defeatedBoss);
             
-            // Atualizar direção dos sprites
+            arcadeIndex++; 
+            LORE.currentStage++;
+            
+            // Verificar se completou o desafio atual
+            if (arcadeIndex >= arcadeCurrentOrder.length) {
+                if (currentArcadeChallenge === 1) {
+                    // Completou o primeiro desafio
+                    addLog("🏆 PRIMEIRO DESAFIO COMPLETO!");
+                    addLog("🔥 NOVOS BOSSES DESBLOQUEADOS!");
+                    addLog("⭐ O SEGUNDO DESAFIO AGORA ESTÁ DISPONÍVEL!");
+                    
+                    // Salvar progresso
+                    const savedData = localStorage.getItem('entity_titles_data');
+                    if (savedData) {
+                        try {
+                            const data = JSON.parse(savedData);
+                            data.stats = data.stats || {};
+                            data.stats.first_challenge_completed = true;
+                            localStorage.setItem('entity_titles_data', JSON.stringify(data));
+                        } catch (e) {
+                            console.error("Erro ao salvar progresso:", e);
+                        }
+                    }
+                    
+                    showEndGame("DESAFIO 1 COMPLETO!", true);
+                } else {
+                    // Completou o segundo desafio
+                    LORE.anhangáRevealed = true;
+                    addLog("👑 DESAFIO FINAL COMPLETO!");
+                    addLog("🎉 TODOS OS BOSSES FORAM DERROTADOS!");
+                    addLog("🏆 VOCÊ É O VERDADEIRO HERÓI DA FLORESTA!");
+                    
+                    showEndGame("VITÓRIA TOTAL!", true);
+                }
+                return;
+            }
+            
+            // Próximo boss no mesmo desafio
+            boss.type = arcadeCurrentOrder[arcadeIndex];
+            boss.hp = boss.maxHp;
+            boss.dead = false;
+            boss.x = 4;
+            boss.y = 0;
+            
+            document.getElementById('imgBoss').src = SPRITES[boss.type];
+            document.getElementById('turnBoss').innerText = `${boss.type} BOSS`;
+            
             updateAllSpriteDirections();
             
-            // Adicionar um delay e limpar a flag de transição
-            setTimeout(() => {
-                arcadeBossTransition = false;
-                if (gameActive) {
-                    addLog(`🎮 Os heróis atacam primeiro contra ${boss.type}!`);
-                }
-            }, 1000);
+            updateVisuals();
+            playBossTheme();
+            
+            arcadeBossTransition = true;
+            
+            currentPlayerIdx = 0;
+            while (currentPlayerIdx < players.length && players[currentPlayerIdx] && players[currentPlayerIdx].dead) {
+                currentPlayerIdx++;
+            }
+            
+            if (currentPlayerIdx < players.length && players[currentPlayerIdx]) {
+                switchConfig(currentPlayerIdx);
+                addLog(`🔥 PRÓXIMO BOSS: ${boss.type}! Turno de ${players[currentPlayerIdx].name}`);
+                
+                document.getElementById('turnP_Active').classList.add('active-turn');
+                document.getElementById('turnBoss').classList.remove('active-turn');
+                
+                saveAndRefresh();
+                updateAllSpriteDirections();
+                
+                setTimeout(() => {
+                    arcadeBossTransition = false;
+                    if (gameActive) {
+                        addLog(`🎮 Os heróis atacam primeiro contra ${boss.type}!`);
+                    }
+                }, 1000);
+            }
+            
+        } else if (mode === "BOSS") {
+            showEndGame("BOSS DERROTADO!", true);
         }
-        
-    } else if (mode === "ARCADE") {
-        LORE.anhangáRevealed = true;
-        showEndGame("VITÓRIA TOTAL!", true);
-        
-    } else if (mode === "BOSS") {
-        showEndGame("BOSS DERROTADO!", true);
     }
-}
 
     // ================= FUNÇÕES AUXILIARES DO JOGO =================
     function saveAndRefresh() { 
@@ -4817,7 +5623,6 @@
         ed.innerText = p.element; 
         ed.className = `element-display bg-${p.element}`; 
         
-        // Calcular ATK total incluindo título
         const baseAtk = CLASS_DB[p.class].atk;
         const amuletBonus = p.bonusAtk || 0;
         const titleBonus = p.titleBonus?.ATK || 0;
@@ -4832,19 +5637,16 @@
         const img = document.getElementById(`imgP${p.id}`); 
         if (img) img.src = SPRITES[p.class]; 
         
-        // Verificar se é turno do jogador atual
         const isMyTurn = (editingIdx === currentPlayerIdx && currentPlayerIdx >= 0); 
         document.getElementById('btnPlay').disabled = !isMyTurn; 
         document.getElementById('btnSkill').disabled = !isMyTurn || players[currentPlayerIdx]?.skillUsed; 
         
-        // Atualizar indicador de turno ativo
         const turnActive = document.getElementById('turnP_Active');
         if (turnActive) {
             turnActive.classList.toggle('active-turn', currentPlayerIdx >= 0); 
             turnActive.style.opacity = currentPlayerIdx >= 0 ? "1" : "0.7";
         }
         
-        // Atualizar bônus de título
         const titleBonusDisplay = document.getElementById('titleBonusDisplay');
         if (titleBonus > 0) {
             titleBonusDisplay.style.display = 'block';
@@ -4853,7 +5655,6 @@
             titleBonusDisplay.style.display = 'none';
         }
         
-        // Atualizar direção do sprite
         updateAllSpriteDirections();
     }
     
@@ -4972,7 +5773,6 @@
         return null; 
     }
     
-    // ================= FUNÇÃO TRIGGERELEMENTALFX CORRIGIDA =================
     function triggerElementalFX(element, pos, type, heroX, heroY) { 
         const s = getStep(); 
         const board = document.getElementById('board'); 
@@ -4994,19 +5794,16 @@
         } else if(element === 'AGUA') { 
             playSfx('iara2'); 
             
-            // Criar efeito visual de água
             const waterFX = document.createElement('div');
             waterFX.className = 'water-cross-fx';
             
             if(type === 'COL') {
-                // Efeito de coluna d'água
                 waterFX.style.width = s + 'px';
                 waterFX.style.height = '100%';
                 waterFX.style.left = (pos * s + 8) + 'px';
                 waterFX.style.top = '0';
                 waterFX.style.background = 'linear-gradient(0deg, transparent, rgba(255,255,255,0.9), rgba(52,152,219,1), rgba(255,255,255,0.9), transparent)';
             } else {
-                // Efeito de linha d'água  
                 waterFX.style.width = '100%';
                 waterFX.style.height = s + 'px';
                 waterFX.style.top = (pos * s + 8) + 'px';
@@ -5050,7 +5847,6 @@
         gameActive = false;
         console.log("🏁 Fim de jogo:", msg, "Venceu?", isWin);
         
-        // Verificar sobrevivência com 1 HP
         if (isWin) {
             players.forEach(p => {
                 if (p.hp === 1 && !p.dead) {
@@ -5075,7 +5871,6 @@
     function applyDmg(t, amt) { 
         if(t.dead) return; 
         
-        // Aplicar resistência elemental se houver
         if (t.titleBonus?.RESIST) {
             const attacker = players[currentPlayerIdx];
             if (attacker && t.titleBonus.RESIST[attacker.element]) {
@@ -5087,7 +5882,6 @@
         t.hp -= amt; 
         showDmgEffect(t.x, t.y, amt); 
         
-        // Rastrear dano por elemento e classe
         if (gameActive && currentPlayerIdx >= 0 && path.length > 0) {
             const player = players[currentPlayerIdx];
             const element = grid[path[0]];
@@ -5109,14 +5903,12 @@
         } 
         updateVisuals(); 
         
-        // Atualizar display do boss/player
         if (mode === "BOSS" || mode === "ARCADE") {
             document.getElementById('bossStatsDisplay').innerHTML = `HP: <b>${boss.hp}</b> / ${boss.maxHp}`;
         } else if (t === players[1]) {
             document.getElementById('bossStatsDisplay').innerHTML = `HP: <b>${t.hp}</b> / ${t.maxHp}`;
         }
         
-        // Atualizar direção dos sprites após dano
         updateAllSpriteDirections();
     }
     
@@ -5180,14 +5972,12 @@
         setTimeout(() => t.remove(), 1200); 
     }
     
-    // Função atualizada para criar vórtice mais rápido (Saci)
     function triggerVortex(x, y, d = 0, enhanced = false) { 
         setTimeout(() => { 
             const v = document.createElement('img'); 
             v.src = SPRITES.VortexFX; 
             v.className = 'vortex-fx';
             
-            // Aplicar animação mais rápida para enhanced (Saci)
             if (enhanced) {
                 v.style.animation = 'vortexAnimEnhanced 0.3s linear infinite';
                 v.style.filter = 'drop-shadow(0 0 12px #3498db) brightness(1.3)';
@@ -5201,7 +5991,6 @@
             
             document.getElementById('board').appendChild(v); 
             
-            // Remover após animação
             setTimeout(() => { 
                 v.style.opacity = '0'; 
                 v.style.transform = 'scale(0.5)'; 
@@ -5212,63 +6001,38 @@
     }
     
     function triggerWaterJet(bx, by) { 
-        // Cria jato d'água em forma de cruz (vertical e horizontal)
         const board = document.getElementById('board');
         const s = getStep();
-        const boardSize = s * 8; // Tamanho total do tabuleiro
+        const boardSize = s * 8;
         
-        // Jato vertical (coluna) - CORREÇÃO COMPLETA
         const vertical = document.createElement('div');
         vertical.className = 'water-cross-fx';
         vertical.style.width = s + 'px';
         vertical.style.height = boardSize + 'px';
         vertical.style.left = (bx * s + 8) + 'px';
-        vertical.style.top = '8px'; // Começa do topo do tabuleiro (8px é o padding)
+        vertical.style.top = '8px';
         vertical.style.background = 'linear-gradient(0deg, transparent, rgba(255,255,255,0.9), rgba(52,152,219,1), rgba(255,255,255,0.9), transparent)';
         vertical.style.boxShadow = '0 0 20px rgba(52, 152, 219, 0.8)';
         vertical.style.borderRadius = '4px';
         vertical.style.animation = 'waterCrossAnim 0.8s ease-out';
         board.appendChild(vertical);
         
-        // Jato horizontal (linha)
         const horizontal = document.createElement('div');
         horizontal.className = 'water-cross-fx';
         horizontal.style.width = boardSize + 'px';
         horizontal.style.height = s + 'px';
         horizontal.style.top = (by * s + 8) + 'px';
-        horizontal.style.left = '8px'; // Começa da esquerda do tabuleiro
+        horizontal.style.left = '8px';
         horizontal.style.background = 'linear-gradient(90deg, transparent, rgba(255,255,255,0.9), rgba(52,152,219,1), rgba(255,255,255,0.9), transparent)';
         horizontal.style.boxShadow = '0 0 20px rgba(52, 152, 219, 0.8)';
         horizontal.style.borderRadius = '4px';
         horizontal.style.animation = 'waterCrossAnim 0.8s ease-out';
         board.appendChild(horizontal);
         
-        // Remover após animação
         setTimeout(() => {
             if (vertical.parentNode) vertical.parentNode.removeChild(vertical);
             if (horizontal.parentNode) horizontal.parentNode.removeChild(horizontal);
         }, 800);
-    }
-    
-    // Nova função para a pororoca da Iara (onda redonda do centro)
-    function triggerPororoca() {
-        const board = document.getElementById('board');
-        
-        // Efeito principal de pororoca (onda redonda)
-        const pororoca = document.createElement('div');
-        pororoca.className = 'pororoca-fx';
-        board.appendChild(pororoca);
-        
-        // Efeito adicional de onda circular
-        const wave = document.createElement('div');
-        wave.className = 'circular-wave-fx';
-        board.appendChild(wave);
-        
-        // Remover após animação
-        setTimeout(() => {
-            if (pororoca.parentNode) pororoca.parentNode.removeChild(pororoca);
-            if (wave.parentNode) wave.parentNode.removeChild(wave);
-        }, 1500);
     }
     
     function getStep() { 
@@ -5363,7 +6127,6 @@
         arrow.style.left = (f.x * s + 20) + 'px';
         arrow.style.top = (f.y * s + 20) + 'px';
         
-        // Rotaciona a flecha na direção do alvo
         const dx = t.x - f.x;
         const dy = t.y - f.y;
         const angle = Math.atan2(dy, dx) * (180 / Math.PI);
@@ -5380,19 +6143,16 @@
         arrow.remove();
     }
 
-    // Função auxiliar para sleep/await
     function sleep(ms) {
         return new Promise(resolve => setTimeout(resolve, ms));
     }
 
     // ================= INICIALIZAÇÃO =================
     document.addEventListener("DOMContentLoaded", function() {
-        // Carregar dados de títulos
+        showIntro();
+        
         loadTitleData();
         checkTitleUnlocks();
-        
-        // Mostrar tela de título inicial
-        showScreen('titleScreen');
     });
 
 </script>
