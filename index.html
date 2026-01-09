@@ -2132,6 +2132,15 @@
                 font-size: 1rem;
                 padding: 15px;
             }
+            #modeScreen {
+                overflow-y: auto;
+                padding-bottom: 100px;
+            }
+    
+            .mode-container {
+                min-height: auto;
+            }
+    /* ========== FIM DA ADIÇÃO ========== */
         }
     </style>
 </head>
@@ -3090,23 +3099,30 @@
 
     // ================= FUNÇÕES DE INTRODUÇÃO =================
     function showIntro() {
-        const introScreen = document.getElementById('introScreen');
-        const titleScreen = document.getElementById('titleScreen');
-        
-        introScreen.style.display = 'flex';
-        titleScreen.style.display = 'none';
+    const introScreen = document.getElementById('introScreen');
+    const titleScreen = document.getElementById('titleScreen');
+    
+    introScreen.style.display = 'flex';
+    titleScreen.style.display = 'none';
+    
+    // 🔉 TOCAR SOM DA INTRO
+    if (sfx.intro) {
+        sfx.intro.volume = 0.4; // Volume mais baixo
+        sfx.intro.currentTime = 0; // Reiniciar o som
+        sfx.intro.play();
+    }
+    
+    setTimeout(() => {
+        introScreen.style.opacity = '0';
         
         setTimeout(() => {
-            introScreen.style.opacity = '0';
-            
-            setTimeout(() => {
-                introScreen.style.display = 'none';
-                titleScreen.style.display = 'flex';
-                currentScreen = 'title';
-                unlockAudio();
-            }, 800);
-        }, 3000);
-    }
+            introScreen.style.display = 'none';
+            titleScreen.style.display = 'flex';
+            currentScreen = 'title';
+            unlockAudio();
+        }, 800);
+    }, 3000);
+}
 
     // ================= FUNÇÕES DE NAVEGAÇÃO =================
     function startGame() {
@@ -4455,7 +4471,8 @@
         // NOVO BOSS FINAL
         anhanga_skill1: null, // Será referenciado a skill1
         anhanga_skill2: null, // Será referenciado a cucask2
-        anhangatema: new Audio("anhanga.mp3")
+        anhangatema: new Audio("anhanga.mp3"),
+        intro: new Audio("intro.mp3")
     };
 
     // Referenciar sons existentes para evitar duplicação
@@ -4762,7 +4779,7 @@
             
             // Se for o Anhangá, adicionar +10 de vida
             if (boss.type === "ANHANGA") {
-                boss.maxHp = baseBossHP + 10;
+                boss.maxHp = baseBossHP + 9;
             } else {
                 boss.maxHp = baseBossHP;
             }
@@ -5882,7 +5899,7 @@
                 
                 // Vida do Anhangá: 10 a mais que o boss normal
                 const baseBossHP = parseInt(document.getElementById('hp_BOSS_cfg').value) || 30;
-                boss.maxHp = baseBossHP + 10;
+                boss.maxHp = baseBossHP + 9;
                 boss.hp = boss.maxHp;
                 boss.dead = false;
                 boss.x = 4;
