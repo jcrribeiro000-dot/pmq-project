@@ -902,6 +902,59 @@
             cursor: not-allowed;
         }
         
+        /* ================= NOVA SEÇÃO: INFORMAÇÕES DAS FORMAS ================= */
+        .forms-info {
+            background: rgba(0,0,0,0.3);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            border-left: 4px solid #f1c40f;
+        }
+        
+        .forms-title {
+            color: #f1c40f;
+            font-size: 1rem;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .form-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            padding: 6px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            font-size: 0.85rem;
+        }
+        
+        .form-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+        
+        .form-name {
+            color: #fff;
+            font-weight: 500;
+        }
+        
+        .form-bonus {
+            color: #2ecc71;
+            font-weight: bold;
+            font-size: 0.9rem;
+            background: rgba(46, 204, 113, 0.1);
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+        
+        .form-shape {
+            color: #aaa;
+            font-size: 0.8rem;
+            margin-top: 2px;
+        }
+        
         /* Tabuleiro */
         .board-wrapper {
             position: relative;
@@ -2381,6 +2434,41 @@
                     <button id="btnSkill" class="skill-btn" onclick="activateSkill()">ULTIMATE (1x)</button>
                     <button id="btnPlay" class="play-btn" onclick="executeAction()">JOGAR TURNO</button>
                 </div>
+                
+                <!-- ========== NOVA SEÇÃO: INFORMAÇÕES DAS FORMAS ========== -->
+                <div class="forms-info">
+                    <div class="forms-title">
+                        <span>📋 FORMAS E BÔNUS</span>
+                    </div>
+                    <div class="form-item">
+                        <div>
+                            <div class="form-name">LINHA (4 tiles)</div>
+                            <div class="form-shape">Forma reta em linha</div>
+                        </div>
+                        <div class="form-bonus">+2 ATK, +1 HP</div>
+                    </div>
+                    <div class="form-item">
+                        <div>
+                            <div class="form-name">LETRA L (4 tiles)</div>
+                            <div class="form-shape">Forma de L (2x2)</div>
+                        </div>
+                        <div class="form-bonus">+2 HP</div>
+                    </div>
+                    <div class="form-item">
+                        <div>
+                            <div class="form-name">ZIGZAG (4 tiles)</div>
+                            <div class="form-shape">Forma em ziguezague</div>
+                        </div>
+                        <div class="form-bonus">+3 ATK</div>
+                    </div>
+                    <div class="form-item">
+                        <div>
+                            <div class="form-name">QUADRADO (4 tiles)</div>
+                            <div class="form-shape">Forma quadrada 2x2</div>
+                        </div>
+                        <div class="form-bonus">Recarrega Ultimate</div>
+                    </div>
+                </div>
             </div>
             
             <!-- Tabuleiro -->
@@ -2666,8 +2754,8 @@
         CUCA: "https://i.imgur.com/oxrLSyq.gif",
         ANHANGA: "https://i.imgur.com/bmCTfRc.gif", // NOVO BOSS FINAL
         
-        Muiraquita: "https://i.ibb.co/JjYQszc0/muiraquita.png",
-        VortexFX: "https://cdn-icons-png.flaticon.com/512/1344/1344933.png",
+        Muiraquita: "https://i.imgur.com/WAWqKeB.png",
+        VortexFX: "https://i.imgur.com/XHq6PVm.png",
         SwordFX: "https://cdn-icons-png.flaticon.com/512/6720/6720973.png",
         ArrowFX: "https://cdn-icons-png.flaticon.com/128/3854/3854999.png",
         MagicFX: "https://cdn-icons-png.flaticon.com/128/4325/4325956.png",
@@ -6534,6 +6622,10 @@
         loadTitleData();
         checkTitleUnlocks();
     });
+
+</script>
+</body>
+</html>  });
 
 </script>
 </body>
